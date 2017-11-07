@@ -13,9 +13,19 @@ import android.widget.ImageView;
  */
 
 public class LetterImage {
-
+    private static final int APPROXIMATION = 20;
     private Rect rectangle;
     private Drawable img;
+    private boolean updateable=false;
+
+
+    public boolean isUpdateable() {
+        return updateable;
+    }
+
+    public void setUpdateable(boolean updateable) {
+        this.updateable = updateable;
+    }
 
     public Rect getRectangle(){
         return rectangle;
@@ -24,16 +34,18 @@ public class LetterImage {
     public LetterImage(Rect rectangle, Drawable img) {
         this.rectangle=rectangle;
         this.img=img;
-        img.setBounds(rectangle); //reference dobre?
+        img.setBounds(rectangle);
     }
 
     //TODO metode u interface ???
+    public boolean insideRectangle(int x, int y){
+        if(rectangle.contains(x,y))
+            return true;
+        updateable=false;
+        return false;
+    }
+
     public void draw(Canvas canvas) {
-        /*
-        Paint paint=new Paint();
-        paint.set...
-        canvas.drawRec...;
-         */
         img.draw(canvas);
     }
 

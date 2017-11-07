@@ -20,9 +20,7 @@ public class DropArea {
         this.color=color;
     }
 
-    public void setColor(int color){
-        this.color=color;
-    }
+
 
     //TODO metode u interface ???
     public void draw(Canvas canvas) {
@@ -36,8 +34,11 @@ public class DropArea {
         if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().left, letter.getRectangle().bottom)
-                || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom))
+                || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom)){
+            color=Color.WHITE;//pozadina
             return true;
+        }
+        color=Color.RED;
         return false;
     }
 

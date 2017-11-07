@@ -84,10 +84,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //return super.onTouchEvent(event);
 
         // bolji drag and drop alg, listener?
-        switch (event.getAction()){
+        switch (event.getAction()){ //provjeri ako smo pritisnuli na objekt!
             case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_MOVE:
-                    letterAPoint.set((int)event.getX(), (int)event.getY());
+                if(letterA.insideRectangle((int)event.getX(), (int)event.getY())) {
+                    letterA.setUpdateable(true);
+                }
+            case MotionEvent.ACTION_MOVE:
+                        if(letterA.isUpdateable())
+                            letterAPoint.set((int)event.getX(), (int)event.getY());
         }
 
 
@@ -102,7 +106,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         letterA.update(letterAPoint);
         if(dropArea.collision(letterA)){
             letterAPoint.set(350,350);//centar drop area
-            dropArea.setColor(Color.WHITE);
         }
     }
 
@@ -124,7 +127,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         letterA.draw(canvas);
 
         //za provjeru dropa
-        dropArea.draw(canvas);
+        if(!dropArea.collision(letterA)){
+            dropArea.draw(canvas);
+        }
+
 
     }
 }
