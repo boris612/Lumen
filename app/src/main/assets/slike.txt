@@ -1,0 +1,8 @@
+slike/kamen.png
+slike/kisa.png
+slike/kisobran.png
+slike/mjesec.png
+slike/oblak.png
+slike/svemir.png
+slike/trava.png
+slike/vjetar2.png

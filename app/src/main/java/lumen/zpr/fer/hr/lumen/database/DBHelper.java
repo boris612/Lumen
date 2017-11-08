@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * naziv datoteke baze podataka
      */
     private static final String DATABASE_NAME = "lumeni.db";
+
     /**
      * naziv tablice "jezici"
      */
@@ -40,6 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * naziv datoteke koja sadrži dostupne jezike
      */
     private static final String LANGUAGES_FILENAME = "jezici.txt";
+
     /**
      * naziv tablice "kategorije"
      */
@@ -56,6 +59,31 @@ public class DBHelper extends SQLiteOpenHelper {
      * naziv datoteke iz koje se čitaju dostupne kategorije
      */
     private static final String CATEGORIES_FILENAME = "kategorije.txt";
+
+    /**
+     * naziv tablice "slike"
+     */
+    private static final String IMAGES_TABLE_NAME = "slike";
+    /**
+     * naziv atributa "idslika
+     */
+    private static final String IMAGES_ID = "idslika";
+    /**
+     * naziv atributa "stazaslike"
+     */
+    private static final String IMAGES_PATH = "stazaSlike";
+    /**
+     * naziv datoteke iz koje se čitaju dostupne slike
+     */
+    private static final String IMAGES_FILENAME = "slike.txt";
+
+    private static final String WORDS_TABLE_NAME = "rijeci";
+    private static final String WORDS_ID = "idrijec";
+    private static final String WORDS_LANGUAGE = "jezik";
+    private static final String WORDS_CATEGORY = "kategorija";
+    private static final String WORDS_IMAGE_ID = "idslika";
+    private static final String WORDS_VALUE = "rijec";
+    private static final String WORDS_FILENAME = "rijeci.txt";
 
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
@@ -96,10 +124,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 CATEGORIES_ID + " integer primary key autoincrement," +
                 CATEGORIES_VALUE + " varchar unique)");
 
+        //stvoir tablicu "slike"
+        db.execSQL("create table if not exists " + IMAGES_TABLE_NAME + " (" +
+                IMAGES_ID + " integer primary key autoincrement," +
+                IMAGES_PATH + " varchar unique)");
+
+        //stvori tablicu "rijeci"
+        db.execSQL("create table if not exists " + WORDS_TABLE_NAME + "(" +
+                WORDS_ID + " integer primary key autoincrement," +
+                WORDS_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME +
+                "(" + LANGUAGES_VALUE + ")," +
+                WORDS_CATEGORY + " varchar references " + CATEGORIES_TABLE_NAME +
+                "(" + CATEGORIES_VALUE + ")," +
+                WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
+                WORDS_VALUE + " varchar unique)");
+
         //popuni tablice
         try {
             fillLanguageTable(db);
             fillCategoryTable(db);
+            fillImageTable(db);
+            fillWordsTable(db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,11 +207,88 @@ public class DBHelper extends SQLiteOpenHelper {
         reader.close();
     }
 
+    /**
+     * Zapisuje n-torku kategorije u tablicu "kategorije".
+     *
+     * @param db  {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param cat kategorija koju zapisujemo u bazu
+     */
     private void insertCategoryEntity(SQLiteDatabase db, String cat) {
         ContentValues values = new ContentValues();
         values.put(CATEGORIES_VALUE, cat);
 
         db.insert(CATEGORIES_TABLE_NAME, null, values);
+    }
+
+    /**
+     * Puni tablicu "slike" n-torkama.
+     *
+     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @throws IOException baca se ako dođe do greške pri čitanju pripadne datoteke
+     */
+    private void fillImageTable(SQLiteDatabase db) throws IOException {
+        if (tableFilled(db, IMAGES_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(IMAGES_FILENAME)));
+
+        while (reader.ready()) {
+            insertImageEntity(db, reader.readLine());
+        }
+
+        reader.close();
+    }
+
+    /**
+     * Zapisuje n-torku slike u tablicu "slike".
+     *
+     * @param db        {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param imagePath staza do datoteke slike
+     */
+    private void insertImageEntity(SQLiteDatabase db, String imagePath) {
+        ContentValues values = new ContentValues();
+        values.put(IMAGES_PATH, imagePath);
+
+        db.insert(IMAGES_TABLE_NAME, null, values);
+    }
+
+    /**
+     * Puni tablicu "rijeci" n-torkama.
+     *
+     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @throws IOException baca se ako dođe do greške pri čitanju pripadne datoteke
+     */
+    private void fillWordsTable(SQLiteDatabase db) throws IOException {
+        if(tableFilled(db, WORDS_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(WORDS_FILENAME)));
+        while(reader.ready()) {
+            addWordEntity(db, reader.readLine());
+        }
+
+        reader.close();
+    }
+
+    /**
+     * Zapisuje n-torku riječi u tablicu "rijeci".
+     *
+     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param wordEntry n-torka riječi koju unosimo u bazu podataka
+     */
+    private void addWordEntity(SQLiteDatabase db, String wordEntry) {
+        String[] attributes = wordEntry.split(" ");
+        ContentValues values = new ContentValues();
+        values.put(WORDS_LANGUAGE, attributes[0]);
+        values.put(WORDS_CATEGORY, attributes[1]);
+        values.put(WORDS_IMAGE_ID, attributes[2]);
+        values.put(WORDS_VALUE, attributes[3]);
+
+        db.insert(WORDS_TABLE_NAME, null, values);
     }
 
     /**
