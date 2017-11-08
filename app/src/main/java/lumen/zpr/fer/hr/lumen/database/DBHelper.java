@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,12 +76,33 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String IMAGES_FILENAME = "slike.txt";
 
+    /**
+     * naziv tablice "rijeci"
+     */
     private static final String WORDS_TABLE_NAME = "rijeci";
+    /**
+     * naziv atributa "idrijec"
+     */
     private static final String WORDS_ID = "idrijec";
+    /**
+     * naziv atributa jezik
+     */
     private static final String WORDS_LANGUAGE = "jezik";
+    /**
+     * naziv atributa "kategorija"
+     */
     private static final String WORDS_CATEGORY = "kategorija";
+    /**
+     * naziv atributa "idslika"
+     */
     private static final String WORDS_IMAGE_ID = "idslika";
+    /**
+     * naziv atributa "rijec"
+     */
     private static final String WORDS_VALUE = "rijec";
+    /**
+     * naziv datoteke koja sadrži zapise o riječima
+     */
     private static final String WORDS_FILENAME = "rijeci.txt";
 
     /**
@@ -261,13 +281,13 @@ public class DBHelper extends SQLiteOpenHelper {
      * @throws IOException baca se ako dođe do greške pri čitanju pripadne datoteke
      */
     private void fillWordsTable(SQLiteDatabase db) throws IOException {
-        if(tableFilled(db, WORDS_TABLE_NAME)) {
+        if (tableFilled(db, WORDS_TABLE_NAME)) {
             return;
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(WORDS_FILENAME)));
-        while(reader.ready()) {
+        while (reader.ready()) {
             addWordEntity(db, reader.readLine());
         }
 
@@ -277,7 +297,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Zapisuje n-torku riječi u tablicu "rijeci".
      *
-     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param db        {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
      * @param wordEntry n-torka riječi koju unosimo u bazu podataka
      */
     private void addWordEntity(SQLiteDatabase db, String wordEntry) {
