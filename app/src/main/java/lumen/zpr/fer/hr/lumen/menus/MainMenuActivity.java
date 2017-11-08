@@ -22,13 +22,12 @@ public class MainMenuActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        //       WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main_menu);
+
         helper = new DBHelper(this,
                 getAssets());
         helper.onCreate(helper.getWritableDatabase());
+
         Button startGameBtn = findViewById(R.id.pokreniIgru);
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
