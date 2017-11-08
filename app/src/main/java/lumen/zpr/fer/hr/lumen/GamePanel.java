@@ -1,7 +1,9 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,7 +25,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         setFocusable(true);
 
+
         phase = GamePhase.PRESENTING_WORD;
+
     }
 
     private enum GamePhase {
@@ -81,10 +85,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void draw(Canvas canvas) {
+        StartingHint hint=new StartingHint("konj",this);
+        Bitmap bithint=hint.getHintBitmap();
+
         //TODO dodati crtanje objekata zajedničkih objema fazama
 
         if(phase == GamePhase.PRESENTING_WORD) {
-            //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
+            canvas.drawBitmap(bithint,10,10,new Paint());
             return;
         }
 
