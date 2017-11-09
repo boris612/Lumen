@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -13,6 +15,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * Created by Alen on 6.11.2017..
  */
@@ -20,6 +26,9 @@ import android.view.SurfaceView;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private GamePhase phase;
+    private GameImage currentImage;
+    private String currentWord;
+    private CharactersFields charactersFields;
 
     private Drawable img = getResources().getDrawable(R.drawable.image);
     private LetterImage letterA = new LetterImage(new Rect(100,100,200,200),img);
@@ -39,9 +48,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         setFocusable(true);
 
-        //phase = GamePhase.PRESENTING_WORD;
-        phase = GamePhase.TYPING_WORD; // za testiranje
+        phase = GamePhase.PRESENTING_WORD;
+        phase = GamePhase.TYPING_WORD;
+
+        try {
+            initNewWord();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            //TODO: pronaći odgovarajući postupak u ovoj situaciji
+        }
     }
+
+    private void initNewWord() throws  IOException{
+        String currentWord = "motocikl";
+        //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
+
+        currentImage = loadImage("motocikl.jpg");
+        //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
+
+        charactersFields = new CharactersFields(currentWord,getContext());
+    }
+
+    private GameImage loadImage(String imageName) throws  IOException {
+        return new GameImage(imageName,getContext());
+    }
+
 
     private enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
@@ -66,9 +97,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         while(true) {
             try {
-                thread.setRunning(false);
-                thread.join();
-                break;
+                 thread.setRunning(false);
+                 thread.join();
+                 break;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -115,14 +146,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void draw(Canvas canvas) {
-        //TODO dodati crtanje objekata zajedničkih objema fazama
         super.draw(canvas);
+        //TODO dodati crtanje objekata zajedničkih objema fazama
+      
         canvas.drawColor(Color.WHITE); //zamjena za background
-        if (phase == GamePhase.PRESENTING_WORD) {
+
+        canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
+
+        if(phase == GamePhase.PRESENTING_WORD) {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             return;
         }
 
+        charactersFields.draw(canvas);
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
         letterA.draw(canvas);
 
