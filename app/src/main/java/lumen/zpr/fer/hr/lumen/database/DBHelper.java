@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
  * podatke iz baze pomoću svojih javnih metoda.
  *
  * @author Darian Šarić
- * @version 0.1
+ * @version 0.5
  */
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -105,39 +105,65 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String WORDS_FILENAME = "rijeci.txt";
 
+    /**
+     * naziv tablice "slova"
+     */
     private static final String LETTERS_TABLE_NAME = "slova";
+    /**
+     * naziv atributa "idslovo"
+     */
     private static final String LETTERS_ID = "idslovo";
+    /**
+     * naziv atributa "slovo"
+     */
     private static final String LETTERS_VALUE = "slovo";
+    /**
+     * naziv datoteke iz kojih se čitaju slova
+     */
     private static final String LETTERS_FILENAME = "slova.txt";
 
+    /**
+     * naziv tablice "zvukovislova"
+     */
     private static final String LETTER_SOUND_TABLE_NAME = "zvukovislova";
+    /**
+     * naziv atributa "idzvucnizapis"
+     */
     private static final String LETTER_SOUND_ID = "idzvucnizapis";
+    /**
+     * naziv atributa "slovo"
+     */
     private static final String LETTER_SOUND_LETTER = "slovo";
+    /**
+     * naziv atributa "jezik"
+     */
     private static final String LETTER_SOUND_LANGUAGE = "jezik";
+    /**
+     * naziv atributa "idzvuk"
+     */
     private static final String LETTER_SOUND_IDSOUND = "idzvuk";
+    /**
+     * naziv datoteke iz koje se čitaju vrijednosti n-torki
+     */
     private static final String LETTER_SOUND_FILENAME = "zvukovislova.txt";
 
     /**
      * naziv tablice "zvukovi"
      */
-
     private static final String SOUND_TABLE_NAME = "zvukovi";
-
     /**
      * naziv atributa "idzvuk"
      */
     private static final String SOUND_ID = "idzvuk";
-
     /**
      * naziv atributa "staza zvuka"
      */
     private static final String SOUND_PATH = "stazaZvuk";
-
     /**
      * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
      */
-
     private static final String SOUND_FILENAME = "zvukovi.txt";
+
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
      * u bazu podataka
