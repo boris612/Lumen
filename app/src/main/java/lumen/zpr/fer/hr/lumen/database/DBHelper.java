@@ -6,8 +6,8 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,13 +77,39 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String IMAGES_FILENAME = "slike.txt";
 
+    /**
+     * naziv tablice "rijeci"
+     */
     private static final String WORDS_TABLE_NAME = "rijeci";
+    /**
+     * naziv atributa "idrijec"
+     */
     private static final String WORDS_ID = "idrijec";
+    /**
+     * naziv atributa jezik
+     */
     private static final String WORDS_LANGUAGE = "jezik";
+    /**
+     * naziv atributa "kategorija"
+     */
     private static final String WORDS_CATEGORY = "kategorija";
+    /**
+     * naziv atributa "idslika"
+     */
     private static final String WORDS_IMAGE_ID = "idslika";
+    /**
+     * naziv atributa "rijec"
+     */
     private static final String WORDS_VALUE = "rijec";
+    /**
+     * naziv datoteke koja sadrži zapise o riječima
+     */
     private static final String WORDS_FILENAME = "rijeci.txt";
+
+    private static final String LETTERS_TABLE_NAME = "slova";
+    private static final String LETTERS_ID = "idslovo";
+    private static final String LETTERS_VALUE = "slovo";
+    private static final String LETTERS_FILENAME = "slova.txt";
 
     /**
      * naziv tablice "zvukovi"
@@ -160,10 +186,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
                 WORDS_VALUE + " varchar unique)");
 
+
         //stvori tablicu "zvukovi"
         db.execSQL("create table if not exists " + SOUND_TABLE_NAME + "(" +
                SOUND_ID + " integer primary key autoincrement," +
-                SOUND_PATH + " varchar unique");
+                SOUND_PATH + " varchar unique)");
+
+        //stvori tablicu "slova"
+        db.execSQL("create table if not exists " + LETTERS_TABLE_NAME + "(" +
+                LETTERS_ID + " integer primary key autoincrement," +
+                        LETTERS_VALUE + " varchar unique)");
+
 
         //popuni tablice
         try {
@@ -171,7 +204,11 @@ public class DBHelper extends SQLiteOpenHelper {
             fillCategoryTable(db);
             fillImageTable(db);
             fillWordsTable(db);
+
             fillSoundTable(db);
+
+            fillLetterTable(db);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -288,13 +325,13 @@ public class DBHelper extends SQLiteOpenHelper {
      * @throws IOException baca se ako dođe do greške pri čitanju pripadne datoteke
      */
     private void fillWordsTable(SQLiteDatabase db) throws IOException {
-        if(tableFilled(db, WORDS_TABLE_NAME)) {
+        if (tableFilled(db, WORDS_TABLE_NAME)) {
             return;
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(WORDS_FILENAME)));
-        while(reader.ready()) {
+        while (reader.ready()) {
             addWordEntity(db, reader.readLine());
         }
 
@@ -304,7 +341,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * Zapisuje n-torku riječi u tablicu "rijeci".
      *
-     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param db        {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
      * @param wordEntry n-torka riječi koju unosimo u bazu podataka
      */
     private void addWordEntity(SQLiteDatabase db, String wordEntry) {
@@ -316,6 +353,25 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(WORDS_VALUE, attributes[3]);
 
         db.insert(WORDS_TABLE_NAME, null, values);
+    }
+
+    private void fillLetterTable(SQLiteDatabase db) throws IOException {
+        if(tableFilled(db, LETTERS_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(LETTERS_FILENAME)));
+        while(reader.ready()) {
+            addLetterEntity(db, reader.readLine());
+        }
+        reader.close();
+    }
+
+    private void addLetterEntity(SQLiteDatabase db, String letter) {
+        ContentValues values = new ContentValues();
+        values.put(LETTERS_VALUE, letter);
+        db.insert(LETTERS_TABLE_NAME, null, values);
     }
 
     /**
