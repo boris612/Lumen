@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća
  * podatke iz baze pomoću svojih javnih metoda.
  *
- * @author Darian Šarić
+ * @author Darian Šarić, Matija Čavlović
  * @version 0.5
  */
 
