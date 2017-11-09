@@ -34,11 +34,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private LetterImage letterA = new LetterImage(new Rect(100,100,200,200),img);
     private Point letterAPoint= new Point(150,150); //centar rect
 
-    //za provjeru dropa
-    private DropArea dropArea=new DropArea(new Rect(300,300,400,400), Color.rgb(255,0,0) );
-
-
-
     public GamePanel(Context context) {
         super(context);
 
@@ -135,8 +130,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             return;
         }
         letterA.update(letterAPoint);
-        if(dropArea.collision(letterA)){
-            letterAPoint.set(350,350);//centar drop area
+
+        DropArea area = charactersFields.getFieldThatCollidesWith(letterA);
+        if(area!=null){
+            Point areaCenter = area.getCenterPoint();
+            letterAPoint.set(areaCenter.x,areaCenter.y);//centar drop area
         }
     }
 
@@ -163,9 +161,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         letterA.draw(canvas);
 
         //za provjeru dropa
-        if(!dropArea.collision(letterA)){
-            dropArea.draw(canvas);
-        }
+       // if(!dropArea.collision(letterA)){
+        //    dropArea.draw(canvas);
+       // }
 
 
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.util.DisplayMetrics;
@@ -18,7 +19,8 @@ import java.util.List;
  */
 
 public class CharactersFields {
-    private List<Rect> fields;
+    private static int COLOR = Color.RED;
+    private List<DropArea> fields;
     private static double FIELD_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELD_WIDTH_FACTOR;
     private static double GAP_BETWEEN_FIELDS_FACTOR = GameLayoutConstants.GAP_BETWEEN_CHAR_FIELDS_FACTOR;
     private static double Y_COORDINATE_FACTOR = GameLayoutConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR;
@@ -37,7 +39,7 @@ public class CharactersFields {
             r.top = (int)(dm.heightPixels*Y_COORDINATE_FACTOR);
             r.right = r.left + fieldWidthHeight;
             r.bottom = r.top + fieldWidthHeight;
-            fields.add(r);
+            fields.add(new DropArea(r,COLOR));
         }
     }
 
@@ -57,8 +59,17 @@ public class CharactersFields {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.BLUE);
-        for(Rect field: fields) {
-            canvas.drawRect(field, paint);
+        for(DropArea field: fields) {
+            field.draw(canvas);
         }
+    }
+
+    public DropArea getFieldThatCollidesWith(LetterImage letterImage) {
+        for(DropArea field: fields) {
+            if(field.collision(letterImage)) {
+                return field;
+            }
+        }
+        return null;
     }
 }

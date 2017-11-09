@@ -20,7 +20,9 @@ public class DropArea {
         this.color=color;
     }
 
-
+    public Point getCenterPoint() {
+        return new Point(rectangle.centerX(),rectangle.centerY());
+    }
 
     //TODO metode u interface ???
     public void draw(Canvas canvas) {
