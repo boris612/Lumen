@@ -22,6 +22,9 @@ import java.util.function.Predicate;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private GamePhase phase;
+
+    private GameInstance instance;
+
     private GameImage currentImage;
     private String currentWord;
     private CharactersFields charactersFields;
@@ -47,10 +50,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        String currentWord = "motocikl";
+        String language = "hrvatski";
+        String category = "priroda";
+
+        instance = new GameInstance(this.getContext(), language, category, 1);
+
+        String currentWord = instance.getWord();
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
-        currentImage = loadImage("motocikl.jpg");
+        currentImage = loadImage(instance.getPath());
         //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
         charactersFields = new CharactersFields(currentWord,getContext());

@@ -11,6 +11,8 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća
@@ -312,5 +314,77 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+
+    /**
+     * Vraća listu identifikatora svih riječi danog jezika i kategorije.
+     *
+     * @param language jezik
+     * @param category kategorija
+     * @return lista identifikatora svih odgovaraućih riječi u bazi
+     */
+    public List<Integer> getWordIds (String language, String category) {
+        List<Integer> words = new ArrayList<Integer>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_ID},
+                WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
+                new String[] {language, category}, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                words.add(Integer.parseInt(cursor.getString(0)));
+            } while (cursor.moveToNext());
+        }
+
+        return words;
+    }
+
+    /**
+     * Za dani id vraća pripadnu riječ
+     *
+     * @param id identifikator riječi
+     * @return pripadna riječ
+     * @throws android.database.CursorIndexOutOfBoundsException du bazi ne postoji dani identifikator
+     */
+    public String getWord(int id) {
+        String word;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        word = cursor.getString(0);
+
+        return word;
+    }
+
+    /**
+     * Za dani identifikator riječi vraća path do pripadne slike.
+     *
+     * @param id identifikator riječi
+     * @return path do slike riječi
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
+    public String getWordPath(int id) {
+        String path;
+        String imageId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_IMAGE_ID}, WORDS_ID + " = ?",
+                new String[] {Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        imageId = cursor.getString(0);
+
+        cursor = db.query(IMAGES_TABLE_NAME, new String[] {IMAGES_PATH}, IMAGES_ID + " = ?",
+                new String[] {imageId}, null, null, null , null);
+
+        cursor.moveToFirst();
+        path = cursor.getString(0);
+
+        return path;
     }
 }
