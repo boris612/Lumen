@@ -4,9 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,12 +30,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private String currentWord;
     private CharactersFields charactersFields;
 
+    private Drawable img = getResources().getDrawable(R.drawable.image);
+    private LetterImage letterA = new LetterImage(new Rect(100,100,200,200),img);
+    private Point letterAPoint= new Point(150,150); //centar rect
+
+    //za provjeru dropa
+    private DropArea dropArea=new DropArea(new Rect(300,300,400,400), Color.rgb(255,0,0) );
+
+
+
     public GamePanel(Context context) {
         super(context);
 
         getHolder().addCallback(this);
 
-        thread = new MainThread(getHolder(),this);
+        thread = new MainThread(getHolder(), this);
 
         setFocusable(true);
 
@@ -70,7 +83,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        thread = new MainThread(getHolder(),this);
+        thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
     }
@@ -95,29 +108,48 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(phase == GamePhase.PRESENTING_WORD) {
+        if (phase == GamePhase.PRESENTING_WORD) {
             return true;
         }
         //TODO dodati imoplementaciju za TYPING_WORD fazu
-        return super.onTouchEvent(event);
+        //return super.onTouchEvent(event);
+
+        // bolji drag and drop alg, listener?
+        switch (event.getAction()){ //provjeri ako smo pritisnuli na objekt!
+            case MotionEvent.ACTION_DOWN:
+                if(letterA.insideRectangle((int)event.getX(), (int)event.getY())) {
+                    letterA.setUpdateable(true);
+                }
+            case MotionEvent.ACTION_MOVE:
+                        if(letterA.isUpdateable())
+                            letterAPoint.set((int)event.getX(), (int)event.getY());
+        }
+
+
+        return true;
     }
 
     public void update() {
-        if(phase == GamePhase.PRESENTING_WORD) {
+        if (phase == GamePhase.PRESENTING_WORD) {
             updateWordPresentation();
             return;
         }
-        //TODO dodati implementaciju za TYPING_WORD fazu
-     }
+        letterA.update(letterAPoint);
+        if(dropArea.collision(letterA)){
+            letterAPoint.set(350,350);//centar drop area
+        }
+    }
 
-     private void updateWordPresentation() {
+    private void updateWordPresentation() {
         //TODO dodati implementaciju
-     }
+    }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         //TODO dodati crtanje objekata zajedničkih objema fazama
+      
+        canvas.drawColor(Color.WHITE); //zamjena za background
 
         canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
 
@@ -128,6 +160,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields.draw(canvas);
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
+        letterA.draw(canvas);
+
+        //za provjeru dropa
+        if(!dropArea.collision(letterA)){
+            dropArea.draw(canvas);
+        }
+
 
     }
 }
