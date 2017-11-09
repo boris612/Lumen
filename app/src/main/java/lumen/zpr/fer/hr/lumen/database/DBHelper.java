@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -111,6 +110,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String LETTERS_VALUE = "slovo";
     private static final String LETTERS_FILENAME = "slova.txt";
 
+    private static final String LETTER_SOUND_TABLE_NAME = "zvukovislova";
+    private static final String LETTER_SOUND_ID = "idzvucnizapis";
+    private static final String LETTER_SOUND_LETTER = "slovo";
+    private static final String LETTER_SOUND_LANGUAGE = "jezik";
+    private static final String LETTER_SOUND_IDSOUND = "idzvuk";
+    private static final String LETTER_SOUND_FILENAME = "zvukovislova.txt";
+
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
      * u bazu podataka
@@ -168,7 +174,14 @@ public class DBHelper extends SQLiteOpenHelper {
         //stvori tablicu "slova"
         db.execSQL("create table if not exists " + LETTERS_TABLE_NAME + "(" +
                 LETTERS_ID + " integer primary key autoincrement," +
-                        LETTERS_VALUE + " varchar unique)");
+                LETTERS_VALUE + " varchar unique)");
+
+//        db.execSQL("create table if not exists " + LETTER_SOUND_TABLE_NAME + "(" +
+//                LETTER_SOUND_ID + " integer primary key autoincrement," +
+//                LETTER_SOUND_LETTER + " varchar," +
+//                LETTER_SOUND_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME + "(" +
+//                LANGUAGES_VALUE + ")," +
+//                LETTER_SOUND_IDSOUND + " varchar references " + ));
 
         //popuni tablice
         try {
@@ -177,6 +190,7 @@ public class DBHelper extends SQLiteOpenHelper {
             fillImageTable(db);
             fillWordsTable(db);
             fillLetterTable(db);
+            fillLetterSoundTable(db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -324,13 +338,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void fillLetterTable(SQLiteDatabase db) throws IOException {
-        if(tableFilled(db, LETTERS_TABLE_NAME)) {
+        if (tableFilled(db, LETTERS_TABLE_NAME)) {
             return;
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(LETTERS_FILENAME)));
-        while(reader.ready()) {
+        while (reader.ready()) {
             addLetterEntity(db, reader.readLine());
         }
         reader.close();
@@ -340,6 +354,29 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(LETTERS_VALUE, letter);
         db.insert(LETTERS_TABLE_NAME, null, values);
+    }
+
+    private void fillLetterSoundTable(SQLiteDatabase db) throws IOException {
+        if (tableFilled(db, LETTER_SOUND_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(LETTER_SOUND_FILENAME)));
+        while (reader.ready()) {
+            addLetterSoundEntity(db, reader.readLine());
+        }
+        reader.close();
+    }
+
+    private void addLetterSoundEntity(SQLiteDatabase db, String letterSound) {
+        String[] attributes = letterSound.split(" ");
+        ContentValues values = new ContentValues();
+        values.put(LETTER_SOUND_LETTER, attributes[0]);
+        values.put(LETTER_SOUND_LANGUAGE, attributes[1]);
+        values.put(LETTER_SOUND_IDSOUND, attributes[2]);
+
+        db.insert(LETTER_SOUND_TABLE_NAME, null, values);
     }
 
     /**
