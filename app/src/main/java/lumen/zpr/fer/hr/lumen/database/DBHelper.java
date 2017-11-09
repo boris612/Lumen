@@ -118,6 +118,27 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String LETTER_SOUND_FILENAME = "zvukovislova.txt";
 
     /**
+     * naziv tablice "zvukovi"
+     */
+
+    private static final String SOUND_TABLE_NAME = "zvukovi";
+
+    /**
+     * naziv atributa "idzvuk"
+     */
+    private static final String SOUND_ID = "idzvuk";
+
+    /**
+     * naziv atributa "staza zvuka"
+     */
+    private static final String SOUND_PATH = "stazaZvuk";
+
+    /**
+     * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
+     */
+
+    private static final String SOUND_FILENAME = "zvukovi.txt";
+    /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
      * u bazu podataka
      */
@@ -171,17 +192,24 @@ public class DBHelper extends SQLiteOpenHelper {
                 WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
                 WORDS_VALUE + " varchar unique)");
 
+
+        //stvori tablicu "zvukovi"
+        db.execSQL("create table if not exists " + SOUND_TABLE_NAME + "(" +
+                SOUND_ID + " integer primary key autoincrement," +
+                SOUND_PATH + " varchar unique)");
+
         //stvori tablicu "slova"
         db.execSQL("create table if not exists " + LETTERS_TABLE_NAME + "(" +
                 LETTERS_ID + " integer primary key autoincrement," +
                 LETTERS_VALUE + " varchar unique)");
 
-//        db.execSQL("create table if not exists " + LETTER_SOUND_TABLE_NAME + "(" +
-//                LETTER_SOUND_ID + " integer primary key autoincrement," +
-//                LETTER_SOUND_LETTER + " varchar," +
-//                LETTER_SOUND_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME + "(" +
-//                LANGUAGES_VALUE + ")," +
-//                LETTER_SOUND_IDSOUND + " varchar references " + ));
+        db.execSQL("create table if not exists " + LETTER_SOUND_TABLE_NAME + "(" +
+                LETTER_SOUND_ID + " integer primary key autoincrement," +
+                LETTER_SOUND_LETTER + " varchar," +
+                LETTER_SOUND_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME + "(" +
+                LANGUAGES_VALUE + ")," +
+                LETTER_SOUND_IDSOUND + " varchar references " + SOUND_ID + ")");
+
 
         //popuni tablice
         try {
@@ -189,6 +217,7 @@ public class DBHelper extends SQLiteOpenHelper {
             fillCategoryTable(db);
             fillImageTable(db);
             fillWordsTable(db);
+            fillSoundTable(db);
             fillLetterTable(db);
             fillLetterSoundTable(db);
         } catch (IOException e) {
@@ -377,6 +406,37 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(LETTER_SOUND_IDSOUND, attributes[2]);
 
         db.insert(LETTER_SOUND_TABLE_NAME, null, values);
+    }
+
+    /**
+     * Puni tablicu "zvukovi" n-torkama
+     */
+    private void fillSoundTable(SQLiteDatabase db) throws IOException {
+        if (tableFilled(db, SOUND_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(SOUND_FILENAME)));
+        while (reader.ready()) {
+            addSoundEntity(db, reader.readLine());
+        }
+
+        reader.close();
+
+    }
+
+    /**
+     * Zapisuje n-torku zvukovu u tablicu "zvukovi
+     *
+     * @param db        {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param soundPath Staza do datoteke zvučnih zapisa riječi
+     */
+    private void addSoundEntity(SQLiteDatabase db, String soundPath) {
+        ContentValues values = new ContentValues();
+        values.put(SOUND_PATH, soundPath);
+
+        db.insert(SOUND_TABLE_NAME, null, values);
     }
 
     /**
