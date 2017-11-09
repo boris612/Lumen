@@ -3,6 +3,7 @@ package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +23,11 @@ public class GameInstance {
 
     public GameInstance(Context context, String lang, String cat, int amount) {
         helper = new DBHelper(context);
+
+        if (amount <= 0) {                          //Željeno ponašanje?
+            wordIds = new ArrayList<Integer>();
+            return;
+        }
 
         wordIds = helper.getWordIds(lang, cat);
 
@@ -44,7 +50,7 @@ public class GameInstance {
     }
 
     public String getPath() {
-        return helper.getWordPath(wordIds.get(solved));
+        return helper.getWordImagePath(wordIds.get(solved));
     }
 
     public boolean goToNext() {

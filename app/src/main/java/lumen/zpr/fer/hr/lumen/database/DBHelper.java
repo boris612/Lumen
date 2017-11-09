@@ -491,6 +491,132 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+
+    /**
+     * Za dani identifikator riječi vraća pripadnu riječ
+     *
+     * @param id identifikator riječi
+     * @return pripadna riječ
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
+    public String getWord(int id) {
+        String word;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        word = cursor.getString(0);
+
+        return word;
+    }
+
+    public String getLanguage(int id) {
+        String lang;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_VALUE}, LANGUAGES_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        lang = cursor.getString(0);
+
+        return lang;
+    }
+
+    public String getCategory(int id) {
+        String cat;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(CATEGORIES_TABLE_NAME, new String[]{CATEGORIES_VALUE}, CATEGORIES_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        cat = cursor.getString(0);
+
+        return cat;
+    }
+
+    public String getLetter(int id) {
+        String letter;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(LETTERS_TABLE_NAME, new String[]{LETTERS_VALUE}, LETTERS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        letter = cursor.getString(0);
+
+        return letter;
+    }
+
+    public int getLanguageId(String language) {
+        int langId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_ID}, LANGUAGES_VALUE + " = ?",
+                new String[]{language}, null, null, null, null);
+
+        cursor.moveToFirst();
+        langId = Integer.parseInt(cursor.getString(0));
+
+        return langId;
+    }
+
+    public int getCategoryId(String category) {
+        int catId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(CATEGORIES_TABLE_NAME, new String[]{CATEGORIES_ID}, CATEGORIES_VALUE + " = ?",
+                new String[]{category}, null, null, null, null);
+
+        cursor.moveToFirst();
+        catId = Integer.parseInt(cursor.getString(0));
+
+        return catId;
+    }
+
+    public int getLetterId(String letter) {
+        int letterId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(LETTERS_TABLE_NAME, new String[]{LETTERS_ID}, LETTERS_VALUE + " = ?",
+                new String[]{letter}, null, null, null, null);
+
+        cursor.moveToFirst();
+        letterId = Integer.parseInt(cursor.getString(0));
+
+        return letterId;
+    }
+
+    public String getImagePath(int id) {
+        String imgPath;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        imgPath = cursor.getString(0);
+
+        return imgPath;
+    }
+
+    public String getSoundPath(int id) {
+        String sndPath;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(SOUND_TABLE_NAME, new String[]{SOUND_PATH}, SOUND_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        sndPath = cursor.getString(0);
+
+        return sndPath;
+    }
+
+
     /**
      * Vraća listu identifikatora svih riječi danog jezika i kategorije.
      *
@@ -515,24 +641,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return words;
     }
 
-    /**
-     * Za dani id vraća pripadnu riječ
-     *
-     * @param id identifikator riječi
-     * @return pripadna riječ
-     * @throws android.database.CursorIndexOutOfBoundsException du bazi ne postoji dani identifikator
-     */
-    public String getWord(int id) {
-        String word;
+    public List<Integer> getWordIds (int langId, int catId) {
+        String language = getLanguage(langId);
+        String category = getCategory(catId);
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
-                new String[]{Integer.toString(id)}, null, null, null, null);
-
-        cursor.moveToFirst();
-        word = cursor.getString(0);
-
-        return word;
+        return getWordIds(language, category);
     }
 
     /**
@@ -542,23 +655,40 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return path do slike riječi
      * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
      */
-    public String getWordPath(int id) {
-        String path;
-        String imageId;
+    public String getWordImagePath(int id) {
+        int imageId;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_IMAGE_ID}, WORDS_ID + " = ?",
                 new String[] {Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
-        imageId = cursor.getString(0);
+        imageId = Integer.parseInt(cursor.getString(0));
 
-        cursor = db.query(IMAGES_TABLE_NAME, new String[] {IMAGES_PATH}, IMAGES_ID + " = ?",
-                new String[] {imageId}, null, null, null , null);
+        return getImagePath(imageId);
+    }
+
+    // TODO: public String getWordSoundPath(int id) -- nakon dodatka id zvuka u tablici rijeci
+
+    public String getLetterSoundPath(String letter, String language) {
+        int soundId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(LETTER_SOUND_TABLE_NAME, new String[] {LETTER_SOUND_IDSOUND},
+                LETTER_SOUND_LETTER + " = ? AND " + LETTER_SOUND_LANGUAGE + "= ?",
+                new String[] {letter, language}, null, null, null, null);
 
         cursor.moveToFirst();
-        path = cursor.getString(0);
+        soundId = Integer.parseInt(cursor.getString(0));
 
-        return path;
+        return getSoundPath(soundId);
     }
+
+    public String getLetterSoundPath(int letterId, int langId) {
+        String letter = getLetter(letterId);
+        String language = getLanguage(langId);
+
+        return getLetterSoundPath(letter, language);
+    }
+
 }
