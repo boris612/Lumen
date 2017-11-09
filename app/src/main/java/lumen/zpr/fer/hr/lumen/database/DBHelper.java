@@ -86,6 +86,27 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String WORDS_FILENAME = "rijeci.txt";
 
     /**
+     * naziv tablice "zvukovi"
+     */
+
+    private static final String SOUND_TABLE_NAME = "zvukovi";
+
+    /**
+     * naziv atributa "idzvuk"
+     */
+    private static final String SOUND_ID = "idzvuk";
+
+    /**
+     * naziv atributa "staza zvuka"
+     */
+    private static final String SOUND_PATH = "stazaZvuk";
+
+    /**
+     * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
+     */
+
+    private static final String SOUND_FILENAME = "zvukovi.txt";
+    /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
      * u bazu podataka
      */
@@ -139,12 +160,18 @@ public class DBHelper extends SQLiteOpenHelper {
                 WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
                 WORDS_VALUE + " varchar unique)");
 
+        //stvori tablicu "zvukovi"
+        db.execSQL("create table if not exists " + SOUND_TABLE_NAME + "(" +
+               SOUND_ID + " integer primary key autoincrement," +
+                SOUND_PATH + " varchar unique");
+
         //popuni tablice
         try {
             fillLanguageTable(db);
             fillCategoryTable(db);
             fillImageTable(db);
             fillWordsTable(db);
+            fillSoundTable(db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -289,6 +316,36 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(WORDS_VALUE, attributes[3]);
 
         db.insert(WORDS_TABLE_NAME, null, values);
+    }
+
+    /**
+     * Puni tablicu "zvukovi" n-torkama
+     */
+    private void fillSoundTable(SQLiteDatabase db) throws IOException{
+        if(tableFilled(db, SOUND_TABLE_NAME)) {
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                assetManager.open(SOUND_FILENAME)));
+        while(reader.ready()) {
+            addWordEntity(db, reader.readLine());
+        }
+
+        reader.close();
+
+    }
+
+    /**
+     * Zapisuje n-torku zvukovu u tablicu "zvukovi
+     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+     * @param soundPath Staza do datoteke zvučnih zapisa riječi
+     */
+    private void addSoundEntity(SQLiteDatabase db, String soundPath) {
+        ContentValues values = new ContentValues();
+        values.put(SOUND_PATH, soundPath);
+
+        db.insert(SOUND_TABLE_NAME, null, values);
     }
 
     /**
