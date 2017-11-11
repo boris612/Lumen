@@ -166,7 +166,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
      */
-    private static final String SOUND_FILENAME = "zvukoviA.txt";
+    private static final String SOUND_FILENAME = "zvukovi.txt";
 
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
