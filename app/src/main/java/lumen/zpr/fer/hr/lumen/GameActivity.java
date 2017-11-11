@@ -1,8 +1,10 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +17,6 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(new GamePanel(this));
-
-        //test
-        List<String> list = new ArrayList<String>();
-        list.add("zvucniZapisi/hrvatskaAbeceda/b.mp3");
-
-        GameSound gs = new GameSound(this,"zvucniZapisi/hrvatskaAbeceda/a.mp3",list);
-     //   gs.wordRecording.start();
-
 
     }
 }

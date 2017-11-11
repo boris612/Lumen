@@ -61,22 +61,14 @@ public class GameInstance {
 
     public List<String> getLettersRecordingPath(String word, String language){
         String [] letters = word.split("");
-       // System.out.println("to");
-        for (String l:letters)
-            System.out.println(l.toUpperCase());
+
         List<String> paths = new ArrayList<>();
 
+       for (int i=1;i<letters.length;i++){
+            paths.add(helper.getLetterSoundPath(letters[i].toUpperCase(),language));
+        }
 
-        String letter = letters[1];
-        System.out.println(letter.toUpperCase().trim());
-        paths.add(helper.getLetterSoundPath("B",language));
 
-     /*   for (String letter:letters){
-            System.out.println(letter.toUpperCase());
-            paths.add(helper.getLetterSoundPath(letter.toUpperCase(),language));
-
-        }*/
-       // paths.add(helper.getLetterSoundPath("A",language));
         return paths;
     }
 

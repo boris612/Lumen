@@ -51,7 +51,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private void initNewWord() throws  IOException{
+    public void initNewWord() throws  IOException{
         String language = "hrvatski";
         String category = "priroda";
 
@@ -65,9 +65,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
      /*   currentSound = loadSound(instance.getWordRecordingPath(),
                                  instance.getLettersRecordingPath(currentWord,language));*/
-        currentSound = new GameSound(getContext(),"A",instance.getLettersRecordingPath(currentWord,language));
+        currentSound = new GameSound(getContext(),"Nema jos",instance.getLettersRecordingPath(currentWord,language));
 
+        //test reprodukcije slovkanja
+        //currentSound.playSpelling(500);
         charactersFields = new CharactersFields(currentWord,getContext());
+
     }
 
     private GameImage loadImage(String imageName) throws  IOException {
@@ -90,6 +93,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(),this);
         thread.setRunning(true);
         thread.start();
+
     }
 
     @Override
