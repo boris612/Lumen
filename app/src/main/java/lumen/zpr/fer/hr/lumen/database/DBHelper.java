@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.sql.DriverManager.println;
+
 /**
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća
  * podatke iz baze pomoću svojih javnih metoda.
@@ -147,7 +149,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * naziv datoteke iz koje se čitaju vrijednosti n-torki
      */
-    private static final String LETTER_SOUND_FILENAME = "zvukovislova.txt";
+    private static final String LETTER_SOUND_FILENAME = "zvukoviSlova.txt";
 
     /**
      * naziv tablice "zvukovi"
@@ -164,7 +166,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
      */
-    private static final String SOUND_FILENAME = "zvukovi.txt";
+    private static final String SOUND_FILENAME = "zvukoviA.txt";
 
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
@@ -672,7 +674,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public String getLetterSoundPath(String letter, String language) {
         int soundId;
-
+        println(letter);
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(LETTER_SOUND_TABLE_NAME, new String[] {LETTER_SOUND_IDSOUND},
                 LETTER_SOUND_LETTER + " = ? AND " + LETTER_SOUND_LANGUAGE + "= ?",

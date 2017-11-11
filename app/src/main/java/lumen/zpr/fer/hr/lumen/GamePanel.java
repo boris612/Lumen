@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -27,6 +28,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameImage currentImage;
     private String currentWord;
+    private GameSound currentSound;
     private CharactersFields charactersFields;
 
     public GamePanel(Context context) {
@@ -61,6 +63,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentImage = loadImage(instance.getPath());
         //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
+     /*   currentSound = loadSound(instance.getWordRecordingPath(),
+                                 instance.getLettersRecordingPath(currentWord,language));*/
+        currentSound = new GameSound(getContext(),"A",instance.getLettersRecordingPath(currentWord,language));
+
         charactersFields = new CharactersFields(currentWord,getContext());
     }
 
@@ -68,6 +74,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return new GameImage(imageName,getContext());
     }
 
+    private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+    }
 
     private enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
