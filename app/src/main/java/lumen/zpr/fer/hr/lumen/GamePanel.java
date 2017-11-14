@@ -11,11 +11,14 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -30,9 +33,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private String currentWord;
     private CharactersFields charactersFields;
 
-    private Drawable img = getResources().getDrawable(R.drawable.image);
-    private LetterImage letterA = new LetterImage(new Rect(100,100,200,200),img);
-    private Point letterAPoint= new Point(150,150); //centar rect
+
+    //za potrebe demo inacice, slike treba dohvatiti iz baze ?
+    private List<LetterImage> listOfLetters;
+    private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
+
 
     public GamePanel(Context context) {
         super(context);
@@ -62,7 +67,42 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
         charactersFields = new CharactersFields(currentWord,getContext());
+
+        listOfLetters=getLetters();
     }
+
+    //TODO: povezat s bazom
+    private List<LetterImage> getLetters() {
+        List<LetterImage> listOfLetters = new ArrayList<>();
+        Drawable img;
+        LetterImage letter;
+        Point center = new Point(150,350);
+
+        //TODO: popraviti da radi automatsko skaliranje
+
+        img = getResources().getDrawable(R.drawable.a);
+        letter = new LetterImage(center,img);
+        listOfLetters.add(letter);
+
+        center=new Point(250,350);
+        img = getResources().getDrawable(R.drawable.b);
+        letter = new LetterImage(center,img);
+        listOfLetters.add(letter);
+
+        center=new Point(350,350);
+        img = getResources().getDrawable(R.drawable.c);
+        letter = new LetterImage(center,img);
+        listOfLetters.add(letter);
+
+
+        center=new Point(450,350);
+        img = getResources().getDrawable(R.drawable.d);
+        letter = new LetterImage(center,img);
+        listOfLetters.add(letter);
+
+        return  listOfLetters;
+    }
+
 
     private GameImage loadImage(String imageName) throws  IOException {
         return new GameImage(imageName,getContext());
@@ -100,41 +140,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (phase == GamePhase.PRESENTING_WORD) {
-            return true;
-        }
-        //TODO dodati imoplementaciju za TYPING_WORD fazu
-        //return super.onTouchEvent(event);
-
-        // bolji drag and drop alg, listener?
-        switch (event.getAction()){ //provjeri ako smo pritisnuli na objekt!
-            case MotionEvent.ACTION_DOWN:
-                if(letterA.insideRectangle((int)event.getX(), (int)event.getY())) {
-                    letterA.setUpdateable(true);
-                }
-            case MotionEvent.ACTION_MOVE:
-                        if(letterA.isUpdateable())
-                            letterAPoint.set((int)event.getX(), (int)event.getY());
-        }
-
-
-        return true;
-    }
-
+    
     public void update() {
         if (phase == GamePhase.PRESENTING_WORD) {
             updateWordPresentation();
             return;
         }
-        letterA.update(letterAPoint);
 
-        DropArea area = charactersFields.getFieldThatCollidesWith(letterA);
-        if(area!=null){
-            Point areaCenter = area.getCenterPoint();
-            letterAPoint.set(areaCenter.x,areaCenter.y);//centar drop area
+        for (LetterImage letter:listOfLetters) {
+            DropArea area = charactersFields.getFieldThatCollidesWith(letter);
+            if (area != null) {
+                letter.setCenter(area.getCenterPoint());//centar drop area
+            }
+            letter.update();
         }
     }
 
@@ -158,13 +176,118 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields.draw(canvas);
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
-        letterA.draw(canvas);
+        for (LetterImage letter:listOfLetters){
+            letter.draw(canvas);
+        }
+    }
 
-        //za provjeru dropa
-       // if(!dropArea.collision(letterA)){
-        //    dropArea.draw(canvas);
-       // }
+    private LetterImage getTouchedLetter( int x,  int y) {
+        LetterImage touched = null;
+        for (LetterImage letter : listOfLetters) {
+            if (letter.insideRectangle(x,y)) {
+                touched = letter;
+                break;
+            }
+        }
+        return touched;
+    }
+
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        boolean handled = false;
+
+        LetterImage touchedLetter;
+        int xTouch;
+        int yTouch;
+        int pointerId;
+        int actionIndex = event.getActionIndex();
+
+        // get touch event coordinates and make transparent circle from it
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                // it's the first pointer, so clear all existing pointers data
+                clearLetterPointer();
+
+                xTouch = (int) event.getX(0);
+                yTouch = (int) event.getY(0);
+
+                // check if we've touched inside some circle
+                touchedLetter = getTouchedLetter(xTouch, yTouch);
+                if(touchedLetter == null) return true; //ok?
+                touchedLetter.setCenter(new Point(xTouch,yTouch));
+
+                mLetterPointer.put(event.getPointerId(0), touchedLetter);
+
+                invalidate(); //???
+                handled = true;
+                break;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+                // It secondary pointers, so obtain their ids and check circles
+                pointerId = event.getPointerId(actionIndex);
+
+                xTouch = (int) event.getX(actionIndex);
+                yTouch = (int) event.getY(actionIndex);
+
+                // check if we've touched inside some circle
+                touchedLetter = getTouchedLetter(xTouch, yTouch);
+                if(touchedLetter == null) return true;
+
+                mLetterPointer.put(pointerId, touchedLetter);
+                touchedLetter.setCenter(new Point(xTouch,yTouch));
+                invalidate();
+                handled = true;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                final int pointerCount = event.getPointerCount();
 
 
+                for (actionIndex = 0; actionIndex < pointerCount; actionIndex++) {
+                    // Some pointer has moved, search it by pointer id
+                    pointerId = event.getPointerId(actionIndex);
+
+                    xTouch = (int) event.getX(actionIndex);
+                    yTouch = (int) event.getY(actionIndex);
+
+                    touchedLetter = mLetterPointer.get(pointerId);
+
+                    if (null != touchedLetter) {
+                        touchedLetter.setCenter(new Point(xTouch,yTouch));
+                    }
+                }
+                invalidate();
+                handled = true;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                clearLetterPointer();
+                invalidate();
+                handled = true;
+                break;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                // not general pointer was up
+                pointerId = event.getPointerId(actionIndex);
+
+                mLetterPointer.remove(pointerId);
+                invalidate();
+                handled = true;
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+                handled = true;
+                break;
+
+            default:
+                // do nothing
+                break;
+        }
+
+        return super.onTouchEvent(event) || handled;
+    }
+
+    public void clearLetterPointer(){
+        mLetterPointer.clear();
     }
 }

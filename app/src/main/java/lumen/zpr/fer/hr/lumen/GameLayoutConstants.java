@@ -13,4 +13,11 @@ public class GameLayoutConstants {
     static double GAP_BETWEEN_CHAR_FIELDS_FACTOR = CHAR_FIELD_WIDTH_FACTOR/5.0;
     static double CHAR_FIELDS_Y_COORDINATE_FACTOR = 0.55;
 
+    //work in progress
+    static int DEFAULT_RECT_LEFT_VALUE = 100;
+    static int DEFAULT_RECT_TOP_VALUE = 100;
+    static double RECT_SPACE_FACTOR=1.2;
+
+    static int DEFAULT_RECT_WIDTH=60;
+    static int DEFAULT_RECT_HEIGHT=60;
 }

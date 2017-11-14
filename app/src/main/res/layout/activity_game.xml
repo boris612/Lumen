@@ -6,11 +6,4 @@
     android:layout_height="match_parent"
     tools:context="lumen.zpr.fer.hr.lumen.GameActivity">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="119dp"
-        android:layout_height="77dp"
-        android:src="@drawable/image"
-        tools:layout_editor_absoluteX="139dp"
-        tools:layout_editor_absoluteY="537dp" />
 </android.support.constraint.ConstraintLayout>
