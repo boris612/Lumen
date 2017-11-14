@@ -37,11 +37,12 @@ public class DropArea {
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().left, letter.getRectangle().bottom)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom)){
-            color=Color.WHITE;//pozadina
             return true;
         }
-        color=Color.RED;
         return false;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
 }

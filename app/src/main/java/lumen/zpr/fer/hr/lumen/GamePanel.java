@@ -14,10 +14,15 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+
+import lumen.zpr.fer.hr.lumen.menus.Letter;
 
 /**
  * Created by Alen on 6.11.2017..
@@ -33,6 +38,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Drawable img = getResources().getDrawable(R.drawable.image);
     private LetterImage letterA = new LetterImage(new Rect(100,100,200,200),img);
     private Point letterAPoint= new Point(150,150); //centar rect
+    private List<Letter> letters;
+
+    private int coins = 0;
+
+    //inicijalizacijski blok samo za potrebe testiranja
+    {
+        letters = new ArrayList<>();
+        Drawable img2 = getResources().getDrawable(R.drawable.image);
+        Drawable img3 = getResources().getDrawable(R.drawable.image);
+        Drawable img4 = getResources().getDrawable(R.drawable.image);
+        letters.add(new Letter('M',new LetterImage(new Rect(100,100,200,200),img)));
+        letters.add(new Letter('O',new LetterImage(new Rect(200,100,300,200),img2)));
+        letters.add(new Letter('T',new LetterImage(new Rect(300,100,400,200),img3)));
+        letters.add(new Letter('O',new LetterImage(new Rect(400,100,500,200),img4)));
+    }
 
     public GamePanel(Context context) {
         super(context);
@@ -55,7 +75,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        String currentWord = "motocikl";
+        currentWord = "MOTO";
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
         currentImage = loadImage("motocikl.jpg");
@@ -73,7 +93,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
         PRESENTING_WORD,
         //faza u kojoj igrač piše (drag and dropanjem slova) riječ
-        TYPING_WORD;
+        TYPING_WORD,
+        //faza u kojem se igraču ispisuje da je točno poslozio slova
+        ENDING
+
     }
 
     @Override
@@ -111,15 +134,25 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         // bolji drag and drop alg, listener?
         switch (event.getAction()){ //provjeri ako smo pritisnuli na objekt!
+            case MotionEvent.ACTION_UP:
+                checkIfInputComplete();
+                break;
             case MotionEvent.ACTION_DOWN:
-                if(letterA.insideRectangle((int)event.getX(), (int)event.getY())) {
-                    letterA.setUpdateable(true);
+                for(Letter l: letters) {
+                    LetterImage limg = l.getLetterImage();
+                    if(limg.insideRectangle((int)event.getX(), (int)event.getY())) {
+                        limg.setUpdateable(true);
+                    }
                 }
-            case MotionEvent.ACTION_MOVE:
-                        if(letterA.isUpdateable())
-                            letterAPoint.set((int)event.getX(), (int)event.getY());
-        }
 
+            case MotionEvent.ACTION_MOVE:
+                for(Letter l: letters) {
+                    LetterImage limg = l.getLetterImage();
+                    if(limg.isUpdateable())
+                        limg.update(new Point((int)event.getX(), (int)event.getY()));
+                }
+
+        }
 
         return true;
     }
@@ -129,12 +162,40 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             updateWordPresentation();
             return;
         }
-        letterA.update(letterAPoint);
+        //letterA.update(letterAPoint);
 
-        DropArea area = charactersFields.getFieldThatCollidesWith(letterA);
-        if(area!=null){
-            Point areaCenter = area.getCenterPoint();
-            letterAPoint.set(areaCenter.x,areaCenter.y);//centar drop area
+        for(Letter l: letters) {
+            LetterImage limg = l.getLetterImage();
+            CharacterField area = charactersFields.getFieldThatCollidesWith(limg);
+            if (area != null) {
+                Point areaCenter = area.getCenterPoint();
+                limg.update(areaCenter);
+                area.setCharacterInsideField(l.getLetter());
+            }
+        }
+
+        checkIfInputComplete();
+    }
+
+    private void checkIfInputComplete() {
+        List<CharacterField> fields = charactersFields.getFields();
+
+        boolean correct = true;
+        for(int i = 0, n = fields.size(); i < n; i++) {
+            CharacterField f = fields.get(i);
+            if(!f.hasCharacterInsideField()) {
+                return; //nije complete
+            }
+
+            if(!f.getCharacterInsideField().equals(currentWord.charAt(i))) {
+                correct = false;
+            }
+        }
+
+        if(correct) {
+            phase = GamePhase.ENDING;
+            coins++;
+            //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
         }
     }
 
@@ -155,16 +216,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             return;
         }
+        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
 
         charactersFields.draw(canvas);
-        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
-        letterA.draw(canvas);
+
+        for(Letter l: letters) {
+            l.getLetterImage().draw(canvas);
+        }
 
         //za provjeru dropa
        // if(!dropArea.collision(letterA)){
         //    dropArea.draw(canvas);
        // }
 
-
+        if(phase == GamePhase.ENDING) {
+            charactersFields.setColor(Color.GREEN);
+        }
     }
 }

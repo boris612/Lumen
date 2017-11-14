@@ -20,18 +20,24 @@ import java.util.List;
 
 public class CharactersFields {
     private static int COLOR = Color.RED;
-    private List<DropArea> fields;
-    private static double FIELD_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELD_WIDTH_FACTOR;
-    private static double GAP_BETWEEN_FIELDS_FACTOR = GameLayoutConstants.GAP_BETWEEN_CHAR_FIELDS_FACTOR;
+    private List<CharacterField> fields;
+    private static double FIELD_WIDTH_MAX_FACTOR = GameLayoutConstants.CHAR_FIELD_WIDTH_MAX_FACTOR;
+    private static double WHOLE_ARRAY_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELDS_WIDTH_FACTOR;
     private static double Y_COORDINATE_FACTOR = GameLayoutConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR;
+    private static double GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR;
 
     public CharactersFields(String word, Context context) {
         fields = new ArrayList<>();
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_FACTOR);
-        int gapWidth = (int)(dm.widthPixels*GAP_BETWEEN_FIELDS_FACTOR);
-        int x = determineStartingX(word.length(),context);
+        //int fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_FACTOR);
+        int fieldWidthHeight = (int)(dm.widthPixels/(word.length()*(1+GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * WHOLE_ARRAY_WIDTH_FACTOR);
+        if (fieldWidthHeight > dm.widthPixels*FIELD_WIDTH_MAX_FACTOR) {
+            fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_MAX_FACTOR);
+        }
+
+        int gapWidth = (int)(fieldWidthHeight*GAP_WIDTH_TO_FIELD_WIDTH_FACTOR);
+        int x = determineStartingX(word.length(),context,fieldWidthHeight,gapWidth);
 
         for(int i = 0, n = word.length(); i < n; i++) {
             Rect r = new Rect();
@@ -39,7 +45,7 @@ public class CharactersFields {
             r.top = (int)(dm.heightPixels*Y_COORDINATE_FACTOR);
             r.right = r.left + fieldWidthHeight;
             r.bottom = r.top + fieldWidthHeight;
-            fields.add(new DropArea(r,COLOR));
+            fields.add(new CharacterField(r,COLOR));
         }
     }
 
@@ -49,27 +55,35 @@ public class CharactersFields {
      * @param context
      * @return
      */
-    private int determineStartingX(int wordLength, Context context) {
+    private int determineStartingX(int wordLength, Context context, int fieldWidthHeight, int gapWidth) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int componentWidth = (int)((wordLength*FIELD_WIDTH_FACTOR+(wordLength-1)*GAP_BETWEEN_FIELDS_FACTOR)*dm.widthPixels);
+        int componentWidth = fieldWidthHeight*wordLength+(wordLength-1)*gapWidth;
         Log.d("COMP WIDTH",Integer.toString(componentWidth));
         return dm.widthPixels/2-componentWidth/2;
     }
 
     public void draw(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
         for(DropArea field: fields) {
             field.draw(canvas);
         }
     }
 
-    public DropArea getFieldThatCollidesWith(LetterImage letterImage) {
-        for(DropArea field: fields) {
+    public CharacterField getFieldThatCollidesWith(LetterImage letterImage) {
+        for(CharacterField field: fields) {
             if(field.collision(letterImage)) {
                 return field;
             }
         }
         return null;
+    }
+
+    public List<CharacterField> getFields() {
+        return fields;
+    }
+
+    public void setColor(int color) {
+        for(CharacterField f: fields) {
+            f.setColor(color);
+        }
     }
 }
