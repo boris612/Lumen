@@ -80,7 +80,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         List<LetterImage> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
-        Point center = new Point(150,350);
+        Point center = new Point(150,450);
 
         //TODO: popraviti da radi automatsko skaliranje
 
@@ -88,18 +88,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         letter = new LetterImage(center,img);
         listOfLetters.add(letter);
 
-        center=new Point(250,350);
+        center=new Point(250,450);
         img = getResources().getDrawable(R.drawable.b);
         letter = new LetterImage(center,img);
         listOfLetters.add(letter);
 
-        center=new Point(350,350);
+        center=new Point(350,450);
         img = getResources().getDrawable(R.drawable.c);
         letter = new LetterImage(center,img);
         listOfLetters.add(letter);
 
 
-        center=new Point(450,350);
+        center=new Point(450,450);
         img = getResources().getDrawable(R.drawable.d);
         letter = new LetterImage(center,img);
         listOfLetters.add(letter);
@@ -155,13 +155,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-        for (LetterImage letter:listOfLetters) {
+        for (LetterImage letter : listOfLetters) {
             DropArea area = charactersFields.getFieldThatCollidesWith(letter);
             if (area != null) {
                 letter.setCenter(area.getCenterPoint());//centar drop area
             }
             letter.update();
-        //letterA.update(letterAPoint);
+            //letterA.update(letterAPoint);
+        }
     }
 
     private void checkIfInputComplete() {
@@ -207,8 +208,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
 
         charactersFields.draw(canvas);
-
-        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
+        
         for (LetterImage letter:listOfLetters){
             letter.draw(canvas);
         }
