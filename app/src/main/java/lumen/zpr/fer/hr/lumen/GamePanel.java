@@ -15,12 +15,17 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Predicate;
+
+import lumen.zpr.fer.hr.lumen.menus.Letter;
 
 /**
  * Created by Alen on 6.11.2017..
@@ -33,11 +38,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private String currentWord;
     private CharactersFields charactersFields;
 
-
     //za potrebe demo inacice, slike treba dohvatiti iz baze ?
     private List<LetterImage> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
-
+    private int coins = 0;
 
     public GamePanel(Context context) {
         super(context);
@@ -60,7 +64,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        String currentWord = "motocikl";
+        currentWord = "MOTO";
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
         currentImage = loadImage("motocikl.jpg");
@@ -113,7 +117,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
         PRESENTING_WORD,
         //faza u kojoj igrač piše (drag and dropanjem slova) riječ
-        TYPING_WORD;
+        TYPING_WORD,
+        //faza u kojem se igraču ispisuje da je točno poslozio slova
+        ENDING
+
     }
 
     @Override
@@ -140,12 +147,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-    
+
     public void update() {
         if (phase == GamePhase.PRESENTING_WORD) {
             updateWordPresentation();
             return;
         }
+
 
         for (LetterImage letter:listOfLetters) {
             DropArea area = charactersFields.getFieldThatCollidesWith(letter);
@@ -153,6 +161,29 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 letter.setCenter(area.getCenterPoint());//centar drop area
             }
             letter.update();
+        //letterA.update(letterAPoint);
+    }
+
+    private void checkIfInputComplete() {
+        List<CharacterField> fields = charactersFields.getFields();
+
+        boolean correct = true;
+        for(int i = 0, n = fields.size(); i < n; i++) {
+            CharacterField f = fields.get(i);
+            if(!f.hasCharacterInsideField()) {
+                return; //nije complete
+            }
+
+            if(!f.getCharacterInsideField().equals(currentWord.charAt(i))) {
+                correct = false;
+            }
+        }
+
+        if(correct) {
+            phase = GamePhase.ENDING;
+            coins++;
+            //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
+
         }
     }
 
@@ -173,8 +204,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             return;
         }
+        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
 
         charactersFields.draw(canvas);
+
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
         for (LetterImage letter:listOfLetters){
             letter.draw(canvas);
@@ -222,9 +255,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 handled = true;
                 break;
 
+
             case MotionEvent.ACTION_POINTER_DOWN:
                 // It secondary pointers, so obtain their ids and check circles
                 pointerId = event.getPointerId(actionIndex);
+
 
                 xTouch = (int) event.getX(actionIndex);
                 yTouch = (int) event.getY(actionIndex);
@@ -289,5 +324,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public void clearLetterPointer(){
         mLetterPointer.clear();
+
     }
 }
