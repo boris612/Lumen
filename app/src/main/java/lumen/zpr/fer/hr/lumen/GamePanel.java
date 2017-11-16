@@ -1,31 +1,22 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
 
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.function.Predicate;
 
-import lumen.zpr.fer.hr.lumen.menus.Letter;
+import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 
 /**
  * Created by Alen on 6.11.2017..
@@ -39,9 +30,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private CharactersFields charactersFields;
 
     //za potrebe demo inacice, slike treba dohvatiti iz baze ?
-    private List<LetterImage> listOfLetters;
+    private List<Letter> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
-    private int coins = 0;
+    private CoinComponent coinComponent;
+    private Label winTextLabel;
+
 
     public GamePanel(Context context) {
         super(context);
@@ -61,10 +54,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
+
+        coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),0,getContext());
+
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        int display_width = dm.widthPixels;
+        int display_height = dm.heightPixels;
+        winTextLabel = new Label("TOČNO!",new Point((int)(dm.widthPixels*0.3),(int)(dm.heightPixels*0.4)), Color.GREEN, 300);
     }
 
     private void initNewWord() throws  IOException{
-        currentWord = "MOTO";
+        currentWord = "ABCD";
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
         currentImage = loadImage("motocikl.jpg");
@@ -76,33 +76,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     //TODO: povezat s bazom
-    private List<LetterImage> getLetters() {
-        List<LetterImage> listOfLetters = new ArrayList<>();
+    private List<Letter> getLetters() {
+        List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
-        LetterImage letter;
+        LetterImage letterImage;
         Point center = new Point(150,450);
 
         //TODO: popraviti da radi automatsko skaliranje
 
         img = getResources().getDrawable(R.drawable.a);
-        letter = new LetterImage(center,img);
-        listOfLetters.add(letter);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('A',letterImage));
 
         center=new Point(250,450);
         img = getResources().getDrawable(R.drawable.b);
-        letter = new LetterImage(center,img);
-        listOfLetters.add(letter);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('B',letterImage));
 
         center=new Point(350,450);
         img = getResources().getDrawable(R.drawable.c);
-        letter = new LetterImage(center,img);
-        listOfLetters.add(letter);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('C',letterImage));
 
 
         center=new Point(450,450);
         img = getResources().getDrawable(R.drawable.d);
-        letter = new LetterImage(center,img);
-        listOfLetters.add(letter);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('D',letterImage));
 
         return  listOfLetters;
     }
@@ -155,13 +155,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-        for (LetterImage letter : listOfLetters) {
-            DropArea area = charactersFields.getFieldThatCollidesWith(letter);
+        for (Letter letter : listOfLetters) {
+            LetterImage letterImage = letter.getLetterImage();
+            CharacterField area = charactersFields.getFieldThatCollidesWith(letterImage);
             if (area != null) {
-                letter.setCenter(area.getCenterPoint());//centar drop area
+                letterImage.setCenter(area.getCenterPoint());//centar drop area
+                area.setCharacterInsideField(letter.getLetter());
             }
-            letter.update();
+            letterImage.update();
             //letterA.update(letterAPoint);
+
+        }
+
+        if(phase!=GamePhase.ENDING) {
+            checkIfInputComplete();
         }
     }
 
@@ -182,7 +189,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if(correct) {
             phase = GamePhase.ENDING;
-            coins++;
+            coinComponent.addCoins(1);
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
 
         }
@@ -201,6 +208,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
 
+        coinComponent.draw(canvas);
+
         if(phase == GamePhase.PRESENTING_WORD) {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             return;
@@ -209,16 +218,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields.draw(canvas);
         
-        for (LetterImage letter:listOfLetters){
-            letter.draw(canvas);
+        for (Letter letter:listOfLetters){
+            letter.getLetterImage().draw(canvas);
+        }
+
+        if(phase == GamePhase.ENDING) {
+            charactersFields.setColor(Color.GREEN);
+            winTextLabel.draw(canvas);
         }
     }
 
     private LetterImage getTouchedLetter( int x,  int y) {
         LetterImage touched = null;
-        for (LetterImage letter : listOfLetters) {
-            if (letter.insideRectangle(x,y)) {
-                touched = letter;
+        for (Letter letter : listOfLetters) {
+            if (letter.getLetterImage().insideRectangle(x,y)) {
+                touched = letter.getLetterImage();
                 break;
             }
         }
@@ -227,6 +241,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
+        if(phase == GamePhase.ENDING) {
+            //TODO dodat postupak kojim se igrač prebacuje na novu rijec
+            return true;
+        }
+
         boolean handled = false;
 
         LetterImage touchedLetter;
@@ -299,6 +318,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 clearLetterPointer();
                 invalidate();
                 handled = true;
+                checkIfInputComplete();
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
@@ -324,6 +344,5 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public void clearLetterPointer(){
         mLetterPointer.clear();
-
     }
 }
