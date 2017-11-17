@@ -50,7 +50,7 @@ public class CharactersFields {
     }
 
     /**
-     * Određuje X koordinatu prvog polja.
+     * Određuje x koordinatu prvog polja.
      * @param wordLength
      * @param context
      * @return

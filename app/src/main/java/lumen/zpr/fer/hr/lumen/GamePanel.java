@@ -4,12 +4,26 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
+import android.view.Display;
+
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
+import android.widget.Toast;
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.IOException;
 
@@ -29,12 +43,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private String currentWord;
     private CharactersFields charactersFields;
 
-    //za potrebe demo inacice, slike treba dohvatiti iz baze ?
-    private List<Letter> listOfLetters;
-    private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
     private CoinComponent coinComponent;
     private Label winTextLabel;
 
+    private StartingHint startingHint;
+    private int screenWidth;
+    private int screenHeight;
+    private long presentingTimeStart;
+    //za potrebe demo inacice, slike treba dohvatiti iz baze ?
+    private List<Letter> listOfLetters;
+    private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
 
     public GamePanel(Context context) {
         super(context);
@@ -44,12 +62,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
 
         setFocusable(true);
+        WindowManager wm=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display disp=wm.getDefaultDisplay();
+        Point p=new Point();
+        disp.getSize(p);
+        screenWidth=p.x;
+        screenHeight=p.y;
+
 
         phase = GamePhase.PRESENTING_WORD;
-        phase = GamePhase.TYPING_WORD;
+
+        presentingTimeStart=System.currentTimeMillis();
+       // phase = GamePhase.TYPING_WORD;
 
         try {
             initNewWord();
+            currentWord=currentWord.toLowerCase();
         } catch (IOException ex) {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
@@ -64,10 +92,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        currentWord = "ABCD";
+        currentWord = "moto";
+        currentImage = loadImage("motocikl.jpg");
+        startingHint=new StartingHint(currentWord,this,screenWidth,screenHeight);
+        startingHint.setRect(currentImage.getRect());
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
-        currentImage = loadImage("motocikl.jpg");
         //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
         charactersFields = new CharactersFields(currentWord,getContext());
@@ -76,35 +106,83 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     //TODO: povezat s bazom
+
     private List<Letter> getLetters() {
         List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letterImage;
-        Point center = new Point(150,450);
 
         //TODO: popraviti da radi automatsko skaliranje
 
-        img = getResources().getDrawable(R.drawable.a);
+        Point center = new Point(150,850);
+        img = getResources().getDrawable(R.drawable.letter_20);
         letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('A',letterImage));
+        listOfLetters.add(new Letter('O',letterImage));
 
-        center=new Point(250,450);
-        img = getResources().getDrawable(R.drawable.b);
+        center = new Point(200,850);
+        img = getResources().getDrawable(R.drawable.letter_20);
         letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('B',letterImage));
+        listOfLetters.add(new Letter('O',letterImage));
 
-        center=new Point(350,450);
-        img = getResources().getDrawable(R.drawable.c);
+        center = new Point(250,850);
+        img = getResources().getDrawable(R.drawable.letter_17);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('M',letterImage));
+
+
+        center = new Point(300,850);
+        img = getResources().getDrawable(R.drawable.letter_26);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('T',letterImage));
+
+/*
+        center = new Point(350,850);
+        img = getResources().getDrawable(R.drawable.letter_2);
         letterImage = new LetterImage(center,img);
         listOfLetters.add(new Letter('C',letterImage));
 
-
-        center=new Point(450,450);
-        img = getResources().getDrawable(R.drawable.d);
+        center = new Point(400,850);
+        img = getResources().getDrawable(R.drawable.letter_12);
         letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('D',letterImage));
+        listOfLetters.add(new Letter('I',letterImage));
 
+        center = new Point(450,850);
+        img = getResources().getDrawable(R.drawable.letter_15);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('L',letterImage));
+
+        center = new Point(500,850);
+        img = getResources().getDrawable(R.drawable.letter_14);
+        letterImage = new LetterImage(center,img);
+        listOfLetters.add(new Letter('K',letterImage));
+*/
         return  listOfLetters;
+
+    }
+
+    private List<LetterImage> createCroatianLetters() {
+        List<LetterImage> listOfLetters = new ArrayList<>();
+        Drawable img;
+        LetterImage letter;
+        currentWord=currentWord.toLowerCase();
+
+        for(int i=0,len=currentWord.length();i<len;i++){
+            Point center=new Point(100+i*50,450);
+            if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
+                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
+                img=getResources().getDrawable(id);
+                letter=new LetterImage(center,img);
+                listOfLetters.add(letter);
+                i++;
+            }
+            else{
+                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
+                img=getResources().getDrawable(id);
+                letter=new LetterImage(center,img);
+                listOfLetters.add(letter);
+            }
+        }
+        return listOfLetters;
     }
 
 
@@ -163,12 +241,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 area.setCharacterInsideField(letter.getLetter());
             }
             letterImage.update();
-            //letterA.update(letterAPoint);
 
-        }
-
-        if(phase!=GamePhase.ENDING) {
-            checkIfInputComplete();
+            if(phase!=GamePhase.ENDING) {
+                checkIfInputComplete();
+            }
         }
     }
 
@@ -182,42 +258,51 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 return; //nije complete
             }
 
-            if(!f.getCharacterInsideField().equals(currentWord.charAt(i))) {
+            if(!f.getCharacterInsideField().equals(Character.toLowerCase(currentWord.charAt(i)))) {
                 correct = false;
             }
         }
 
         if(correct) {
             phase = GamePhase.ENDING;
+
             coinComponent.addCoins(1);
+
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
 
         }
     }
 
     private void updateWordPresentation() {
-        //TODO dodati implementaciju
+
+        if(System.currentTimeMillis()-presentingTimeStart>= GameConstants.PRESENTING_TIME){
+            phase=GamePhase.TYPING_WORD;
+        }
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         //TODO dodati crtanje objekata zajedničkih objema fazama
-      
+
         canvas.drawColor(Color.WHITE); //zamjena za background
 
         canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
 
         coinComponent.draw(canvas);
 
+
         if(phase == GamePhase.PRESENTING_WORD) {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
+            canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
+            canvas.drawBitmap(startingHint.getHintBitmap(),null,startingHint.getRect(),null);
+
             return;
         }
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
 
         charactersFields.draw(canvas);
-        
+
         for (Letter letter:listOfLetters){
             letter.getLetterImage().draw(canvas);
         }
@@ -229,23 +314,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private LetterImage getTouchedLetter( int x,  int y) {
-        LetterImage touched = null;
         for (Letter letter : listOfLetters) {
             if (letter.getLetterImage().insideRectangle(x,y)) {
-                touched = letter.getLetterImage();
-                break;
+                return letter.getLetterImage();
             }
         }
-        return touched;
+        return null;
     }
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
+
         if(phase == GamePhase.ENDING) {
             //TODO dodat postupak kojim se igrač prebacuje na novu rijec
             return true;
         }
-
         boolean handled = false;
 
         LetterImage touchedLetter;
@@ -318,7 +401,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 clearLetterPointer();
                 invalidate();
                 handled = true;
-                checkIfInputComplete();
+
+                //checkIfInputComplete();//greska?
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:

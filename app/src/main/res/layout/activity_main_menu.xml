@@ -8,9 +8,20 @@
 
     <Button
         android:id="@+id/pokreniIgru"
+
+        android:text="Pokreni igru"
+        android:textColor="#FF1F1F"
+        android:textSize="30sp"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#1C07A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+
         android:layout_gravity="center"
-        android:text="@string/pokreniIgru"/>
+        />
 
 </LinearLayout>
