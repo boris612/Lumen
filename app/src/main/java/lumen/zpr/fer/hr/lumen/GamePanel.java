@@ -9,21 +9,12 @@ import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.util.SparseArray;
 import android.view.Display;
 
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.Toast;
-
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.io.IOException;
 
@@ -92,7 +83,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        currentWord = "moto";
+        currentWord = "motocikl";
         currentImage = loadImage("motocikl.jpg");
         startingHint=new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
@@ -135,7 +126,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         letterImage = new LetterImage(center,img);
         listOfLetters.add(new Letter('T',letterImage));
 
-/*
         center = new Point(350,850);
         img = getResources().getDrawable(R.drawable.letter_2);
         letterImage = new LetterImage(center,img);
@@ -155,7 +145,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         img = getResources().getDrawable(R.drawable.letter_14);
         letterImage = new LetterImage(center,img);
         listOfLetters.add(new Letter('K',letterImage));
-*/
+
         return  listOfLetters;
 
     }
@@ -258,7 +248,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 return; //nije complete
             }
 
-            if(!f.getCharacterInsideField().equals(Character.toLowerCase(currentWord.charAt(i)))) {
+            if(!f.getCharacterInsideField().equals(Character.toUpperCase(currentWord.charAt(i)))) {
                 correct = false;
             }
         }
@@ -402,7 +392,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 invalidate();
                 handled = true;
 
-                //checkIfInputComplete();//greska?
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
