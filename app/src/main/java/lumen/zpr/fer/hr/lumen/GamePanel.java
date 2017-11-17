@@ -44,8 +44,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     //za potrebe demo inacice, slike treba dohvatiti iz baze ?
     private List<Letter> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
+    private long endingTime;
 
-    public GamePanel(Context context) {
+    public GamePanel(Context context, int initCoins) {
         super(context);
 
         getHolder().addCallback(this);
@@ -60,12 +61,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenWidth=p.x;
         screenHeight=p.y;
 
-
-        phase = GamePhase.PRESENTING_WORD;
-
-        presentingTimeStart=System.currentTimeMillis();
-       // phase = GamePhase.TYPING_WORD;
-
         try {
             initNewWord();
             currentWord=currentWord.toLowerCase();
@@ -74,7 +69,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
 
-        coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),0,getContext());
+        coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         int display_width = dm.widthPixels;
@@ -90,6 +85,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
         //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
+
+        phase = GamePhase.PRESENTING_WORD;
+
+        presentingTimeStart=System.currentTimeMillis();
 
         charactersFields = new CharactersFields(currentWord,getContext());
 
@@ -257,6 +256,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             phase = GamePhase.ENDING;
 
             coinComponent.addCoins(1);
+            endingTime = System.currentTimeMillis();
 
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
 
@@ -300,6 +300,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if(phase == GamePhase.ENDING) {
             charactersFields.setColor(Color.GREEN);
             winTextLabel.draw(canvas);
+
+            if(System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
+                try{
+                initNewWord();
+                }catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
