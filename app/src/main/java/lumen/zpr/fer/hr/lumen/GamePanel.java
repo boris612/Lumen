@@ -83,7 +83,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void initNewWord() throws  IOException{
         currentWord = "motocikl";
         currentImage = loadImage("motocikl.jpg");
-        startingHint=new StartingHint(currentWord,this,screenWidth,screenHeight);
+        startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
         //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
 
