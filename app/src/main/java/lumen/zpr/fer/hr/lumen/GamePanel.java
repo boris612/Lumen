@@ -72,9 +72,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int display_width = dm.widthPixels;
-        int display_height = dm.heightPixels;
-        winTextLabel = new Label("TOČNO!",new Point((int)(dm.widthPixels*0.3),(int)(dm.heightPixels*0.4)), Color.GREEN, 300);
+        int disp_width = dm.widthPixels;
+        int disp_height = dm.heightPixels;
+        int winTLPosX = (int)(disp_width*GameLayoutConstants.WIN_TEXT_LABEL_X_CENTER_COORDINATE_FACTOR);
+        int winTLPosY = (int)(disp_height*GameLayoutConstants.WIN_TEXT_LABEL_Y_CENTER_COORDINATE_FACTOR);
+        Point winTLPosition = new Point(winTLPosX,winTLPosY);
+        winTextLabel = new Label("TOČNO!",winTLPosition, Color.GREEN, GameLayoutConstants.WIN_TEXT_LABEL_SIZE);
     }
 
     private void initNewWord() throws  IOException{
