@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import lumen.zpr.fer.hr.lumen.guicomponents.Label;
@@ -30,8 +31,12 @@ import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private GamePhase phase;
+
+    private GameInstance instance;
+
     private GameImage currentImage;
     private String currentWord;
+    private GameSound currentSound;
     private CharactersFields charactersFields;
 
     private CoinComponent coinComponent;
@@ -96,6 +101,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         charactersFields = new CharactersFields(currentWord,getContext());
 
         listOfLetters=getLetters();
+
     }
 
     //TODO: povezat s bazom
@@ -182,6 +188,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return new GameImage(imageName,getContext());
     }
 
+    private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+    }
 
     private enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
@@ -198,6 +207,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
+
     }
 
     @Override
