@@ -101,6 +101,10 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String WORDS_IMAGE_ID = "idslika";
     /**
+     * naziv atributa "idzvuk"
+     */
+    private static final String WORDS_SOUND_ID = "idzvuk";
+    /**
      * naziv atributa "rijec"
      */
     private static final String WORDS_VALUE = "rijec";
@@ -220,6 +224,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 WORDS_CATEGORY + " varchar references " + CATEGORIES_TABLE_NAME +
                 "(" + CATEGORIES_VALUE + ")," +
                 WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
+                WORDS_SOUND_ID + " integer references " + SOUND_TABLE_NAME + "," +
                 WORDS_VALUE + " varchar unique)");
 
 
@@ -391,7 +396,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(WORDS_LANGUAGE, attributes[0]);
         values.put(WORDS_CATEGORY, attributes[1]);
         values.put(WORDS_IMAGE_ID, attributes[2]);
-        values.put(WORDS_VALUE, attributes[3]);
+        values.put(WORDS_SOUND_ID, attributes[3]);
+        values.put(WORDS_VALUE, attributes[4]);
 
         db.insert(WORDS_TABLE_NAME, null, values);
     }
@@ -514,6 +520,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return word;
     }
 
+    /**
+     * Za dani identifikator jezika vraća pripadni jezik
+     *
+     * @param id identifikator jezika
+     * @return pripadni jezik
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
     public String getLanguage(int id) {
         String lang;
 
@@ -527,6 +540,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return lang;
     }
 
+    /**
+     * Za dani identifikator kategorije vraća pripadnu kategoriju
+     *
+     * @param id identifikator kategorije
+     * @return pripadna kategorija
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
     public String getCategory(int id) {
         String cat;
 
@@ -540,6 +560,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return cat;
     }
 
+    /**
+     * Za dani identifikator slova vraća pripadno slovo
+     *
+     * @param id identifikator riječi
+     * @return pripadna riječ
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
     public String getLetter(int id) {
         String letter;
 
@@ -553,6 +580,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return letter;
     }
 
+    /**
+     * Za dani jezik vraca njegov identifikator
+     *
+     * @param language jezik
+     * @return pripadni identifikator
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani jezik
+     */
     public int getLanguageId(String language) {
         int langId;
 
@@ -566,6 +600,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return langId;
     }
 
+    /**
+     * Za danu kategoriju vraca njezin identifikator
+     *
+     * @param category kategorija
+     * @return pripadni identifikator
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dana kategorija
+     */
     public int getCategoryId(String category) {
         int catId;
 
@@ -579,6 +620,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return catId;
     }
 
+    /**
+     * Za dano slovo vraca njegov identifikator
+     *
+     * @param letter slovo
+     * @return pripadni identifikator
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dano slovo
+     */
     public int getLetterId(String letter) {
         int letterId;
 
@@ -592,6 +640,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return letterId;
     }
 
+    /**
+     * Za dani identifikator slike vraca putanju do slike
+     *
+     * @param id identifikator slike
+     * @return putanja do pripadne slike
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
     public String getImagePath(int id) {
         String imgPath;
 
@@ -605,6 +660,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return imgPath;
     }
 
+    /**
+     * Za dani identifikator zvučnog zapisa vraca putanju do zapisa
+     *
+     * @param id identifikator zvučnog zapisa
+     * @return putanja do pripadnog zvučnog zapisa
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
     public String getSoundPath(int id) {
         String sndPath;
 
@@ -643,6 +705,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return words;
     }
 
+    /**
+     * Vraća listu identifikatora svih riječi danog jezika i kategorije.
+     *
+     * @param langId identifikator jezika
+     * @param catId idetifikator kategorije
+     * @return lista identifikatora svih odgovaraućih riječi u bazi
+     */
     public List<Integer> getWordIds (int langId, int catId) {
         String language = getLanguage(langId);
         String category = getCategory(catId);
@@ -670,7 +739,26 @@ public class DBHelper extends SQLiteOpenHelper {
         return getImagePath(imageId);
     }
 
-    // TODO: public String getWordSoundPath(int id) -- nakon dodatka id zvuka u tablici rijeci
+    /**
+     * Za dani identifikator riječi vraća path do pripadnog zvučnog zapisa.
+     *
+     * @param id identifikator riječi
+     * @return path do zvučnog zapisa riječi
+     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+     */
+    public String getWordSoundPath(int id) {
+        int soundId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_SOUND_ID}, WORDS_ID + " = ?",
+                new String[] {Integer.toString(id)}, null, null, null, null);
+
+        cursor.moveToFirst();
+        soundId = Integer.parseInt(cursor.getString(0));
+
+        return getSoundPath(soundId);
+    }
+
 
     public String getLetterSoundPath(String letter, String language) {
         int soundId;

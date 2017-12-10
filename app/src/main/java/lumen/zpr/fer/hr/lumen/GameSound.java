@@ -22,7 +22,7 @@ public class GameSound {
     private List<MediaPlayer> lettersRedording;
 
     public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath){
-       // wordRecording = loadWordRecording(context,wordRecordingPath);
+        wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRedording = loadLettersRecording(context, lettersRecordingPath);
     }
 
@@ -78,10 +78,19 @@ public class GameSound {
     }
 
     /**
-     * Reproducira slovkanje pojedine riječi
+     * Reproducira pojedinu riječ i slovkanje riječi
      * @param letterPauseLength Duljina pauze između izgovora pojedinog slova u milisekundama
      */
     public void playSpelling(int letterPauseLength){
+        wordRecording.start();
+        while (wordRecording.isPlaying()) ;
+
+        try {
+            Thread.sleep(letterPauseLength);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         for (MediaPlayer mp : this.lettersRedording) {
             mp.start();
             while (mp.isPlaying()) ;

@@ -1,11 +1,13 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 
 import android.graphics.drawable.Drawable;
+import android.nfc.NfcEvent;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
@@ -32,11 +34,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private GamePhase phase;
 
-    private GameInstance instance;
+    private WordSupply supply;
 
     private GameImage currentImage;
     private String currentWord;
     private GameSound currentSound;
+    private Thread spelling;
     private CharactersFields charactersFields;
 
     private CoinComponent coinComponent;
@@ -66,6 +69,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenWidth=p.x;
         screenHeight=p.y;
 
+        supply = new WordSupply(this.getContext(), "hrvatski", "priroda");
+
         try {
             initNewWord();
             currentWord=currentWord.toLowerCase();
@@ -86,27 +91,34 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        currentWord = "motocikl";
-        currentImage = loadImage("motocikl.jpg");
+        currentWord = supply.getWord();
+        currentImage = loadImage(supply.getImagePath());
+        currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
+
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
-        //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
-
-        //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
         phase = GamePhase.PRESENTING_WORD;
-
         presentingTimeStart=System.currentTimeMillis();
 
+        spelling = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                currentSound.playSpelling();
+            }
+        });
+        spelling.start();
+        //TODO: uskladiti igru i slovkanje rijeci
+
         charactersFields = new CharactersFields(currentWord,getContext());
+        listOfLetters=createCroatianLetters();
 
-        listOfLetters=getLetters();
-
+        supply.goToNext();
     }
 
     //TODO: povezat s bazom
 
-    private List<Letter> getLetters() {
+/*    private List<Letter> getLetters() {
         List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letterImage;
@@ -127,7 +139,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         img = getResources().getDrawable(R.drawable.letter_17);
         letterImage = new LetterImage(center,img);
         listOfLetters.add(new Letter('M',letterImage));
-
 
         center = new Point(300,850);
         img = getResources().getDrawable(R.drawable.letter_26);
@@ -156,30 +167,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         return  listOfLetters;
 
-    }
+    }*/
 
-    private List<LetterImage> createCroatianLetters() {
-        List<LetterImage> listOfLetters = new ArrayList<>();
+    private List<Letter> createCroatianLetters() {
+        List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
         currentWord=currentWord.toLowerCase();
 
+        //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
+
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(100+i*50,450);
+            Point center=new Point(100+i*50,850);
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
                 letter=new LetterImage(center,img);
-                listOfLetters.add(letter);
+                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter)); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
                 letter=new LetterImage(center,img);
-                listOfLetters.add(letter);
+                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter));
             }
         }
+
         return listOfLetters;
     }
 
@@ -277,7 +291,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updateWordPresentation() {
-
         if(System.currentTimeMillis()-presentingTimeStart>= GameConstants.PRESENTING_TIME){
             phase=GamePhase.TYPING_WORD;
         }
