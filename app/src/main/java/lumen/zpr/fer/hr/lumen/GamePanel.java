@@ -9,8 +9,10 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.nfc.NfcEvent;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 
@@ -129,15 +132,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private void initNewWord() throws  IOException{
         currentWord = supply.getWord();
+
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
-
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
-
+        listOfLetters=createCroatianLetters();
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -148,7 +151,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO: uskladiti igru i slovkanje rijeci
 
         charactersFields = new CharactersFields(currentWord,getContext());
-        listOfLetters=createCroatianLetters();
+
         //proba
         fields=charactersFields.getFields();
 
@@ -156,29 +159,47 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private List<LetterImage> createCroatianLetters() {
-        List<LetterImage> listOfLetters = new ArrayList<>();
+         listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
-        currentWord=currentWord.toLowerCase();
-
+        //currentWord=currentWord.toLowerCase();
         //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
         //TODO: bolji nacin za generiranje slova (skaliranje!)
-
+        int space=getResources().getDisplayMetrics().widthPixels-currentWord.length()*GameLayoutConstants.DEFAULT_RECT_WIDTH;
+        space/=(int)(currentWord.length());
+        int spaceStart=getResources().getDisplayMetrics().widthPixels;
+        spaceStart-=space*currentWord.length();
+        spaceStart-=GameLayoutConstants.DEFAULT_RECT_WIDTH;
+        spaceStart/=2;
+        List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(100+i*GameLayoutConstants.DEFAULT_RECT_WIDTH + GameLayoutConstants.RECT_SPACE_FACTOR,850);
+            Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
             }
         }
-        return listOfLetters;
+        List<Rect> rects=new ArrayList<>();
+        List<Point> points=new ArrayList<>();
+        for(int i=0,size=list.size();i<size;i++){
+            points.add(list.get(i).getCenter());
+            rects.add(list.get(i).getRectangle());
+        }
+        Random rand=new Random();
+        for(int i=0,size=list.size();i<size;i++){
+            int index=rand.nextInt(points.size());
+            list.get(i).setCenter(points.get(index));
+            list.get(i).update();
+            points.remove(index);
+        }
+        return list;
     }
 
     @Override
