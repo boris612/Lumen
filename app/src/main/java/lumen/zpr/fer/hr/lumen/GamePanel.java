@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.nfc.NfcEvent;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
@@ -20,6 +25,7 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,6 +60,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<LetterImage> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
 
+    private boolean hintActive=false;
+    private CharacterField hintField;
+    private List<LetterImage> hintImageList;
+    private long hintStart;
 
     public GamePanel(Context context, int initCoins) {
         super(context);
@@ -79,7 +89,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
-
+        //TODO: maknuti fixani coin
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
@@ -196,6 +206,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             updateWordPresentation();
             return;
         }
+        if(phase==GamePhase.TYPING_WORD){
+            if(hintActive) updateHint();
+        }
 
 
         for (LetterImage letter : listOfLetters) {
@@ -213,6 +226,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             if(phase!=GamePhase.ENDING) {
                 checkIfInputComplete();
+            }
+        }
+    }
+
+    private void updateHint() {
+        if(System.currentTimeMillis()-hintStart>500){
+            if(hintField.getColor()==Color.RED){
+                hintField.setColor(Color.GREEN);
+                for(LetterImage img:hintImageList){
+                    img.getDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                }
+
+            }
+            else{
+                hintField.setColor(Color.RED);
+                for(LetterImage img:hintImageList){
+                    img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+
+            hintStart=System.currentTimeMillis();
+        }
+        if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().equals(hintField.getCorrectCharacter())){
+            hintActive=false;
+            for(LetterImage img:hintImageList){
+                img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
             }
         }
     }
@@ -244,7 +283,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updateWordPresentation() {
-        if(System.currentTimeMillis()-presentingTimeStart>= GameConstants.PRESENTING_TIME){
+        if(!spelling.isAlive()){
             phase=GamePhase.TYPING_WORD;
         }
     }
@@ -307,7 +346,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             return true;
         }
         boolean handled = false;
-
         LetterImage touchedLetter;
         int xTouch;
         int yTouch;
@@ -322,6 +360,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 xTouch = (int) event.getX(0);
                 yTouch = (int) event.getY(0);
+                if(coinComponent.getRectangle().contains(xTouch,yTouch)){
+                    executeCoinHint();
+                }
+
 
                 // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
@@ -344,6 +386,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 yTouch = (int) event.getY(actionIndex);
 
                 // check if we've touched inside some rect
+
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if(touchedLetter == null) return true;
 
@@ -400,6 +443,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         return super.onTouchEvent(event) || handled;
+    }
+
+    private void executeCoinHint() {
+        if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
+            coinComponent.addCoins(-1);
+            List<CharacterField> list=charactersFields.getFields();
+            int size=list.size();
+            for(int i=0;i<size;i++){
+                CharacterField c=list.get(i);
+                if(c.getCharacterInsideField()==null || !c.getCharacterInsideField().equals(c.getCorrectCharacter())){
+                    hintField=c;
+                    break;
+                }
+            }
+            LetterImage image=null;
+            size=listOfLetters.size();
+            hintImageList=new ArrayList<>();
+            for(int i=0;i<size;i++){
+                if(listOfLetters.get(i).getLetter().equals(hintField.getCorrectCharacter())){
+                    hintImageList.add(listOfLetters.get(i));
+                }
+            }
+            hintActive=true;
+            hintStart=System.currentTimeMillis();
+        }
+
     }
 
     public void clearLetterPointer(){

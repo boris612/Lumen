@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -25,17 +26,18 @@ public class CoinComponent {
     private int coins = 0;
     private Label label;
     private Drawable coinImage;
+    private Rect rectangle;
 
     public CoinComponent(Drawable coinImage, int coins, Context context) {
         this.coinImage = coinImage;
         this.coins = coins;
-
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         int display_width = dm.widthPixels;
         int display_height = dm.heightPixels;
         int coinWidth = (int)(display_width*IMAGE_WIDTH_FACTOR);
         int coinPosX = (int)(display_width*IMAGE_X_COORDINATE_FACTOR);
         int coinPosY = (int)(display_height*IMAGE_Y_COORDINATE_FACTOR);
+        rectangle=new Rect(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
         Log.d("COIN",""+coinPosX+" "+coinPosY);
         coinImage.setBounds(coinPosX,coinPosY,coinWidth,coinWidth);
         coinImage.setBounds(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
@@ -52,5 +54,13 @@ public class CoinComponent {
     public void draw(Canvas canvas) {
         coinImage.draw(canvas);
         label.draw(canvas);
+    }
+
+    public Rect getRectangle(){
+        return rectangle;
+    }
+
+    public int getCoins(){
+        return coins;
     }
 }

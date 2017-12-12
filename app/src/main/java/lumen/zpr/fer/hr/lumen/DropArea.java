@@ -44,4 +44,7 @@ public class DropArea {
         this.color = color;
     }
 
+    public int getColor(){
+        return this.color;
+    }
 }

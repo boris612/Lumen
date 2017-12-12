@@ -97,4 +97,7 @@ public class LetterImage {
                 point.x+rectangle.width()/2, point.y+rectangle.height()/2 );
         img.setBounds(rectangle);
     }
+    public Drawable getDrawable(){
+        return this.img;
+    }
 }
