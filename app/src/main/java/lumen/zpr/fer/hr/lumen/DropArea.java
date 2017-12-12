@@ -31,12 +31,13 @@ public class DropArea {
     }
 
     public boolean collision (LetterImage letter){
-        if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
+       /* if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().left, letter.getRectangle().bottom)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom)){
             return true;
-        }
+        }*/
+       if(letter.getRectangle().contains(rectangle.centerX(),rectangle.centerY())) return true;
         return false;
     }
 

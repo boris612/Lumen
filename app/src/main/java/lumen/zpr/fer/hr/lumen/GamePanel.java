@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import lumen.zpr.fer.hr.lumen.guicomponents.Label;
@@ -60,10 +61,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<LetterImage> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
 
+<<<<<<< HEAD
     private boolean hintActive=false;
     private CharacterField hintField;
     private List<LetterImage> hintImageList;
     private long hintStart;
+=======
+    //proba
+    private List<CharacterField> fields;
+>>>>>>> master
 
     public GamePanel(Context context, int initCoins) {
         super(context);
@@ -144,6 +150,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields = new CharactersFields(currentWord,getContext());
         listOfLetters=createCroatianLetters();
+        //proba
+        fields=charactersFields.getFields();
 
         supply.goToNext();
     }
@@ -171,7 +179,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
             }
         }
-
         return listOfLetters;
     }
 
@@ -211,22 +218,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-        for (LetterImage letter : listOfLetters) {
-            CharacterField area = charactersFields.getFieldThatCollidesWith(letter);
-            if (area != null) {
-                letter.setCenter(area.getCenterPoint());//centar drop area
-                area.setCharacterInsideField(letter.getLetter());
-                if(area.getCorrectCharacter().equals(letter.getLetter())){
-                    area.setColor(Color.GREEN);
-                }
-            }
+       for(CharacterField field: fields) {
+           field.setCharacterInsideField(null);
 
+           for (LetterImage letter : listOfLetters) {
+               if(field.collision(letter)){
+                   field.setCharacterInsideField(letter.getLetter());
+                   letter.setCenter(field.getCenterPoint());
+               }
 
-            letter.update();
+               letter.update();
 
-            if(phase!=GamePhase.ENDING) {
-                checkIfInputComplete();
-            }
+           }
+       }
+
+        if (phase != GamePhase.ENDING) {
+            checkIfInputComplete();
         }
     }
 
