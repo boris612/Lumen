@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Lumen.iml" filepath="$PROJECT_DIR$/Lumen.iml" />
+      <module fileurl="file://C:\Users\Zlatko\AndroidStudioProjects\Lumen\Lumen.iml" filepath="C:\Users\Zlatko\AndroidStudioProjects\Lumen\Lumen.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

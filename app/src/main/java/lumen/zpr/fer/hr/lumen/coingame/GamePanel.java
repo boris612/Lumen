@@ -9,27 +9,55 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lumen.zpr.fer.hr.lumen.R;
 import lumen.zpr.fer.hr.lumen.coingame.objects.CoinComponent;
 import lumen.zpr.fer.hr.lumen.coingame.objects.ContainerComponent;
 
 /**
+ * Razred koji sadrzi trenutno stanje igre i brine se o njenom toku. Zna iscrtavati trenutno stanje igre.
  * Created by Zlatko on 12-Dec-17.
  */
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
+    /**
+     * Dretva koja osvjezava stanje ove igre
+     */
     private MainThread thread;
-    private CoinComponent coin;
+    /**
+     * Lista novcica koji se koriste
+     */
+    private List<CoinComponent> coins = new ArrayList<>();
+    /**
+     * Container u koji se dovlace selektirani novcici
+     */
     private ContainerComponent container;
 
+    /**
+     * Konstruktor.
+     *
+     * @param context kontekst
+     */
     public GamePanel(Context context) {
         super(context);
 
         getHolder().addCallback(this);
 
         thread = new MainThread(getHolder(), this);
-        coin = new CoinComponent(getResources().getDrawable(R.drawable.coin_value_1), new Point(getHeight() / 2, getWidth() / 2), 1);
-        container = new ContainerComponent(new Rect(getWidth() / 2, 20, getWidth() - 20, getHeight() / 2), new Point(getWidth() / 4, getHeight() / 2));
+        //Todo relativno postavljanje containera
+        container = new ContainerComponent(new Rect(400, 100, 1800, 800), new Point(100, 300));
+
+        //Todo automatsko generiranje kovanica
+        //Todo dodati novcanice
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_1), new Point(400, 1100), 1));
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_1), new Point(600, 1100), 1));
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_1), new Point(800, 1100), 1));
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_2), new Point(1000, 1100), 2));
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_2), new Point(1200, 1100), 2));
+        coins.add(new CoinComponent(getResources().getDrawable(R.drawable.coin_value_2), new Point(1400, 1100), 2));
+
     }
 
     @Override
@@ -63,16 +91,29 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                if (coin.isSelected((int) event.getX(), (int) event.getY())) {
-                    coin.update(new Point((int) event.getX(), (int) event.getY()));
+                for (CoinComponent coin : coins) {
+                    if (coin.isSelected((int) event.getX(), (int) event.getY())) {
+                        coin.update(new Point((int) event.getX(), (int) event.getY()));
+                        break;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                for (CoinComponent coin : coins) {
+                    Point position = coin.getPosition();
+                    if (container.isSelected(position.x, position.y)) {
+                        container.addCoin(coin);
+                    }
                 }
         }
-
         return true;
     }
 
+    /**
+     * Osigurava da elementi igre budu "up to date".
+     */
     public void update() {
-
+        container.update();
     }
 
     @Override
@@ -83,7 +124,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         container.draw(canvas);
 
-        coin.draw(canvas);
-
+        for (CoinComponent coin : coins) {
+            coin.draw(canvas);
+        }
     }
 }

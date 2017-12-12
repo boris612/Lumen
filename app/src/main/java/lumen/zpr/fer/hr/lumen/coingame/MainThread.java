@@ -4,16 +4,34 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
 /**
+ * Dretva zaduzena za periodicno osvjezavanje trenutnog stanja igre.
  * Created by Zlatko on 12-Dec-17.
  */
 
 public class MainThread extends Thread {
+    /**
+     * Maksimalni broj osvjezavanja u sekundi
+     */
     public static final int MAX_FPS = 30;
+    /**
+     * Surface na koji se iscrtava igra
+     */
     private SurfaceHolder surfaceHolder;
+    /**
+     * GamePanel koji sadrži trenutno stanje igre
+     */
     private GamePanel gamePanel;
+    /**
+     * Zastavica stanja igre
+     */
     private boolean running;
-    public static Canvas canvas;
 
+    /**
+     * Konstruktor.
+     *
+     * @param surfaceHolder surface na koji se iscrtava igra
+     * @param gamePanel     game panel koji sadrzi trenutno stanje igre
+     */
     public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
         super();
         this.surfaceHolder = surfaceHolder;
@@ -26,10 +44,10 @@ public class MainThread extends Thread {
         long timeMilis;
         long waitTime;
         long targetTime = 1000 / MAX_FPS;
+        Canvas canvas = null;
 
         while (running) {
             startTime = System.nanoTime();
-            canvas = null;
 
             try {
                 canvas = surfaceHolder.lockCanvas();
@@ -62,6 +80,11 @@ public class MainThread extends Thread {
         }
     }
 
+    /**
+     * Pokrece/zaustavlja igru.
+     *
+     * @param running igra se zaustavlja postavljanjem na false
+     */
     public void setRunning(boolean running) {
         this.running = running;
     }
