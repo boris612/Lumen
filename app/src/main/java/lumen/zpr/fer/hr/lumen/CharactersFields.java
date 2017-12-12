@@ -68,17 +68,6 @@ public class CharactersFields {
         }
     }
 
-    public CharacterField getFieldThatCollidesWith(LetterImage letterImage) {
-        for(CharacterField field: fields) {
-            if(field.collision(letterImage)) {
-                /*if(field.getCharacterInsideField().equals(letterImage.getLetter())){
-                    field.setColor(CORRECT_COLOR);
-                }*/
-                return field;
-            }
-        }
-        return null;
-    }
 
     public List<CharacterField> getFields() {
         return fields;
