@@ -21,7 +21,7 @@ public class MainMenuActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent startGameIntent = new Intent(MainMenuActivity.this,
-                        GameActivity.class);
+                        lumen.zpr.fer.hr.lumen.coingame.GameActivity.class);
                 startActivity(startGameIntent);
             }
         });
