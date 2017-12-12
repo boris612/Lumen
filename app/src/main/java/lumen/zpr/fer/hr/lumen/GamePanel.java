@@ -49,10 +49,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private int screenWidth;
     private int screenHeight;
     private long presentingTimeStart;
-    //za potrebe demo inacice, slike treba dohvatiti iz baze ?
-    private List<Letter> listOfLetters;
-    private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
     private long endingTime;
+
+    private List<LetterImage> listOfLetters;
+    private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
+
 
     public GamePanel(Context context, int initCoins) {
         super(context);
@@ -90,6 +91,27 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         winTextLabel = new Label("TOČNO!",winTLPosition, Color.GREEN, GameLayoutConstants.WIN_TEXT_LABEL_SIZE);
     }
 
+
+
+
+    private GameImage loadImage(String imageName) throws  IOException {
+        return new GameImage(imageName,getContext());
+    }
+
+    private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+    }
+
+    private enum GamePhase {
+        //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
+        PRESENTING_WORD,
+        //faza u kojoj igrač piše (drag and dropanjem slova) riječ
+        TYPING_WORD,
+        //faza u kojem se igraču ispisuje da je točno poslozio slova
+        ENDING
+
+    }
+
     private void initNewWord() throws  IOException{
         currentWord = supply.getWord();
         currentImage = loadImage(supply.getImagePath());
@@ -116,104 +138,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         supply.goToNext();
     }
 
-    //TODO: povezat s bazom
-
-/*    private List<Letter> getLetters() {
-        List<Letter> listOfLetters = new ArrayList<>();
-        Drawable img;
-        LetterImage letterImage;
-
-        //TODO: popraviti da radi automatsko skaliranje
-
-        Point center = new Point(150,850);
-        img = getResources().getDrawable(R.drawable.letter_20);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('O',letterImage));
-
-        center = new Point(200,850);
-        img = getResources().getDrawable(R.drawable.letter_20);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('O',letterImage));
-
-        center = new Point(250,850);
-        img = getResources().getDrawable(R.drawable.letter_17);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('M',letterImage));
-
-        center = new Point(300,850);
-        img = getResources().getDrawable(R.drawable.letter_26);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('T',letterImage));
-
-        center = new Point(350,850);
-        img = getResources().getDrawable(R.drawable.letter_2);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('C',letterImage));
-
-        center = new Point(400,850);
-        img = getResources().getDrawable(R.drawable.letter_12);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('I',letterImage));
-
-        center = new Point(450,850);
-        img = getResources().getDrawable(R.drawable.letter_15);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('L',letterImage));
-
-        center = new Point(500,850);
-        img = getResources().getDrawable(R.drawable.letter_14);
-        letterImage = new LetterImage(center,img);
-        listOfLetters.add(new Letter('K',letterImage));
-
-        return  listOfLetters;
-
-    }*/
-
-    private List<Letter> createCroatianLetters() {
-        List<Letter> listOfLetters = new ArrayList<>();
+    private List<LetterImage> createCroatianLetters() {
+        List<LetterImage> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
         currentWord=currentWord.toLowerCase();
 
         //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
+        //TODO: bolji nacin za generiranje slova (skaliranje!)
 
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(100+i*50,850);
+            Point center=new Point(100+i*GameLayoutConstants.DEFAULT_RECT_WIDTH + GameLayoutConstants.RECT_SPACE_FACTOR,850);
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                letter=new LetterImage(center,img);
-                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter)); //TODO: prilagoditi za hrvatska slova
+                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                letter=new LetterImage(center,img);
-                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter));
+                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
             }
         }
 
         return listOfLetters;
-    }
-
-
-    private GameImage loadImage(String imageName) throws  IOException {
-        return new GameImage(imageName,getContext());
-    }
-
-    private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
-        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
-    }
-
-    private enum GamePhase {
-        //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
-        PRESENTING_WORD,
-        //faza u kojoj igrač piše (drag and dropanjem slova) riječ
-        TYPING_WORD,
-        //faza u kojem se igraču ispisuje da je točno poslozio slova
-        ENDING
-
     }
 
     @Override
@@ -249,14 +198,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
-        for (Letter letter : listOfLetters) {
-            LetterImage letterImage = letter.getLetterImage();
-            CharacterField area = charactersFields.getFieldThatCollidesWith(letterImage);
+        for (LetterImage letter : listOfLetters) {
+            CharacterField area = charactersFields.getFieldThatCollidesWith(letter);
             if (area != null) {
-                letterImage.setCenter(area.getCenterPoint());//centar drop area
+                letter.setCenter(area.getCenterPoint());//centar drop area
                 area.setCharacterInsideField(letter.getLetter());
+                if(area.getCorrectCharacter().equals(letter.getLetter())){
+                    area.setColor(Color.GREEN);
+                }
             }
-            letterImage.update();
+
+
+            letter.update();
 
             if(phase!=GamePhase.ENDING) {
                 checkIfInputComplete();
@@ -319,8 +272,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields.draw(canvas);
 
-        for (Letter letter:listOfLetters){
-            letter.getLetterImage().draw(canvas);
+        for (LetterImage letter:listOfLetters){
+            letter.draw(canvas);
         }
 
         if(phase == GamePhase.ENDING) {
@@ -338,9 +291,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private LetterImage getTouchedLetter( int x,  int y) {
-        for (Letter letter : listOfLetters) {
-            if (letter.getLetterImage().insideRectangle(x,y)) {
-                return letter.getLetterImage();
+        for (LetterImage letter : listOfLetters) {
+            if (letter.insideRectangle(x,y)) {
+                return letter;
             }
         }
         return null;
@@ -361,7 +314,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int pointerId;
         int actionIndex = event.getActionIndex();
 
-        // get touch event coordinates and make transparent circle from it
+
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 // it's the first pointer, so clear all existing pointers data
@@ -370,7 +323,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 xTouch = (int) event.getX(0);
                 yTouch = (int) event.getY(0);
 
-                // check if we've touched inside some circle
+                // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if(touchedLetter == null) return true; //ok?
                 touchedLetter.setCenter(new Point(xTouch,yTouch));
@@ -383,14 +336,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                // It secondary pointers, so obtain their ids and check circles
+                // It secondary pointers, so obtain their ids and check rects
                 pointerId = event.getPointerId(actionIndex);
 
 
                 xTouch = (int) event.getX(actionIndex);
                 yTouch = (int) event.getY(actionIndex);
 
-                // check if we've touched inside some circle
+                // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if(touchedLetter == null) return true;
 

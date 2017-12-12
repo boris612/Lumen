@@ -21,8 +21,9 @@ public class LetterImage {
     private boolean updateable=false;
     private Point center;
     private Point oldCenter;
+    private Character letter;
 
-    public LetterImage(Point center, Drawable img) {
+    public LetterImage(Point center, Drawable img, Character letter) {
         this.center=center;
         this.img=img;
         this.rectangle=new Rect (center.x-GameLayoutConstants.DEFAULT_RECT_WIDTH/2,
@@ -30,6 +31,7 @@ public class LetterImage {
                 center.x+GameLayoutConstants.DEFAULT_RECT_WIDTH/2,
                 center.y+GameLayoutConstants.DEFAULT_RECT_HEIGHT/2 );
         img.setBounds(rectangle);
+        this.letter=letter;
     }
 
     public boolean collision (LetterImage letter){
@@ -42,6 +44,10 @@ public class LetterImage {
         return false;
     }
 
+
+    public Character getLetter(){
+        return letter;
+    }
     public Point getCenter() {
         return center;
     }

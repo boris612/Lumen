@@ -29,8 +29,8 @@ public class GameLayoutConstants {
     //work in progress
     static int DEFAULT_RECT_LEFT_VALUE = 100;
     static int DEFAULT_RECT_TOP_VALUE = 100;
-    static double RECT_SPACE_FACTOR=1.2;
-    static int DEFAULT_RECT_WIDTH=60;
-    static int DEFAULT_RECT_HEIGHT=60;
+    static int RECT_SPACE_FACTOR=50;
+    static int DEFAULT_RECT_WIDTH=100;
+    static int DEFAULT_RECT_HEIGHT=100;
   
 }
