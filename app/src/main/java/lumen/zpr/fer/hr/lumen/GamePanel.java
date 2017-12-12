@@ -61,15 +61,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<LetterImage> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
 
-<<<<<<< HEAD
     private boolean hintActive=false;
     private CharacterField hintField;
     private List<LetterImage> hintImageList;
     private long hintStart;
-=======
+
     //proba
     private List<CharacterField> fields;
->>>>>>> master
+
 
     public GamePanel(Context context, int initCoins) {
         super(context);
@@ -257,6 +256,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
         if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().equals(hintField.getCorrectCharacter())){
             hintActive=false;
+            hintField.setColor(Color.RED);
             for(LetterImage img:hintImageList){
                 img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
             }
