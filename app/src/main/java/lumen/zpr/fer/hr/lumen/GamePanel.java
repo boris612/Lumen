@@ -1,11 +1,13 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 
 import android.graphics.drawable.Drawable;
+import android.nfc.NfcEvent;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
@@ -19,6 +21,7 @@ import android.view.WindowManager;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import lumen.zpr.fer.hr.lumen.guicomponents.Label;
@@ -30,8 +33,13 @@ import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private GamePhase phase;
+
+    private WordSupply supply;
+
     private GameImage currentImage;
     private String currentWord;
+    private GameSound currentSound;
+    private Thread spelling;
     private CharactersFields charactersFields;
 
     private CoinComponent coinComponent;
@@ -61,6 +69,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenWidth=p.x;
         screenHeight=p.y;
 
+        supply = new WordSupply(this.getContext(), "hrvatski", "priroda");
+
         try {
             initNewWord();
             currentWord=currentWord.toLowerCase();
@@ -81,26 +91,34 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void initNewWord() throws  IOException{
-        currentWord = "motocikl";
-        currentImage = loadImage("motocikl.jpg");
+        currentWord = supply.getWord();
+        currentImage = loadImage(supply.getImagePath());
+        currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
+
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
-        //TODO: dodati kod koji određuje (uzimajući u obzir kategoriju/težinu) sljedecu rijec
-
-        //TODO: napraviti pozive metode (i tu metodu) preko koje ce se dohvatiti ime slike za zadanu rijec
 
         phase = GamePhase.PRESENTING_WORD;
-
         presentingTimeStart=System.currentTimeMillis();
 
-        charactersFields = new CharactersFields(currentWord,getContext());
+        spelling = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                currentSound.playSpelling();
+            }
+        });
+        spelling.start();
+        //TODO: uskladiti igru i slovkanje rijeci
 
-        listOfLetters=getLetters();
+        charactersFields = new CharactersFields(currentWord,getContext());
+        listOfLetters=createCroatianLetters();
+
+        supply.goToNext();
     }
 
     //TODO: povezat s bazom
 
-    private List<Letter> getLetters() {
+/*    private List<Letter> getLetters() {
         List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letterImage;
@@ -121,7 +139,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         img = getResources().getDrawable(R.drawable.letter_17);
         letterImage = new LetterImage(center,img);
         listOfLetters.add(new Letter('M',letterImage));
-
 
         center = new Point(300,850);
         img = getResources().getDrawable(R.drawable.letter_26);
@@ -150,30 +167,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         return  listOfLetters;
 
-    }
+    }*/
 
-    private List<LetterImage> createCroatianLetters() {
-        List<LetterImage> listOfLetters = new ArrayList<>();
+    private List<Letter> createCroatianLetters() {
+        List<Letter> listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
         currentWord=currentWord.toLowerCase();
 
+        //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
+
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(100+i*50,450);
+            Point center=new Point(100+i*50,850);
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
                 letter=new LetterImage(center,img);
-                listOfLetters.add(letter);
+                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter)); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
                 letter=new LetterImage(center,img);
-                listOfLetters.add(letter);
+                listOfLetters.add(new Letter(currentWord.toUpperCase().charAt(i),letter));
             }
         }
+
         return listOfLetters;
     }
 
@@ -182,6 +202,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return new GameImage(imageName,getContext());
     }
 
+    private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+    }
 
     private enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
@@ -198,6 +221,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
+
     }
 
     @Override
@@ -267,7 +291,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updateWordPresentation() {
-
         if(System.currentTimeMillis()-presentingTimeStart>= GameConstants.PRESENTING_TIME){
             phase=GamePhase.TYPING_WORD;
         }
