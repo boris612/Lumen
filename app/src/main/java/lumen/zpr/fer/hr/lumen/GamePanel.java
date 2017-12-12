@@ -190,7 +190,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         List<Point> points=new ArrayList<>();
         for(int i=0,size=list.size();i<size;i++){
             points.add(list.get(i).getCenter());
-            rects.add(list.get(i).getRectangle());
         }
         Random rand=new Random();
         for(int i=0,size=list.size();i<size;i++){
