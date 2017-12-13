@@ -53,7 +53,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private CharactersFields charactersFields;
     private List<CharacterField> fields;
-
+    private List<CharacterField> hintFields;
     private CoinComponent coinComponent;
     private Label winTextLabel;
 
@@ -156,6 +156,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         charactersFields = new CharactersFields(currentWord,getContext());
         fields=charactersFields.getFields();
+        hintFields=new ArrayList<>(fields);
 
         supply.goToNext();
     }
@@ -480,10 +481,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void executeCoinHint() {
         if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
             coinComponent.addCoins(-1);
-            List<CharacterField> list=charactersFields.getFields();
-            int size=list.size();
+            int size=hintFields.size();
             for(int i=0;i<size;i++){
-                CharacterField c=list.get(i);
+                CharacterField c=hintFields.get(i);
                 if(c.getCharacterInsideField()==null || !c.getCharacterInsideField().equals(c.getCorrectCharacter())){
                     hintField=c;
                     break;
