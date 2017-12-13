@@ -35,6 +35,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private ContainerComponent container;
 
+    private ProblemGenerator generator = new ProblemGenerator();
+
     /**
      * Konstruktor.
      *
@@ -47,7 +49,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         thread = new MainThread(getHolder(), this);
         //Todo relativno postavljanje containera
-        container = new ContainerComponent(new Rect(400, 100, 1800, 800), new Point(100, 300));
+        container = new ContainerComponent(new Rect(400, 100, 1800, 800), new Point(100, 300), generator.generirajBroj());
 
         //Todo automatsko generiranje kovanica
         //Todo dodati novcanice

@@ -32,22 +32,31 @@ public class ContainerComponent implements CoinGameObject {
      */
     private List<CoinComponent> coinsInside = new ArrayList<>();
 
+    private Integer targetValue;
+
+    private boolean isComplete = false;
+
     /**
      * Konstruktor.
      *
      * @param rect       pravokutnik, graficka reprezentacija kontejnera
      * @param labelPoint mjesto na kojem se iscrtava labela
      */
-    public ContainerComponent(Rect rect, Point labelPoint) {
+    public ContainerComponent(Rect rect, Point labelPoint, int targetValue) {
         this.rect = rect;
         this.labelPoint = labelPoint;
+        this.targetValue = targetValue;
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
 
-        paint.setColor(Color.rgb(204, 217, 255));
+        if (isComplete) {
+            paint.setColor(Color.GREEN);
+        } else {
+            paint.setColor(Color.rgb(204, 217, 255));
+        }
         canvas.drawRect(rect, paint);
 
         paint.setColor(Color.BLACK);
@@ -63,6 +72,8 @@ public class ContainerComponent implements CoinGameObject {
                 removeCoin(coin);
             }
         }
+
+        isComplete = targetValue.equals(value);
     }
 
     @Override
