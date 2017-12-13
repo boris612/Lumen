@@ -4,10 +4,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.nfc.NfcEvent;
+import android.support.constraint.solver.widgets.Rectangle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 
@@ -20,10 +27,12 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 
@@ -55,8 +64,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<LetterImage> listOfLetters;
     private SparseArray<LetterImage> mLetterPointer = new SparseArray<LetterImage>();
 
+    private boolean hintActive=false;
+    private CharacterField hintField;
+    private List<LetterImage> hintImageList;
+    private long hintStart;
+
     //proba
     private List<CharacterField> fields;
+
 
     public GamePanel(Context context, int initCoins) {
         super(context);
@@ -82,7 +97,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
-
+        //TODO: maknuti fixani coin
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
@@ -117,15 +132,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private void initNewWord() throws  IOException{
         currentWord = supply.getWord();
+
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
-
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
         startingHint.setRect(currentImage.getRect());
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
-
+        listOfLetters=createCroatianLetters();
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,7 +151,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO: uskladiti igru i slovkanje rijeci
 
         charactersFields = new CharactersFields(currentWord,getContext());
-        listOfLetters=createCroatianLetters();
+
         //proba
         fields=charactersFields.getFields();
 
@@ -144,29 +159,46 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private List<LetterImage> createCroatianLetters() {
-        List<LetterImage> listOfLetters = new ArrayList<>();
+         listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
-        currentWord=currentWord.toLowerCase();
-
+        //currentWord=currentWord.toLowerCase();
         //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
         //TODO: bolji nacin za generiranje slova (skaliranje!)
-
+        int space=getResources().getDisplayMetrics().widthPixels-currentWord.length()*GameLayoutConstants.DEFAULT_RECT_WIDTH;
+        space/=(int)(currentWord.length());
+        int spaceStart=getResources().getDisplayMetrics().widthPixels;
+        spaceStart-=space*currentWord.length();
+        spaceStart-=GameLayoutConstants.DEFAULT_RECT_WIDTH;
+        spaceStart/=2;
+        List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(100+i*GameLayoutConstants.DEFAULT_RECT_WIDTH + GameLayoutConstants.RECT_SPACE_FACTOR,850);
+            Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                listOfLetters.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
             }
         }
-        return listOfLetters;
+        List<Rect> rects=new ArrayList<>();
+        List<Point> points=new ArrayList<>();
+        for(int i=0,size=list.size();i<size;i++){
+            points.add(list.get(i).getCenter());
+        }
+        Random rand=new Random();
+        for(int i=0,size=list.size();i<size;i++){
+            int index=rand.nextInt(points.size());
+            list.get(i).setCenter(points.get(index));
+            list.get(i).update();
+            points.remove(index);
+        }
+        return list;
     }
 
     @Override
@@ -200,6 +232,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             updateWordPresentation();
             return;
         }
+        if(phase==GamePhase.TYPING_WORD){
+            if(hintActive) updateHint();
+        }
 
 
        for(CharacterField field: fields) {
@@ -218,6 +253,33 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
+        }
+    }
+
+    private void updateHint() {
+        if(System.currentTimeMillis()-hintStart>500){
+            if(hintField.getColor()==Color.RED){
+                hintField.setColor(Color.GREEN);
+                for(LetterImage img:hintImageList){
+                    img.getDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+                }
+
+            }
+            else{
+                hintField.setColor(Color.RED);
+                for(LetterImage img:hintImageList){
+                    img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                }
+            }
+
+            hintStart=System.currentTimeMillis();
+        }
+        if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().equals(hintField.getCorrectCharacter())){
+            hintActive=false;
+            hintField.setColor(Color.RED);
+            for(LetterImage img:hintImageList){
+                img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+            }
         }
     }
 
@@ -248,7 +310,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updateWordPresentation() {
-        if(System.currentTimeMillis()-presentingTimeStart>= GameConstants.PRESENTING_TIME){
+        if(!spelling.isAlive()){
             phase=GamePhase.TYPING_WORD;
         }
     }
@@ -311,7 +373,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             return true;
         }
         boolean handled = false;
-
         LetterImage touchedLetter;
         int xTouch;
         int yTouch;
@@ -326,6 +387,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 xTouch = (int) event.getX(0);
                 yTouch = (int) event.getY(0);
+                if(coinComponent.getRectangle().contains(xTouch,yTouch)){
+                    executeCoinHint();
+                }
+
 
                 // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
@@ -348,6 +413,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 yTouch = (int) event.getY(actionIndex);
 
                 // check if we've touched inside some rect
+
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if(touchedLetter == null) return true;
 
@@ -404,6 +470,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         return super.onTouchEvent(event) || handled;
+    }
+
+    private void executeCoinHint() {
+        if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
+            coinComponent.addCoins(-1);
+            List<CharacterField> list=charactersFields.getFields();
+            int size=list.size();
+            for(int i=0;i<size;i++){
+                CharacterField c=list.get(i);
+                if(c.getCharacterInsideField()==null || !c.getCharacterInsideField().equals(c.getCorrectCharacter())){
+                    hintField=c;
+                    break;
+                }
+            }
+            LetterImage image=null;
+            size=listOfLetters.size();
+            hintImageList=new ArrayList<>();
+            for(int i=0;i<size;i++){
+                if(listOfLetters.get(i).getLetter().equals(hintField.getCorrectCharacter())){
+                    hintImageList.add(listOfLetters.get(i));
+                }
+            }
+            hintActive=true;
+            hintStart=System.currentTimeMillis();
+        }
+
     }
 
     public void clearLetterPointer(){

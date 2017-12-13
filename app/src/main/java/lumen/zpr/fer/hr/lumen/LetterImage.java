@@ -60,6 +60,7 @@ public class LetterImage {
         center = oldCenter;
     }
 
+    public void setOldCenter(Point center){ oldCenter=center;}
     public boolean isUpdateable() {
         return updateable;
     }
@@ -96,5 +97,11 @@ public class LetterImage {
         rectangle.set(point.x-rectangle.width()/2, point.y-rectangle.height()/2,
                 point.x+rectangle.width()/2, point.y+rectangle.height()/2 );
         img.setBounds(rectangle);
+    }
+    public Drawable getDrawable(){
+        return this.img;
+    }
+    public void setRectangle(Rect rect){
+        this.rectangle=rect;
     }
 }

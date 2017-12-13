@@ -31,4 +31,5 @@ public class CharacterField extends DropArea {
     public void setColor(int color) {
         super.setColor(color);
     }
+
 }
