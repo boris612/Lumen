@@ -26,10 +26,6 @@ public class GameLayoutConstants {
     static double WIN_TEXT_LABEL_X_CENTER_COORDINATE_FACTOR = 0.5;
     static double WIN_TEXT_LABEL_Y_CENTER_COORDINATE_FACTOR = 0.4;
 
-
-    //work in progress
-    static int DEFAULT_RECT_LEFT_VALUE = 100;
-    static int DEFAULT_RECT_TOP_VALUE = 100;
     static int RECT_SPACE_FACTOR=50;
     static int DEFAULT_RECT_WIDTH=100;
     static int DEFAULT_RECT_HEIGHT=100;

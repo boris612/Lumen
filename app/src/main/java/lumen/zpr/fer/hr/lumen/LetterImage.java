@@ -20,7 +20,6 @@ public class LetterImage {
     private Drawable img;
     private boolean updateable=false;
     private Point center;
-    private Point oldCenter;
     private Character letter;
 
     public LetterImage(Point center, Drawable img, Character letter) {
@@ -34,17 +33,6 @@ public class LetterImage {
         this.letter=letter;
     }
 
-    public boolean collision (LetterImage letter){
-        if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
-                || rectangle.contains(letter.getRectangle().right, letter.getRectangle().top)
-                || rectangle.contains(letter.getRectangle().left, letter.getRectangle().bottom)
-                || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom)){
-            return true;
-        }
-        return false;
-    }
-
-
     public Character getLetter(){
         return letter;
     }
@@ -53,20 +41,7 @@ public class LetterImage {
     }
 
     public void setCenter(Point center) {
-        oldCenter=this.center;
         this.center = center;
-    }
-    public void setOldCenter() {
-        center = oldCenter;
-    }
-
-    public void setOldCenter(Point center){ oldCenter=center;}
-    public boolean isUpdateable() {
-        return updateable;
-    }
-
-    public void setUpdateable(boolean updateable) {
-        this.updateable = updateable;
     }
 
     public Rect getRectangle(){
@@ -76,7 +51,6 @@ public class LetterImage {
     public boolean insideRectangle(int x, int y){
         if(rectangle.contains(x,y))
             return true;
-        updateable=false;
         return false;
     }
 
@@ -92,7 +66,6 @@ public class LetterImage {
         img.setBounds(rectangle);
     }
 
-    //potrebno u ovoj inacici?
     public void update(Point point) {
         rectangle.set(point.x-rectangle.width()/2, point.y-rectangle.height()/2,
                 point.x+rectangle.width()/2, point.y+rectangle.height()/2 );

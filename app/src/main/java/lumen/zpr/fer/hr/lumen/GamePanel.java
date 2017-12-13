@@ -50,7 +50,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private String currentWord;
     private GameSound currentSound;
     private Thread spelling;
+
     private CharactersFields charactersFields;
+    private List<CharacterField> fields;
 
     private CoinComponent coinComponent;
     private Label winTextLabel;
@@ -69,8 +71,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<LetterImage> hintImageList;
     private long hintStart;
 
-    //proba
-    private List<CharacterField> fields;
+
+    ;
 
 
     public GamePanel(Context context, int initCoins) {
@@ -88,6 +90,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenWidth=p.x;
         screenHeight=p.y;
 
+        //TODO: promjeniti za finalnu verziju
         supply = new WordSupply(this.getContext(), "hrvatski", "priroda");
 
         try {
@@ -148,11 +151,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
         });
         spelling.start();
+
         //TODO: uskladiti igru i slovkanje rijeci
 
         charactersFields = new CharactersFields(currentWord,getContext());
-
-        //proba
         fields=charactersFields.getFields();
 
         supply.goToNext();
@@ -206,7 +208,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
-
     }
 
     @Override
@@ -227,7 +228,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() {
+    public void update() throws InterruptedException {
         if (phase == GamePhase.PRESENTING_WORD) {
             updateWordPresentation();
             return;
@@ -236,20 +237,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             if(hintActive) updateHint();
         }
 
-
-       for(CharacterField field: fields) {
+        Collections.shuffle(fields);
+        for(CharacterField field: fields) {
            field.setCharacterInsideField(null);
-
            for (LetterImage letter : listOfLetters) {
                if(field.collision(letter)){
+                   Point newCenter =field.getCenterPoint();
                    field.setCharacterInsideField(letter.getLetter());
-                   letter.setCenter(field.getCenterPoint());
+                   if(!letter.getCenter().equals(newCenter)) {
+                       letter.setCenter(newCenter);
+                   }
                }
 
                letter.update();
 
            }
        }
+
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
@@ -284,8 +288,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void checkIfInputComplete() {
-        List<CharacterField> fields = charactersFields.getFields();
-
         boolean correct = true;
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
@@ -293,7 +295,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 return; //nije complete
             }
 
-            if(!f.getCharacterInsideField().equals(Character.toUpperCase(currentWord.charAt(i)))) {
+            if(!f.getCharacterInsideField().equals(f.getCorrectCharacter())) {
                 correct = false;
             }
         }
@@ -369,7 +371,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(final MotionEvent event) {
 
         if(phase == GamePhase.ENDING) {
-            //TODO dodat postupak kojim se igrač prebacuje na novu rijec
             return true;
         }
         boolean handled = false;
@@ -472,6 +473,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return super.onTouchEvent(event) || handled;
     }
 
+    public void clearLetterPointer(){
+        mLetterPointer.clear();
+    }
+
     private void executeCoinHint() {
         if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
             coinComponent.addCoins(-1);
@@ -498,7 +503,5 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    public void clearLetterPointer(){
-        mLetterPointer.clear();
-    }
+
 }
