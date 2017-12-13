@@ -1,18 +1,15 @@
 package lumen.zpr.fer.hr.lumen.coingame.objects;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-
-import lumen.zpr.fer.hr.lumen.coingame.ConstantsUtil;
 
 /**
  * Komponenta koja reprezentira kovanicu. Sadrzi sliku, poziciju i vrijednost.
  * Created by Zlatko on 12-Dec-17.
  */
 
-public class CoinComponent implements CoinGameObject {
+public class CoinGameComponent implements CoinGameObject {
     /**
      * Slika komponente
      */
@@ -22,9 +19,17 @@ public class CoinComponent implements CoinGameObject {
      */
     private Point position;
     /**
+     * Inicijalna pozicija komponente
+     */
+    private final Point initPosition;
+    /**
      * Vrijednost komponente
      */
     private int value;
+    /**
+     * Duljina/sirina komponente
+     */
+    private int size;
 
     /**
      * Konstruktor.
@@ -32,18 +37,19 @@ public class CoinComponent implements CoinGameObject {
      * @param img      slika komponente
      * @param position pocetna pozicija
      * @param value    vrijednost koju predstavlja komponeneta
+     * @param size     duljina/sirina komponente
      */
-    public CoinComponent(Drawable img, Point position, int value) {
+    public CoinGameComponent(Drawable img, Point position, int value, int size) {
         this.img = img;
+        this.initPosition = position;
         this.position = position;
         this.value = value;
-        img.setBounds(position.x - ConstantsUtil.COIN_SIZE / 2, position.y - ConstantsUtil.COIN_SIZE / 2, position.x + ConstantsUtil.COIN_SIZE / 2, position.y + ConstantsUtil.COIN_SIZE / 2);
-
+        this.size = size;
+        img.setBounds(position.x - size / 2, position.y - size / 2, position.x + size / 2, position.y + size / 2);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        Paint paint = new Paint();
         img.draw(canvas);
     }
 
@@ -58,7 +64,7 @@ public class CoinComponent implements CoinGameObject {
      */
     public void update(Point point) {
         position = new Point(point);
-        img.setBounds(point.x - ConstantsUtil.COIN_SIZE / 2, point.y - ConstantsUtil.COIN_SIZE / 2, point.x + ConstantsUtil.COIN_SIZE / 2, point.y + ConstantsUtil.COIN_SIZE / 2);
+        img.setBounds(position.x - size / 2, position.y - size / 2, position.x + size / 2, position.y + size / 2);
     }
 
     @Override
@@ -91,5 +97,12 @@ public class CoinComponent implements CoinGameObject {
      */
     public Point getPosition() {
         return position;
+    }
+
+    /**
+     * Postavlja komponentu na poziciju na kojoj je bila pri stvaranju.
+     */
+    public void resetPosition() {
+        update(initPosition);
     }
 }

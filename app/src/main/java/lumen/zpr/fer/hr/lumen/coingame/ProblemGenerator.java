@@ -16,9 +16,13 @@ import java.util.Random;
 
 public class ProblemGenerator {
     /**
+     * najmanji moguci broj
+     */
+    private static final int MIN_NUMBER = 2;
+    /**
      * najveci mogući broj, zasad 10
      */
-    private static final int MAX_NUMBER = 10;
+    private static final int MAX_NUMBER = 15;
     /**
      * velicina liste posljedne generiranih brojeva,
      * zasad 5
@@ -42,6 +46,8 @@ public class ProblemGenerator {
      */
     private Queue<Integer> recentNumbers = new ArrayDeque<>(QUEUE_SIZE);
 
+    private List<Integer> coins;
+
     /**
      * Metoda generira broj novcica koje ce biti potrebno sloziti.
      *
@@ -54,15 +60,27 @@ public class ProblemGenerator {
         }
         //generira se broj koji nije bio "u zadnje vrijeme"
         do {
-            number = numberGenerator.nextInt(MAX_NUMBER + 1);
+            number = numberGenerator.nextInt(MAX_NUMBER - MIN_NUMBER + 1) + MIN_NUMBER;
         } while (recentNumbers.contains(number));
         //dodaj broj u red generiranih
         recentNumbers.add(number);
         currentNumber = number;
+        if (coins != null) {
+            generateSolution();
+        }
         return number;
     }
 
-    public void generateSolution(List<Integer> coins) {
+    public void setCoins(List<Integer> coins) {
+        this.coins = coins;
+        generateSolution();
+    }
+
+    public List<Integer> getCoins() {
+        return coins;
+    }
+
+    private void generateSolution() {
         Collections.sort(coins, Collections.<Integer>reverseOrder());
         List<Integer> solution = new LinkedList<>();
         int sum = 0;
