@@ -2,6 +2,8 @@ package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -10,7 +12,9 @@ import android.graphics.Point;
 
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.nfc.NfcEvent;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +24,7 @@ import android.util.SparseArray;
 
 import android.view.Display;
 
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -165,6 +170,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
          listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
+        int width,height;
+        width=(int)(GameLayoutConstants.DEFAULT_RECT_WIDTH*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
+        height=(int)(GameLayoutConstants.DEFAULT_RECT_HEIGHT*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
         //currentWord=currentWord.toLowerCase();
         //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
         //TODO: bolji nacin za generiranje slova (skaliranje!)
@@ -180,13 +188,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i))); //TODO: prilagoditi za hrvatska slova
+
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height)); //TODO: prilagoditi za hrvatska slova
                 i++;
             }
             else{
                 int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
-                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i)));
+                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
             }
         }
         List<Rect> rects=new ArrayList<>();

@@ -29,5 +29,8 @@ public class GameLayoutConstants {
     static int RECT_SPACE_FACTOR=50;
     static int DEFAULT_RECT_WIDTH=100;
     static int DEFAULT_RECT_HEIGHT=100;
-  
+
+    static double STARTING_HINT_HEIGHT_SCALE_FACTOR=0.25;
+    static double LETTER_IMAGE_SCALE_FACTOR=1.2;
+
 }
