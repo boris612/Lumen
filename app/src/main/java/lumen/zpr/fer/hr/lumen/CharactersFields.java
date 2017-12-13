@@ -26,7 +26,7 @@ public class CharactersFields {
     private static double Y_COORDINATE_FACTOR = GameLayoutConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR;
     private static double GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR;
 
-    public CharactersFields(String word, Context context) {
+    public CharactersFields(LangDependentString word, Context context) {
         fields = new ArrayList<>();
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
@@ -45,7 +45,7 @@ public class CharactersFields {
             r.top = (int)(dm.heightPixels*Y_COORDINATE_FACTOR);
             r.right = r.left + fieldWidthHeight;
             r.bottom = r.top + fieldWidthHeight;
-            fields.add(new CharacterField(r,COLOR, Character.toUpperCase(word.charAt(i))));
+            fields.add(new CharacterField(r,COLOR, word.charAt(i)));
         }
     }
 

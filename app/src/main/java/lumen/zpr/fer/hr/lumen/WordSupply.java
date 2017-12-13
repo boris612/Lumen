@@ -2,6 +2,7 @@ package lumen.zpr.fer.hr.lumen;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,8 @@ public class WordSupply {
         current = rand.nextInt(wordIds.size());
    }
 
-    public String getWord() {
-        return helper.getWord(wordIds.get(current));
+    public LangDependentString getWord() {
+        return new CroatianString(helper.getWord(wordIds.get(current)));
     }
 
     public String getImagePath() {
@@ -46,14 +47,14 @@ public class WordSupply {
     }
 
     public List<String> getLettersRecordingPaths() {
-        String [] letters = getWord().split(""); //TODO hrvatska slova
+        LangDependentString letters = getWord().toUpperCase();
 
         List<String> paths = new ArrayList<>();
 
-        for (int i=1;i<letters.length;i++){
-            paths.add(helper.getLetterSoundPath(letters[i].toUpperCase(),language));
+        for (int i=0;i<letters.length();i++){
+            paths.add(helper.getLetterSoundPath(letters.charAt(i).toUpperCase(),language));
         }
-
+        Log.d("PATHS",paths.toString());
         return paths;
     }
 

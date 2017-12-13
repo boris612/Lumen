@@ -4,7 +4,7 @@ C
 Č
 Ć
 D
-Dž
+DŽ
 Đ
 E
 F
@@ -14,10 +14,10 @@ I
 J
 K
 L
-Lj
+LJ
 M
 N
-Nj
+NJ
 O
 P
 R

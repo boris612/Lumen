@@ -4,7 +4,7 @@ C hrvatski 3
 Č hrvatski 4
 Ć hrvatski 5
 D hrvatski 6
-Dž hrvatski 7
+DŽ hrvatski 7
 Đ hrvatski 8
 E hrvatski 9
 F hrvatski 10
@@ -14,10 +14,10 @@ I hrvatski 13
 J hrvatski 14
 K hrvatski 15
 L hrvatski 16
-Lj hrvatski 17
+LJ hrvatski 17
 M hrvatski 18
 N hrvatski 19
-Nj hrvatski 20
+NJ hrvatski 20
 O hrvatski 21
 P hrvatski 22
 R hrvatski 23

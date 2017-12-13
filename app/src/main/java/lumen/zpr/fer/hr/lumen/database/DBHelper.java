@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -200,6 +201,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("STVARANJE BAZE","sdgs");
         //stvori tablicu "jezici"
 
         db.execSQL("create table if not exists " + LANGUAGES_TABLE_NAME + "(" +
@@ -436,6 +438,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void addLetterSoundEntity(SQLiteDatabase db, String letterSound) {
         String[] attributes = letterSound.split(" ");
+        Log.d("LSE",letterSound);
         ContentValues values = new ContentValues();
         values.put(LETTER_SOUND_LETTER, attributes[0]);
         values.put(LETTER_SOUND_LANGUAGE, attributes[1]);
@@ -769,6 +772,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] {letter, language}, null, null, null, null);
 
         cursor.moveToFirst();
+        Log.d("LETTERSOUND",letter);
         soundId = Integer.parseInt(cursor.getString(0));
 
         return getSoundPath(soundId);

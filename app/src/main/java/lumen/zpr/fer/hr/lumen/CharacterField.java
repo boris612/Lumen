@@ -7,22 +7,30 @@ import android.graphics.Rect;
  */
 
 public class CharacterField extends DropArea {
-    private Character characterInsideField=null;
-    private Character correctCharacter;
+    private String characterInsideField=null;
+    private String correctCharacter;
 
-    public CharacterField(Rect rectangle, int color, Character correctCharacter) {
+    public CharacterField(Rect rectangle, int color, String correctCharacter) {
         super(rectangle, color);
-        this.correctCharacter=correctCharacter;
+        this.correctCharacter=correctCharacter.toLowerCase();
     }
 
-    public void setCharacterInsideField(Character characterInsideField) {
+    public CharacterField(Rect rectangle, int color, Character correctCharacter) {
+        this(rectangle,color,Character.toString(correctCharacter));
+    }
+
+    public void setCharacterInsideField(String characterInsideField) {
         this.characterInsideField = characterInsideField;
     }
 
-    public Character getCharacterInsideField() {
+    public void setCharacterInsideField(Character characterInsideField) {
+       setCharacterInsideField(Character.toString(characterInsideField));
+    }
+
+    public String getCharacterInsideField() {
         return characterInsideField;
     }
-    public Character getCorrectCharacter(){return  correctCharacter;}
+    public String getCorrectCharacter(){return  correctCharacter;}
 
     public boolean hasCharacterInsideField() {
         return getCharacterInsideField()!=null;
