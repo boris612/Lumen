@@ -20,6 +20,7 @@ import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 
 import android.view.Display;
@@ -52,7 +53,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private WordSupply supply;
 
     private GameImage currentImage;
-    private String currentWord;
+    private LangDependentString currentWord;
     private GameSound currentSound;
     private Thread spelling;
 
@@ -77,12 +78,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private long hintStart;
 
 
-    ;
-
 
     public GamePanel(Context context, int initCoins) {
         super(context);
-
         getHolder().addCallback(this);
 
         thread = new MainThread(getHolder(), this);
@@ -100,7 +98,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         try {
             initNewWord();
-            currentWord=currentWord.toLowerCase();
+            currentWord = currentWord.toLowerCase();
         } catch (IOException ex) {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
@@ -148,11 +146,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
-        listOfLetters=createCroatianLetters();
+        listOfLetters=createLetters();
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
                 currentSound.playSpelling();
+            }
+        });
+        currentSound.registerListener(new GameSoundListener() {
+            @Override
+            public void letterDone() {
+                startingHint.showNextLetter();
+                Log.d("LETT","show next letter");
+            }
+
+            @Override
+            public void wholeSpellingDone() {
+                phase=GamePhase.TYPING_WORD;
             }
         });
         spelling.start();
@@ -166,7 +176,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         supply.goToNext();
     }
 
-    private List<LetterImage> createCroatianLetters() {
+    private List<LetterImage> createLetters() {
          listOfLetters = new ArrayList<>();
         Drawable img;
         LetterImage letter;
@@ -185,18 +195,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
             Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
-            if(i!=len-1 && Util.isCroatianSequence(currentWord.substring(i,i+2))){
-                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+2)),"drawable",this.getContext().getPackageName());
-                img=getResources().getDrawable(id);
 
-                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height)); //TODO: prilagoditi za hrvatska slova
-                i++;
-            }
-            else{
-                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.substring(i,i+1)),"drawable", this.getContext().getPackageName());
+                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
                 img=getResources().getDrawable(id);
                 list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
-            }
+
         }
         List<Rect> rects=new ArrayList<>();
         List<Point> points=new ArrayList<>();
@@ -239,17 +242,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() throws InterruptedException {
-        if (phase == GamePhase.PRESENTING_WORD) {
-            updateWordPresentation();
-            return;
-        }
         if(phase==GamePhase.TYPING_WORD){
             if(hintActive) updateHint();
         }
 
         Collections.shuffle(fields);
         for(CharacterField field: fields) {
-           field.setCharacterInsideField(null);
+           field.setCharacterInsideField((String)null);
            for (LetterImage letter : listOfLetters) {
                if(field.collision(letter)){
                    Point newCenter =field.getCenterPoint();
@@ -305,11 +304,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 return; //nije complete
             }
 
+            Log.d("CHARS",f.getCharacterInsideField()+" : "+f.getCorrectCharacter());
             if(!f.getCharacterInsideField().equals(f.getCorrectCharacter())) {
                 correct = false;
             }
         }
 
+        Log.d("CORRECT",Boolean.toString(correct));
         if(correct) {
             phase = GamePhase.ENDING;
 
@@ -318,12 +319,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
 
-        }
-    }
-
-    private void updateWordPresentation() {
-        if(!spelling.isAlive()){
-            phase=GamePhase.TYPING_WORD;
         }
     }
 
@@ -343,7 +338,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
             canvas.drawBitmap(startingHint.getHintBitmap(),null,startingHint.getRect(),null);
-
             return;
         }
         //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu

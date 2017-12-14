@@ -20,9 +20,9 @@ public class LetterImage {
     private Drawable img;
     private boolean updateable=false;
     private Point center;
-    private Character letter;
+    private String letter;
 
-    public LetterImage(Point center, Drawable img, Character letter,int width,int height) {
+    public LetterImage(Point center, Drawable img, String letter,int width,int height) {
         this.center=center;
         this.img=img;
         this.rectangle=new Rect (center.x-GameLayoutConstants.DEFAULT_RECT_WIDTH/2,
@@ -33,7 +33,11 @@ public class LetterImage {
         this.letter=letter;
     }
 
-    public Character getLetter(){
+    public LetterImage(Point center, Drawable img, Character letter,int width,int height) {
+        this(center,img,Character.toString(letter),width,height);
+    }
+
+    public String getLetter(){
         return letter;
     }
     public Point getCenter() {

@@ -19,11 +19,29 @@ import java.util.List;
 
 public class GameSound {
     private MediaPlayer wordRecording;
-    private List<MediaPlayer> lettersRedording;
+    private List<MediaPlayer> lettersRecording;
+    private List<GameSoundListener> listeners;
 
     public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath){
         wordRecording = loadWordRecording(context, wordRecordingPath);
-        lettersRedording = loadLettersRecording(context, lettersRecordingPath);
+        lettersRecording = loadLettersRecording(context, lettersRecordingPath);
+        listeners = new ArrayList<>();
+    }
+
+    public void registerListener(GameSoundListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListenersForLetterDone() {
+        for(GameSoundListener l: listeners) {
+            l.letterDone();
+        }
+    }
+
+    private void notifyListenersForWholeSpellingDone() {
+        for(GameSoundListener l: listeners) {
+            l.wholeSpellingDone();
+        }
     }
 
     /**
@@ -82,16 +100,13 @@ public class GameSound {
      * @param letterPauseLength Duljina pauze između izgovora pojedinog slova u milisekundama
      */
     public void playSpelling(int letterPauseLength){
-        wordRecording.start();
-        while (wordRecording.isPlaying()) ;
-
         try {
             Thread.sleep(letterPauseLength);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        for (MediaPlayer mp : this.lettersRedording) {
+        for (MediaPlayer mp : this.lettersRecording) {
             mp.start();
             while (mp.isPlaying()) ;
             try {
@@ -99,8 +114,13 @@ public class GameSound {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            notifyListenersForLetterDone();
 
         }
+
+        wordRecording.start();
+        while (wordRecording.isPlaying()) ;
+        notifyListenersForWholeSpellingDone();
     }
 
     /**

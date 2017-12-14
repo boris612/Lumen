@@ -22,13 +22,14 @@ import java.io.IOException;
 
 public class StartingHint {
     /* word to be created */
-    private String word;
+    private LangDependentString word;
     /*bitmap of final hint */
     private Bitmap hint;
     /* view from which this object is called */
     private View view;
     /* rectangle which defines location and size of drawing */
     private Rect rect;
+    private int numOfLetShown;
 
     private int screenWidth;
     private int screenHeight;
@@ -41,11 +42,21 @@ public class StartingHint {
      * @param width of screen
      * @param height of screen
      */
-    public StartingHint(String word,View view,int width,int height) {
+    public StartingHint(LangDependentString word,View view,int width,int height) {
         this.word = word.toLowerCase();
         this.view=view;
         this.screenWidth=width;
         this.screenHeight=height;
+        numOfLetShown=1;
+        buildPicture();
+        scaleHint();
+    }
+
+    public void showNextLetter() {
+        numOfLetShown++;
+        if(numOfLetShown > word.length()) {
+            numOfLetShown = word.length();
+        }
         buildPicture();
         scaleHint();
     }
@@ -74,52 +85,32 @@ public class StartingHint {
         Paint paint=new Paint();
         int sumw=0;
         for(int i=0;i<parts.length;i++){
-            cnv.drawBitmap(parts[i],sumw,0,paint);
+            if(i < numOfLetShown) {
+                cnv.drawBitmap(parts[i], sumw, 0, paint);
+            }
             sumw+=parts[i].getWidth();
             sumw+=100;
         }
     }
 
-
     private Bitmap[] getParts() {
-        int size = getCroatianSize(word);
+        int size = word.length();
         Bitmap[] parts = new Bitmap[size];
-        int wordLen=word.length();
         Context context=view.getContext();
-        createCroatianBitmap(parts,size,wordLen,context);
-    return parts;
+        createBitmap(parts,context);
+        return parts;
     }
 
-    private void createCroatianBitmap(Bitmap[] parts,int size,int wordLen,Context context) {
-        for (int i = 0,j=0; j < size; j++,i++) {
-            if(i!=(wordLen-1) && isSpecialSequence(word.substring(i,i+2))){
-                int id=context.getResources().getIdentifier(LetterMap.letters.get(word.substring(i,i+2)),"drawable",context.getPackageName());
-                parts[j] = BitmapFactory.decodeResource(context.getResources(),id);
-                i++;
-            }
-            else{
-                int id=context.getResources().getIdentifier(LetterMap.letters.get(word.substring(i,i+1)),"drawable",context.getPackageName());
-                parts[j]=BitmapFactory.decodeResource(context.getResources(),id);
-            }
+    private void createBitmap(Bitmap[] parts,Context context) {
+        int wordLen = word.length();
+        for (int i = 0; i < wordLen; i++) {
+            String letter = word.charAt(i);
+            int id=context.getResources().getIdentifier(LetterMap.letters.get(word.charAt(i)),"drawable",context.getPackageName());
+            parts[i] = BitmapFactory.decodeResource(context.getResources(),id);
         }
     }
 
-    private int getCroatianSize(String word) {
-        int size=word.length();
-        for(int i=0,j=size-1;i<j;i++){
-            if((word.charAt(i)=='l' && word.charAt(i+1)=='j') || (word.charAt(i)=='n' && word.charAt(i+1)=='j') || (word.charAt(i)=='d' && word.charAt(i+1)=='ž')){
-                size--;
-            }
-        }
-        return size;
-    }
 
-    private boolean isSpecialSequence(String sequence) {
-        if(sequence.toLowerCase().contains("lj") ||sequence.toLowerCase().contains("dž") ||sequence.toLowerCase().contains("nj")){
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Hint getter
