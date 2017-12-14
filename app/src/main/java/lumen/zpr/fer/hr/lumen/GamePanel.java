@@ -141,8 +141,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
-        startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
-        startingHint.setRect(currentImage.getRect());
+        startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();

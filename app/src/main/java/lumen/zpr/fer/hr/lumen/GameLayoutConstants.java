@@ -17,7 +17,6 @@ public class GameLayoutConstants {
     static double CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = 0.1;
 
     static double COIN_IMAGE_WIDTH_FACTOR = 0.1;
-
     static double COIN_IMAGE_X_COORDINATE_FACTOR = 0;
     static double COIN_IMAGE_Y_COORDINATE_FACTOR = 0;
     static int COIN_NUMBER_FONT_SIZE = 150;
@@ -33,5 +32,9 @@ public class GameLayoutConstants {
 
     static double STARTING_HINT_HEIGHT_SCALE_FACTOR=0.25;
     static double LETTER_IMAGE_SCALE_FACTOR=0.9;
+
+    static int SPACE_FROM_PIC_TO_HINT=20;
+    static int SPACE_FROM_BORDER_TO_HINT=50;
+    static int SPACE_FROM_LETTER_TO_LETTER=50;
 
 }
