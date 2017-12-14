@@ -24,25 +24,28 @@ public class DropArea {
         return new Point(rectangle.centerX(),rectangle.centerY());
     }
 
-    //TODO metode u interface ???
     public void draw(Canvas canvas) {
         Paint paint=new Paint();
         paint.setColor(color);
         canvas.drawRect(rectangle, paint);
     }
 
-    //TODO bolja detekcija
     public boolean collision (LetterImage letter){
-        if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
+       /* if(rectangle.contains(letter.getRectangle().left, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().top)
                 || rectangle.contains(letter.getRectangle().left, letter.getRectangle().bottom)
                 || rectangle.contains(letter.getRectangle().right, letter.getRectangle().bottom)){
             return true;
-        }
+        }*/
+       if(letter.getRectangle().contains(rectangle.centerX(),rectangle.centerY())) return true;
         return false;
     }
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public int getColor(){
+        return this.color;
     }
 }

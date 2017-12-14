@@ -51,11 +51,8 @@ public class StartingHint {
     }
 
     private void scaleHint() {
-        int scaledHeight=screenHeight/8;
-        int scaledWidth= (int) (screenWidth/1);
-        if(scaledWidth>=screenWidth){
-            scaledWidth=screenWidth-screenWidth/10;
-        }
+        int scaledHeight=(int)(screenHeight*GameLayoutConstants.STARTING_HINT_HEIGHT_SCALE_FACTOR);
+        int scaledWidth= (int) (screenWidth);
         hint=Bitmap.createScaledBitmap(hint,scaledWidth,scaledHeight,false);
 
     }

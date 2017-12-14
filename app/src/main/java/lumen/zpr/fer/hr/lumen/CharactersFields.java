@@ -45,7 +45,7 @@ public class CharactersFields {
             r.top = (int)(dm.heightPixels*Y_COORDINATE_FACTOR);
             r.right = r.left + fieldWidthHeight;
             r.bottom = r.top + fieldWidthHeight;
-            fields.add(new CharacterField(r,COLOR));
+            fields.add(new CharacterField(r,COLOR, Character.toUpperCase(word.charAt(i))));
         }
     }
 
@@ -68,14 +68,6 @@ public class CharactersFields {
         }
     }
 
-    public CharacterField getFieldThatCollidesWith(LetterImage letterImage) {
-        for(CharacterField field: fields) {
-            if(field.collision(letterImage)) {
-                return field;
-            }
-        }
-        return null;
-    }
 
     public List<CharacterField> getFields() {
         return fields;

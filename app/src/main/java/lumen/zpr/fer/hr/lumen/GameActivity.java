@@ -1,12 +1,17 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import lumen.zpr.fer.hr.lumen.database.DBHelper;
 
 public class GameActivity extends Activity {
+    DBHelper helper = new DBHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
