@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +43,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private ProblemGenerator generator = new ProblemGenerator();
 
-    private CoinComponent targetView;
     /**
      * Komponenta koja prikazuje trenutni broj bodova
      */
@@ -53,10 +51,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Kontekst
      */
     private Context context;
-    /**
-     * Sluzi za generiranje toasta, privremeno rjesenje
-     */
-    private boolean toastShown = false;
 
     /**
      * Konstruktor.
@@ -173,16 +167,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         scoreView.draw(canvas);
 
         container.draw(canvas);
-        if (!toastShown) {
-            switch (container.getState()) {
-                case NOT_OPTIMAL_RESULT:
-                    Toast.makeText(context, "Točno, ali može bolje", Toast.LENGTH_SHORT).show();
-                case OPTIMAL_RESULT:
-                    Toast.makeText(context, "Bravo, našao si najbolje rješenje",
-                            Toast.LENGTH_SHORT).show();
-            }
-            toastShown = true;
-        }
 
         for (CoinGameComponent coin : coins) {
             coin.draw(canvas);
