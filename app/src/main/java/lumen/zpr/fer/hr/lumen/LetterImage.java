@@ -27,8 +27,8 @@ public class LetterImage {
         this.img=img;
         this.rectangle=new Rect (center.x-GameLayoutConstants.DEFAULT_RECT_WIDTH/2,
                 center.y-GameLayoutConstants.DEFAULT_RECT_HEIGHT/2,
-                center.x+width,
-                center.y+height );
+                center.x-GameLayoutConstants.DEFAULT_RECT_WIDTH/2+width,
+                center.y-GameLayoutConstants.DEFAULT_RECT_HEIGHT/2+height );
         img.setBounds(rectangle);
         this.letter=letter;
     }

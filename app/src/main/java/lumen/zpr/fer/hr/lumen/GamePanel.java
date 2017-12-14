@@ -146,6 +146,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
+        charactersFields = new CharactersFields(currentWord,getContext());
         listOfLetters=createLetters();
         spelling = new Thread(new Runnable() {
             @Override
@@ -169,7 +170,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         //TODO: uskladiti igru i slovkanje rijeci
 
-        charactersFields = new CharactersFields(currentWord,getContext());
         fields=charactersFields.getFields();
         hintFields=new ArrayList<>(fields);
 
@@ -181,8 +181,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         Drawable img;
         LetterImage letter;
         int width,height;
-        width=(int)(GameLayoutConstants.DEFAULT_RECT_WIDTH*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
-        height=(int)(GameLayoutConstants.DEFAULT_RECT_HEIGHT*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
+        width=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
+        height=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
         //currentWord=currentWord.toLowerCase();
         //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
         //TODO: bolji nacin za generiranje slova (skaliranje!)
@@ -195,13 +195,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
             Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
-
-                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
-                img=getResources().getDrawable(id);
-                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
-
+            int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
+            img=getResources().getDrawable(id);
+            list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
         }
-        List<Rect> rects=new ArrayList<>();
         List<Point> points=new ArrayList<>();
         for(int i=0,size=list.size();i<size;i++){
             points.add(list.get(i).getCenter());

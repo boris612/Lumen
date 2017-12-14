@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,14 @@ public class CharactersFields {
     private static double WHOLE_ARRAY_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELDS_WIDTH_FACTOR;
     private static double Y_COORDINATE_FACTOR = GameLayoutConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR;
     private static double GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = GameLayoutConstants.CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR;
+    private int fieldWidthHeight;
 
     public CharactersFields(LangDependentString word, Context context) {
         fields = new ArrayList<>();
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         //int fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_FACTOR);
-        int fieldWidthHeight = (int)(dm.widthPixels/(word.length()*(1+GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * WHOLE_ARRAY_WIDTH_FACTOR);
+        fieldWidthHeight = (int)(dm.widthPixels/(word.length()*(1+GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * WHOLE_ARRAY_WIDTH_FACTOR);
         if (fieldWidthHeight > dm.widthPixels*FIELD_WIDTH_MAX_FACTOR) {
             fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_MAX_FACTOR);
         }
@@ -77,5 +79,9 @@ public class CharactersFields {
         for(CharacterField f: fields) {
             f.setColor(color);
         }
+    }
+
+    public int getFieldDimension() {
+        return fieldWidthHeight;
     }
 }
