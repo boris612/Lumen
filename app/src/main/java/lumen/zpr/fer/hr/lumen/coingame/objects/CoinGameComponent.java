@@ -11,6 +11,10 @@ import android.graphics.drawable.Drawable;
 
 public class CoinGameComponent implements CoinGameObject {
     /**
+     * Inicijalna pozicija komponente
+     */
+    private final Point initPosition;
+    /**
      * Slika komponente
      */
     private Drawable img;
@@ -18,10 +22,6 @@ public class CoinGameComponent implements CoinGameObject {
      * Trenutna pozicija komponente
      */
     private Point position;
-    /**
-     * Inicijalna pozicija komponente
-     */
-    private final Point initPosition;
     /**
      * Vrijednost komponente
      */
@@ -64,7 +64,8 @@ public class CoinGameComponent implements CoinGameObject {
      */
     public void update(Point point) {
         position = new Point(point);
-        img.setBounds(position.x - size / 2, position.y - size / 2, position.x + size / 2, position.y + size / 2);
+        img.setBounds(position.x - size / 2, position.y - size / 2,
+                position.x + size / 2, position.y + size / 2);
     }
 
     @Override

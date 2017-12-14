@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Generira trazene iznose i provjerava tocna rjesenja
      */
     private ProblemGenerator generator = new ProblemGenerator();
+
+    private CoinComponent targetView;
     /**
      * Komponenta koja prikazuje trenutni broj bodova
      */
@@ -50,6 +53,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Kontekst
      */
     private Context context;
+    /**
+     * Sluzi za generiranje toasta, privremeno rjesenje
+     */
+    private boolean toastShown = false;
 
     /**
      * Konstruktor.
@@ -64,8 +71,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         generator.generirajBroj();
         //Todo maknuti u metodu
-        generator.setCoins(Arrays.asList(new Integer[]{1, 1, 1, 2, 2, 2, 5, 5, 10}));
-        generateCoins(Arrays.asList(new Integer[]{1, 1, 1, 2, 2, 2, 5, 5, 10}));
+        generator.setCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
+        generateCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
 
         scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), 0, context);
 
@@ -74,7 +81,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
         int heightPixels = context.getResources().getDisplayMetrics().heightPixels;
 
-        container = new ContainerComponent(this, new Rect((int) ((1 - ConstantsUtil.CONTAINER_WIDTH) * widthPixels), (int) (ConstantsUtil.PADDING * heightPixels), (int) ((1 - ConstantsUtil.PADDING) * widthPixels), (int) (ConstantsUtil.CONTAINER_HEIGHT * heightPixels)), new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels), (int) (ConstantsUtil.CONTAINER_LABEL_Y * heightPixels)), generator, scoreView);
+        container = new ContainerComponent(this,
+                new Rect((int) ((1 - ConstantsUtil.CONTAINER_WIDTH) * widthPixels),
+                        (int) (ConstantsUtil.PADDING * heightPixels),
+                        (int) ((1 - ConstantsUtil.PADDING) * widthPixels),
+                        (int) (ConstantsUtil.CONTAINER_HEIGHT * heightPixels)),
+                new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels),
+                        (int) (ConstantsUtil.CONTAINER_LABEL_Y * heightPixels)),
+                new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels),
+                        (int) (.35 * heightPixels)),
+                generator, scoreView);
+    }
+
+    /**
+     * Metoda koja nasumicno mijesa vrijednosti u polju.
+     *
+     * @param ar polje
+     */
+    private static void shuffleArray(int[] ar) {
+        Random rnd = new Random();
+        for (int i = 0; i < ar.length; i++) {
+            int index = rnd.nextInt(ar.length);
+            int a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
     }
 
     @Override
@@ -142,6 +173,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         scoreView.draw(canvas);
 
         container.draw(canvas);
+        if (!toastShown) {
+            switch (container.getState()) {
+                case NOT_OPTIMAL_RESULT:
+                    Toast.makeText(context, "Točno, ali može bolje", Toast.LENGTH_SHORT).show();
+                case OPTIMAL_RESULT:
+                    Toast.makeText(context, "Bravo, našao si najbolje rješenje",
+                            Toast.LENGTH_SHORT).show();
+            }
+            toastShown = true;
+        }
 
         for (CoinGameComponent coin : coins) {
             coin.draw(canvas);
@@ -179,30 +220,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Drawable getDrawable(int value) {
         switch (value) {
             case 1:
-                return getResources().getDrawable(R.drawable.coin_value_1);
+                return getResources().getDrawable(R.drawable.euro_1);
             case 2:
-                return getResources().getDrawable(R.drawable.coin_value_2);
+                return getResources().getDrawable(R.drawable.euro_2);
             case 5:
-                return getResources().getDrawable(R.drawable.coin_value_5);
+                return getResources().getDrawable(R.drawable.euro_5);
             case 10:
-                return getResources().getDrawable(R.drawable.coin_value_10);
+                return getResources().getDrawable(R.drawable.euro_10);
             default:
                 throw new IllegalArgumentException("Coin with given value does not exist: " + value);
-        }
-    }
-
-    /**
-     * Metoda koja nasumicno mijesa vrijednosti u polju.
-     *
-     * @param ar polje
-     */
-    private static void shuffleArray(int[] ar) {
-        Random rnd = new Random();
-        for (int i = 0; i < ar.length; i++) {
-            int index = rnd.nextInt(ar.length);
-            int a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
         }
     }
 }

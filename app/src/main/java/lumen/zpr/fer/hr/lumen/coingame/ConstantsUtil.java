@@ -44,7 +44,7 @@ public class ConstantsUtil {
     /**
      * Velicina fonta labele kontejnera
      */
-    public static final int CONTAINER_LABEL_FONT = 150;
+    public static final int CONTAINER_LABEL_FONT = 75;
 
     /**
      * Vrijeme cekanja izmedu dva zadatka u milisekundama

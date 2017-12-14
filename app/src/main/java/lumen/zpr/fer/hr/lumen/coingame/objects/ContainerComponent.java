@@ -7,7 +7,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lumen.zpr.fer.hr.lumen.CoinComponent;
 import lumen.zpr.fer.hr.lumen.coingame.ConstantsUtil;
@@ -21,13 +23,22 @@ import lumen.zpr.fer.hr.lumen.coingame.ProblemGenerator;
 
 public class ContainerComponent implements CoinGameObject {
     /**
+     * Color specification of the {@linkplain ContainerState#INVALID_RESULT}
+     */
+    private static final int NEUTRAL_CONTAINER_COLOR = Color.rgb(203, 217, 255);
+    private static Map<ContainerState, Integer> stateColorMap = new HashMap<>();
+    /**
      * Graficka reprezentacija kontejnera
      */
     private Rect rect;
     /**
-     * Pozicija na kojoj se nalazi labela
+     * Pozicija na kojoj se nalazi labela ciljne vrijednosti
      */
-    private Point labelPoint;
+    private Point targetLabelPoint;
+    /**
+     * Pozicija na kojoj se nalazi labela trenunte vrijednosti
+     */
+    private Point currentValueLabelPoint;
     /**
      * Vrijednost kovanica koje su trenutno u kontejneru
      */
@@ -60,44 +71,62 @@ public class ContainerComponent implements CoinGameObject {
     /**
      * Konstruktor.
      *
-     * @param gamePanel      panel kojem pripada novonastali kontejner
-     * @param rect           pravokutnik, graficka reprezentacija kontejnera
-     * @param labelPoint     mjesto na kojem se iscrtava labela
-     * @param generator      generator zadatka
-     * @param scoreComponent komponenta koja prikazuje trenutni broj bodova
+     * @param gamePanel              panel kojem pripada novonastali kontejner
+     * @param rect                   pravokutnik, graficka reprezentacija kontejnera
+     * @param targetLabelPoint       mjesto na kojem se iscrtava labela ciljne vrijednosti
+     * @param currentValueLabelPoint mjesto na kojem se iscrtava labela
+     * @param generator              generator zadatka
+     * @param scoreComponent         komponenta koja prikazuje trenutni broj bodova
      */
-    public ContainerComponent(GamePanel gamePanel, Rect rect, Point labelPoint, ProblemGenerator generator, CoinComponent scoreComponent) {
+    public ContainerComponent(GamePanel gamePanel, Rect rect, Point targetLabelPoint,
+                              Point currentValueLabelPoint, ProblemGenerator generator,
+                              CoinComponent scoreComponent) {
         this.gamePanel = gamePanel;
         this.rect = rect;
-        this.labelPoint = labelPoint;
+        this.targetLabelPoint = targetLabelPoint;
+        this.currentValueLabelPoint = currentValueLabelPoint;
         this.generator = generator;
         this.scoreComponent = scoreComponent;
+        fillStateColorMap();
+    }
+
+    /**
+     * Popunjava mapu bojama za određeni {@linkplain ContainerState}.
+     */
+    private void fillStateColorMap() {
+        stateColorMap.put(ContainerState.OPTIMAL_RESULT, Color.GREEN);
+        stateColorMap.put(ContainerState.NOT_OPTIMAL_RESULT, Color.YELLOW);
+        stateColorMap.put(ContainerState.INVALID_RESULT, NEUTRAL_CONTAINER_COLOR);
+
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
 
-        switch (state) {
-            case INVALID_RESULT:
-                paint.setColor(Color.rgb(204, 217, 255));
-                break;
-            case NOT_OPTIMAL_RESULT:
-                paint.setColor(Color.YELLOW);
-                break;
-            case OPTIMAL_RESULT:
-                paint.setColor(Color.GREEN);
-        }
+        paint.setColor(stateColorMap.get(state));
         canvas.drawRect(rect, paint);
 
-        if (state == ContainerState.OPTIMAL_RESULT) {
-            paint.setColor(Color.GREEN);
-        } else {
-            paint.setColor(Color.BLACK);
-        }
         paint.setTextSize(ConstantsUtil.CONTAINER_LABEL_FONT);
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("Iznos: " + Integer.toString(generator.getCurrentNumber()), labelPoint.x, labelPoint.y, paint);
+
+        switch (state) {
+            case OPTIMAL_RESULT:
+                canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
+                break;
+            case NOT_OPTIMAL_RESULT:
+                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
+                        currentValueLabelPoint.y, paint);
+                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                        targetLabelPoint.x, targetLabelPoint.y, paint);
+                break;
+            default:
+                paint.setColor(Color.BLACK);
+                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                        targetLabelPoint.x, targetLabelPoint.y, paint);
+                canvas.drawText("Trenutni iznos: " + Integer.toString(value),
+                        currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
+        }
     }
 
     @Override
@@ -135,11 +164,8 @@ public class ContainerComponent implements CoinGameObject {
      */
     private void updateState() {
         if (value == generator.getCurrentNumber()) {
-            if (generator.isOptimal(getValues())) {
-                state = ContainerState.OPTIMAL_RESULT;
-            } else {
-                state = ContainerState.NOT_OPTIMAL_RESULT;
-            }
+            state = generator.isOptimal(getValues()) ?
+                    ContainerState.OPTIMAL_RESULT : ContainerState.NOT_OPTIMAL_RESULT;
         } else {
             state = ContainerState.INVALID_RESULT;
         }
@@ -201,21 +227,7 @@ public class ContainerComponent implements CoinGameObject {
         }
     }
 
-    /**
-     * Reprezentacija trenutnog stanja igre.
-     */
-    public enum ContainerState {
-        /**
-         * Rezultat nije valjan
-         */
-        INVALID_RESULT,
-        /**
-         * Rezultat je valjan, ali nije optimalan
-         */
-        NOT_OPTIMAL_RESULT,
-        /**
-         * Rezultat je valjan i optimalan
-         */
-        OPTIMAL_RESULT
+    public ContainerState getState() {
+        return state;
     }
 }

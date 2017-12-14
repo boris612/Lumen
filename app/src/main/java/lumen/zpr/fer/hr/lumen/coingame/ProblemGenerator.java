@@ -11,7 +11,9 @@ import java.util.Random;
 /**
  * ovaj razred generira problem novcica.
  * U sebi takodjer sadrzi i optimalno rjesenje.
- * Created by ddarian on 12.12.17..
+ *
+ * @author Darian Saric
+ * @author Zlatko Verk
  */
 
 public class ProblemGenerator {
@@ -46,6 +48,9 @@ public class ProblemGenerator {
      */
     private Queue<Integer> recentNumbers = new ArrayDeque<>(QUEUE_SIZE);
 
+    /**
+     * Lista dostupnih novcica
+     */
     private List<Integer> coins;
 
     /**
@@ -71,15 +76,22 @@ public class ProblemGenerator {
         return number;
     }
 
+    /**
+     * @return {@linkplain #coins}
+     */
+    public List<Integer> getCoins() {
+        return coins;
+    }
+
     public void setCoins(List<Integer> coins) {
         this.coins = coins;
         generateSolution();
     }
 
-    public List<Integer> getCoins() {
-        return coins;
-    }
-
+    /**
+     * Racuna optimalno rjesenje problema koji je zadan kroz {@linkplain #coins} i
+     * {@linkplain #currentNumber}.
+     */
     private void generateSolution() {
         Collections.sort(coins, Collections.<Integer>reverseOrder());
         List<Integer> solution = new LinkedList<>();
