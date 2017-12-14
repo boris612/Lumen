@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:context="lumen.zpr.fer.hr.lumen.menus.MainMenuActivity">
 
     <Button
@@ -19,7 +19,24 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="5"
-        android:text="Pokreni igru"
+        android:text="@string/pokreniPrvuIgru"
+        android:textColor="#FF1F1F"
+
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/pokreniDruguIgru"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#1C07A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:text="@string/pokreniDruguIgru"
         android:textColor="#FF1F1F"
 
         android:textSize="30sp" />
