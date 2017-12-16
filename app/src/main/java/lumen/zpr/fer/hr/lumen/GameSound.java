@@ -21,9 +21,9 @@ public class GameSound {
     private MediaPlayer wordRecording;
     private List<MediaPlayer> lettersRecording;
     private List<GameSoundListener> listeners;
-
+    private boolean playing;
     public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath){
-        wordRecording = loadWordRecording(context, wordRecordingPath);
+       //wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRecording = loadLettersRecording(context, lettersRecordingPath);
         listeners = new ArrayList<>();
     }
@@ -107,19 +107,21 @@ public class GameSound {
         }
 
         for (MediaPlayer mp : this.lettersRecording) {
+            if (!playing) return;
             mp.start();
+            notifyListenersForLetterDone();
             while (mp.isPlaying()) ;
             try {
                 Thread.sleep(letterPauseLength);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            notifyListenersForLetterDone();
+
 
         }
 
-        wordRecording.start();
-        while (wordRecording.isPlaying()) ;
+       /*ordRecording.start();
+        while (wordRecording.isPlaying()) ;*/
         notifyListenersForWholeSpellingDone();
     }
 
@@ -130,4 +132,7 @@ public class GameSound {
         this.playSpelling(1000);
     }
 
+    public void setPlaying (boolean play){
+        this.playing=play;
+    }
 }

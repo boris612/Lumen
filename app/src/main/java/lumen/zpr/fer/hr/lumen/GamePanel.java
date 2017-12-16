@@ -140,7 +140,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentWord = supply.getWord();
 
         currentImage = loadImage(supply.getImagePath());
-        currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
+        currentSound = loadSound(null,supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
         phase = GamePhase.PRESENTING_WORD;
@@ -165,8 +165,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 phase=GamePhase.TYPING_WORD;
             }
         });
-        spelling.start();
-
+       spelling.start();
+       currentSound.setPlaying(true);
         //TODO: uskladiti igru i slovkanje rijeci
 
         fields=charactersFields.getFields();
@@ -229,6 +229,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         while(true) {
             try {
                  thread.setRunning(false);
+                 currentSound.setPlaying(false);
                  thread.join();
                  break;
             } catch (Exception ex) {
