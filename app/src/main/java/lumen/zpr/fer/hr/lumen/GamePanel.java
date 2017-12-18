@@ -282,7 +282,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
            if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
                field.setColor(Color.GREEN);
            }
-           else{
+           else if(greenOnCorrect){
                field.setColor(Color.RED);
            }
        }
