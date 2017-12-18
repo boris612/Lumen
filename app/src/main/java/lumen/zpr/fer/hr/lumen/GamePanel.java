@@ -279,6 +279,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                letter.update();
 
            }
+           if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
+               field.setColor(Color.GREEN);
+           }
+           else{
+               field.setColor(Color.RED);
+           }
        }
 
 
@@ -319,15 +325,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
             if(!f.hasCharacterInsideField()) {
-                return; //nije complete
+
+                return;
             }
 
             Log.d("CHARS",f.getCharacterInsideField()+" : "+f.getCorrectCharacter());
             if(!f.getCharacterInsideField().equals(f.getCorrectCharacter())) {
                 correct = false;
-            }
-            else if(greenOnCorrect){
-                f.setColor(Color.GREEN);
             }
         }
 
