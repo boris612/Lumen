@@ -41,4 +41,13 @@
 
         android:textSize="30sp" />
 
+    <Button
+        android:id="@+id/Postavke"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttonshape"
+        android:text="Postavke"
+        android:textColor="#FF1F1F"
+        android:textSize="30sp" />
+
 </LinearLayout>

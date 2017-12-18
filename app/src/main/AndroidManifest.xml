@@ -24,6 +24,11 @@
         <activity
             android:name=".coingame.GameActivity"
             android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".GameSettingsActivity"
+            android:screenOrientation="landscape">
+
+        </activity>
     </application>
 
 </manifest>

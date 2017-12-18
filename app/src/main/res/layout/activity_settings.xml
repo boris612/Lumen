@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="lumen.zpr.fer.hr.lumen.GameSettingsActivity">
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10sp" />
+
+    <Button
+        android:id="@+id/GreenWhenCorrectButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Zazeleni Točno Slovo"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10sp" />
+
+    <Button
+        android:id="@+id/GenerateMoreLettersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stvori Više Slova"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10sp" />
+
+    <Button
+        android:id="@+id/languageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Jezik: Hrvatski"
+        android:textSize="30sp" />
+</LinearLayout>

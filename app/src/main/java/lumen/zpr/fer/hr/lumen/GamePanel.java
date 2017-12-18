@@ -1,6 +1,7 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.nfc.NfcEvent;
+import android.preference.PreferenceManager;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -76,15 +78,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private CharacterField hintField;
     private List<LetterImage> hintImageList;
     private long hintStart;
+    private SharedPreferences pref;
+
+    private boolean moreLetters;
+    private boolean greenOnCorrect;
 
 
 
-    public GamePanel(Context context, int initCoins) {
+    public GamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
-
+        pref= this.getContext().getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+        this.updateSettings();
         thread = new MainThread(getHolder(), this);
-
         setFocusable(true);
         WindowManager wm=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display disp=wm.getDefaultDisplay();
@@ -103,6 +109,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
+        int initCoins=pref.getInt(getResources().getString(R.string.coins),0);
         //TODO: maknuti fixani coin
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
@@ -182,21 +189,35 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int width,height;
         width=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
         height=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
-        //currentWord=currentWord.toLowerCase();
-        //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
-        //TODO: bolji nacin za generiranje slova (skaliranje!)
-        int space=getResources().getDisplayMetrics().widthPixels-currentWord.length()*GameLayoutConstants.DEFAULT_RECT_WIDTH;
-        space/=(int)(currentWord.length());
-        int spaceStart=getResources().getDisplayMetrics().widthPixels;
-        spaceStart-=space*currentWord.length();
-        spaceStart-=GameLayoutConstants.DEFAULT_RECT_WIDTH;
-        spaceStart/=2;
+        int space;
+        int startingSpace=getResources().getDisplayMetrics().widthPixels/50;
+        if(moreLetters){
+            space=getResources().getDisplayMetrics().widthPixels-(GameLayoutConstants.MAX_NUM_OF_LETTERS-1)*width-startingSpace;
+            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS;
+        }
+        else {
+            space = getResources().getDisplayMetrics().widthPixels - (currentWord.length()-1) *width-startingSpace;
+            space/=(int)(currentWord.length());
+        }
+        space-=space/10;
+
+
         List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
+            Point center=new Point(startingSpace+i*(space+width) + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
             int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
             img=getResources().getDrawable(id);
             list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
+        }
+
+        if(moreLetters){
+            while(list.size()<GameLayoutConstants.MAX_NUM_OF_LETTERS){
+                String[] values=LetterMap.getRandom();
+                Point center=new Point(startingSpace+ list.size()*(space+width) + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
+                int id=getContext().getResources().getIdentifier(values[1],"drawable", this.getContext().getPackageName());
+                img=getResources().getDrawable(id);
+                list.add(new LetterImage(center,img,values[0],width,height));
+            }
         }
         List<Point> points=new ArrayList<>();
         for(int i=0,size=list.size();i<size;i++){
@@ -305,6 +326,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             if(!f.getCharacterInsideField().equals(f.getCorrectCharacter())) {
                 correct = false;
             }
+            else if(greenOnCorrect){
+                f.setColor(Color.GREEN);
+            }
         }
 
         Log.d("CORRECT",Boolean.toString(correct));
@@ -312,6 +336,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             phase = GamePhase.ENDING;
 
             coinComponent.addCoins(1);
+           SharedPreferences.Editor editor= pref.edit();
+           editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
+           editor.commit();
             endingTime = System.currentTimeMillis();
 
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
@@ -504,4 +531,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
+    public void updateSettings(){
+        moreLetters=pref.getBoolean(getResources().getString(R.string.add_more_letters),false);
+        greenOnCorrect=pref.getBoolean(getResources().getString(R.string.green_on_correct),false);
+    }
 }

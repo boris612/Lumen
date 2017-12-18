@@ -37,4 +37,5 @@ public class GameLayoutConstants {
     static int SPACE_FROM_BORDER_TO_HINT=50;
     static int SPACE_FROM_LETTER_TO_LETTER=50;
 
+    static int MAX_NUM_OF_LETTERS=10;
 }
