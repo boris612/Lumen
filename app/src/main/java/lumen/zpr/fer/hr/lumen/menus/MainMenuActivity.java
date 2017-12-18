@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import lumen.zpr.fer.hr.lumen.GameSettingsActivity;
 import lumen.zpr.fer.hr.lumen.R;
@@ -22,7 +23,7 @@ public class MainMenuActivity extends Activity {
                 getAssets());
         helper.onCreate(helper.getWritableDatabase());
 
-        Button startLetterGameBtn = findViewById(R.id.pokreniIgru);
+        ImageButton startLetterGameBtn = findViewById(R.id.pokreniIgru);
         startLetterGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,7 +33,7 @@ public class MainMenuActivity extends Activity {
             }
         });
 
-        Button startCoinGameBtn = findViewById(R.id.pokreniDruguIgru);
+        ImageButton startCoinGameBtn = findViewById(R.id.pokreniDruguIgru);
         startCoinGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
