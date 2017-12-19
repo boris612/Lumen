@@ -243,7 +243,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             thread.setRunning(true);
             return;
         }
-        for (int i=0;i<10;i++)  System.out.println("STVORENA NOVA GLAVNA DRETVA................................................");
+        for (int i=0;i<10;i++)  System.err.println("STVORENA NOVA GLAVNA DRETVA................................................");
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -275,6 +275,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         Collections.shuffle(fields);
+        outerLoop:
         for(CharacterField field: fields) {
            field.setCharacterInsideField((String)null);
            for (LetterImage letter : listOfLetters) {
@@ -283,18 +284,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                    field.setCharacterInsideField(letter.getLetter());
                    if(!letter.getCenter().equals(newCenter)) {
                        letter.setCenter(newCenter);
+                       if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
+                           field.setColor(Color.GREEN);
+                           continue outerLoop;
+                       }
                    }
                }
 
                letter.update();
 
            }
-           if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
-               field.setColor(Color.GREEN);
-           }
-           else if(greenOnCorrect){
-               field.setColor(Color.RED);
-           }
+           field.setColor(Color.RED);
+           //bijase if
+           /*else if(greenOnCorrect){
+
+           }*/
        }
 
 
