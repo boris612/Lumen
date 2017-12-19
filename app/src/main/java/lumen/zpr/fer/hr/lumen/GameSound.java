@@ -1,5 +1,6 @@
 package lumen.zpr.fer.hr.lumen;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -22,10 +23,16 @@ public class GameSound {
     private List<MediaPlayer> lettersRecording;
     private List<GameSoundListener> listeners;
     private boolean playing;
-    public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath){
+    private Context context;
+    private Thread thread;
+    private GamePanel gamePanel;
+    public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath,GamePanel gamePanel, Thread thread){
        //wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRecording = loadLettersRecording(context, lettersRecordingPath);
         listeners = new ArrayList<>();
+        this.context=context;
+        this.gamePanel=gamePanel;
+        this.thread=thread;
     }
 
     public void registerListener(GameSoundListener listener) {
@@ -106,8 +113,17 @@ public class GameSound {
             e.printStackTrace();
         }
 
+
         for (MediaPlayer mp : this.lettersRecording) {
-            if (!playing) return;
+            if (gamePanel.terminated) return;
+            while(gamePanel.paused){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             mp.start();
             notifyListenersForLetterDone();
             while (mp.isPlaying()) ;
@@ -135,4 +151,5 @@ public class GameSound {
     public void setPlaying (boolean play){
         this.playing=play;
     }
+
 }

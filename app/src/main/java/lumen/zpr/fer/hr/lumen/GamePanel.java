@@ -1,5 +1,6 @@
 package lumen.zpr.fer.hr.lumen;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -57,7 +58,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameImage currentImage;
     private LangDependentString currentWord;
     private GameSound currentSound;
-    private Thread spelling;
+    public Thread spelling;
 
     private CharactersFields charactersFields;
     private List<CharacterField> fields;
@@ -82,11 +83,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private boolean moreLetters;
     private boolean greenOnCorrect;
-
-
+    private Context context;
+    public boolean paused = false;
+    public boolean terminated=false;
 
     public GamePanel(Context context) {
+
         super(context);
+        this.context=context;
         getHolder().addCallback(this);
         pref= this.getContext().getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
         this.updateSettings();
@@ -130,7 +134,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
-        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath,this,Thread.currentThread());
     }
 
     private enum GamePhase {
@@ -235,6 +239,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        if (thread!=null && thread.isInterrupted()){
+            thread.setRunning(true);
+            return;
+        }
+        for (int i=0;i<10;i++)  System.out.println("STVORENA NOVA GLAVNA DRETVA................................................");
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -249,6 +258,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         while(true) {
             try {
+
                  thread.setRunning(false);
                  currentSound.setPlaying(false);
                  thread.join();
@@ -354,7 +364,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         //TODO dodati crtanje objekata zajedničkih objema fazama
-
+     //   System.out.println(spelling.getState());
         canvas.drawColor(Color.WHITE); //zamjena za background
 
         canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
@@ -382,7 +392,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             if(System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
                 try{
-                initNewWord();
+
+                    initNewWord();
                 }catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -539,4 +550,5 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         moreLetters=pref.getBoolean(getResources().getString(R.string.add_more_letters),false);
         greenOnCorrect=pref.getBoolean(getResources().getString(R.string.green_on_correct),false);
     }
+
 }
