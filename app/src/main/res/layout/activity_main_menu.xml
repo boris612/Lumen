@@ -4,66 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="lumen.zpr.fer.hr.lumen.menus.MainMenuActivity">
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_height="match_parent"
-        tools:layout_weight="1">
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="5"
         android:gravity="center">
 
         <ImageButton
             android:id="@+id/pokreniIgru"
-            android:src="@drawable/spelling"
             android:layout_width="183dp"
             android:layout_height="134dp"
             android:layout_gravity="center"
-            android:background="@drawable/buttonshape"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:padding="5dp"
+            android:scaleType="fitCenter"
             android:shadowColor="#1C07A8"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="5"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true" />
+            android:src="@drawable/spelling" />
 
         <ImageButton
             android:id="@+id/pokreniDruguIgru"
-            android:src="@drawable/money"
             android:layout_width="188dp"
             android:layout_height="128dp"
             android:layout_gravity="center"
-            android:background="@drawable/buttonshape"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
             android:padding="5dp"
+            android:scaleType="fitCenter"
             android:shadowColor="#1C07A8"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="5"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true" />
+            android:src="@drawable/money" />
     </TableRow>
 
     <TableRow
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:gravity="center">
 
-        <Button
+        <ImageButton
             android:id="@+id/Postavke"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape"
-            android:text="Postavke"
+            android:layout_width="50dp"
+            android:layout_height="150dp"
+            android:background="@drawable/gear"
             android:textColor="#FF1F1F"
             android:textSize="30sp" />
 

@@ -44,7 +44,7 @@ public class MainMenuActivity extends Activity {
         });
 
 
-        Button openSettings = findViewById(R.id.Postavke);
+        ImageButton openSettings = findViewById(R.id.Postavke);
         openSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
