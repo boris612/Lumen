@@ -117,14 +117,14 @@ public class ContainerComponent implements CoinGameObject {
             case NOT_OPTIMAL_RESULT:
                 canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
                         currentValueLabelPoint.y, paint);
-                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
                 break;
             default:
                 paint.setColor(Color.BLACK);
-                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
-                canvas.drawText("Trenutni iznos: " + Integer.toString(value),
+                canvas.drawText(Integer.toString(value),
                         currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
         }
     }

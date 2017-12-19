@@ -82,8 +82,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                         (int) (ConstantsUtil.CONTAINER_HEIGHT * heightPixels)),
                 new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels),
                         (int) (ConstantsUtil.CONTAINER_LABEL_Y * heightPixels)),
-                new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels),
-                        (int) (.35 * heightPixels)),
+                new Point((int) (ConstantsUtil.CURRENT_VALUE_LABEL_X * widthPixels),
+                        (int) (ConstantsUtil.CURRENT_VALUE_LABEL_Y * heightPixels)),
                 generator, scoreView);
     }
 
