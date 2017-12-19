@@ -284,7 +284,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                    if(!letter.getCenter().equals(newCenter)) {
                        letter.setCenter(newCenter);
                        if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
-                           field.setColor(Color.GREEN);
+                           field.setColorWithTime(Color.GREEN);
                            continue outerLoop;
                        }
                    }
@@ -293,7 +293,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                letter.update();
 
            }
-           field.setColor(Color.RED);
+
+            if(field!=hintField && phase!=GamePhase.ENDING)field.setColor(Color.RED);
        }
 
         if(phase==GamePhase.TYPING_WORD){
@@ -317,6 +318,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             }
             else{
+
                 hintField.setColor(Color.RED);
                 for(LetterImage img:hintImageList){
                     img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
@@ -328,6 +330,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().equals(hintField.getCorrectCharacter())){
             hintActive=false;
             hintField.setColor(Color.RED);
+            hintField=null;
             for(LetterImage img:hintImageList){
                 img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
             }
@@ -525,6 +528,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void executeCoinHint() {
         if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
             coinComponent.addCoins(-1);
+            SharedPreferences.Editor edit=pref.edit();
+            edit.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
+            edit.commit();
             int size=hintFields.size();
             for(int i=0;i<size;i++){
                 CharacterField c=hintFields.get(i);

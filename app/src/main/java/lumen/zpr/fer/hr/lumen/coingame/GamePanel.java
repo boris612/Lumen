@@ -1,6 +1,7 @@
 package lumen.zpr.fer.hr.lumen.coingame;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -52,6 +53,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private Context context;
 
+
+    private SharedPreferences preferences;
     /**
      * Konstruktor.
      *
@@ -60,15 +63,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public GamePanel(Context context) {
         super(context);
         this.context = context;
-
+        preferences=context.getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
         getHolder().addCallback(this);
 
         generator.generirajBroj();
         //Todo maknuti u metodu
         generator.setCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
         generateCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
-
-        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), 0, context);
+        int coins=preferences.getInt(getResources().getString(R.string.coins),0);
+        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), coins, context);
 
         thread = new MainThread(getHolder(), this);
 
@@ -84,7 +87,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                         (int) (ConstantsUtil.CONTAINER_LABEL_Y * heightPixels)),
                 new Point((int) (ConstantsUtil.CONTAINER_LABEL_X * widthPixels),
                         (int) (.35 * heightPixels)),
-                generator, scoreView);
+                generator, scoreView,preferences,context);
     }
 
     /**

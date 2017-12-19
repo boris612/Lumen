@@ -9,6 +9,7 @@ import android.graphics.Rect;
 public class CharacterField extends DropArea {
     private String characterInsideField=null;
     private String correctCharacter;
+    private long  timeStartGreen;
 
     public CharacterField(Rect rectangle, int color, String correctCharacter) {
         super(rectangle, color);
@@ -37,6 +38,16 @@ public class CharacterField extends DropArea {
     }
 
     public void setColor(int color) {
+        if(timeStartGreen>0 && System.currentTimeMillis()-timeStartGreen<GameLayoutConstants.GREEN_HINT_TIME){
+            return;
+        }
+        timeStartGreen=0;
+        super.setColor(color);
+    }
+
+
+    public void setColorWithTime(int color){
+        this.timeStartGreen=System.currentTimeMillis();
         super.setColor(color);
     }
 }

@@ -1,5 +1,7 @@
 package lumen.zpr.fer.hr.lumen.coingame.objects;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import lumen.zpr.fer.hr.lumen.CoinComponent;
+import lumen.zpr.fer.hr.lumen.R;
 import lumen.zpr.fer.hr.lumen.coingame.ConstantsUtil;
 import lumen.zpr.fer.hr.lumen.coingame.GamePanel;
 import lumen.zpr.fer.hr.lumen.coingame.ProblemGenerator;
@@ -68,6 +71,10 @@ public class ContainerComponent implements CoinGameObject {
      */
     private GamePanel gamePanel;
 
+    private SharedPreferences preferences;
+
+    private Context context;
+
     /**
      * Konstruktor.
      *
@@ -80,9 +87,11 @@ public class ContainerComponent implements CoinGameObject {
      */
     public ContainerComponent(GamePanel gamePanel, Rect rect, Point targetLabelPoint,
                               Point currentValueLabelPoint, ProblemGenerator generator,
-                              CoinComponent scoreComponent) {
+                              CoinComponent scoreComponent,SharedPreferences pref,Context context) {
+        preferences=pref;
         this.gamePanel = gamePanel;
         this.rect = rect;
+        this.context=context;
         this.targetLabelPoint = targetLabelPoint;
         this.currentValueLabelPoint = currentValueLabelPoint;
         this.generator = generator;
@@ -143,6 +152,9 @@ public class ContainerComponent implements CoinGameObject {
             if (nextGameTime == null) {
                 nextGameTime = System.currentTimeMillis() + ConstantsUtil.MILLIS_WAITING;
                 scoreComponent.addCoins(1);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putInt(context.getResources().getString(R.string.coins),scoreComponent.getCoins());
+                editor.commit();
                 return;
             }
             if (System.currentTimeMillis() >= nextGameTime) {
