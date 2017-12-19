@@ -270,9 +270,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() throws InterruptedException {
-        if(phase==GamePhase.TYPING_WORD){
-            if(hintActive) updateHint();
-        }
+
+
 
         Collections.shuffle(fields);
         outerLoop:
@@ -295,16 +294,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
            }
            field.setColor(Color.RED);
-           //bijase if
-           /*else if(greenOnCorrect){
-
-           }*/
        }
 
+        if(phase==GamePhase.TYPING_WORD){
+            if(hintActive) updateHint();
+        }
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
         }
+
+
     }
 
     private void updateHint() {
@@ -367,7 +367,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        //TODO dodati crtanje objekata zajedničkih objema fazama
      //   System.out.println(spelling.getState());
         canvas.drawColor(Color.WHITE); //zamjena za background
 
@@ -377,12 +376,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
         if(phase == GamePhase.PRESENTING_WORD) {
-            //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
             canvas.drawBitmap(startingHint.getHintBitmap(),null,startingHint.getRect(),null);
             return;
         }
-        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
+
 
         charactersFields.draw(canvas);
 
@@ -442,7 +440,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
-                if(touchedLetter == null) return true; //ok?
+                if(touchedLetter == null) return true;
                 touchedLetter.setCenter(new Point(xTouch,yTouch));
 
                 mLetterPointer.put(event.getPointerId(0), touchedLetter);
