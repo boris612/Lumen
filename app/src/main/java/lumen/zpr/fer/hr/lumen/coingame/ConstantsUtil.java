@@ -1,5 +1,7 @@
 package lumen.zpr.fer.hr.lumen.coingame;
 
+import android.graphics.Typeface;
+
 /**
  * Razred koji sadrzi raznovrsne konstante.
  * Created by Zlatko on 12-Dec-17.
@@ -48,10 +50,12 @@ public class ConstantsUtil {
      * Velicina fonta labele kontejnera
      */
     public static final int CONTAINER_LABEL_FONT = 150;
-
     /**
      * Vrijeme cekanja izmedu dva zadatka u milisekundama
      */
     public static final long MILLIS_WAITING = 2000;
+    private static final String PATH_TO_FONT = "Sandbox Melodrama.ttf";
+    public static final Typeface LABEL_FONT = Typeface.createFromAsset
+            (GameActivity.assetManager, PATH_TO_FONT);
 
 }
