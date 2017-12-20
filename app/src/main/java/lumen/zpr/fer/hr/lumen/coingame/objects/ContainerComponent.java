@@ -160,6 +160,16 @@ public class ContainerComponent implements CoinGameObject {
         return rect.contains(x, y);
     }
 
+    @Override
+    public boolean getSelection() {
+        return false;
+    }
+
+    @Override
+    public void setSelection(boolean selection) {
+
+    }
+
     /**
      * Osvjezava stanje igre ovisno o sadrzaju kontejnera.
      */

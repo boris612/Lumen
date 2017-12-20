@@ -52,6 +52,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private Context context;
 
+//    private static Comparator<CoinGameObject> coinGameObjectComparator= ((c1,c2) -> {
+//       if(!c1.getSelection()) {
+//           return -1;
+//       }
+//       if(!c2.getSelection()) {
+//           return 1;
+//       }
+//
+//       return 0;
+//    });
+
     /**
      * Konstruktor.
      *
@@ -132,12 +143,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
                 for (CoinGameComponent coin : coins) {
                     if (coin.isSelected((int) event.getX(), (int) event.getY())) {
-                        coin.update(new Point((int) event.getX(), (int) event.getY()));
+                        coin.setSelection(true);
                         break;
                     }
+//                    else {
+//                        coin.setSelection(false);
+//                    }
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                CoinGameComponent component = null;
+                for (CoinGameComponent coin : coins) {
+//                    if (coin.isSelected((int) event.getX(), (int) event.getY())) {
+//                        coin.update(new Point((int) event.getX(), (int) event.getY()));
+//                        break;
+//                    }
+                    if (coin.getSelection()) {
+                        component = coin;
+                        break;
+                    }
+                }
+
+                if (component != null) {
+                    component.update(new Point((int) event.getX(), (int) event.getY()));
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -146,6 +176,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                     if (container.isSelected(position.x, position.y)) {
                         container.addCoin(coin);
                     }
+                    coin.setSelection(false);
                 }
         }
         return true;
@@ -167,6 +198,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         scoreView.draw(canvas);
 
         container.draw(canvas);
+
+//        Collections.sort(coins, );
 
         for (CoinGameComponent coin : coins) {
             coin.draw(canvas);
