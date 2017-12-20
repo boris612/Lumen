@@ -12,12 +12,15 @@ import android.view.SurfaceView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 import lumen.zpr.fer.hr.lumen.CoinComponent;
 import lumen.zpr.fer.hr.lumen.R;
 import lumen.zpr.fer.hr.lumen.coingame.objects.CoinGameComponent;
+import lumen.zpr.fer.hr.lumen.coingame.objects.CoinGameObject;
 import lumen.zpr.fer.hr.lumen.coingame.objects.ContainerComponent;
 
 /**
@@ -26,6 +29,24 @@ import lumen.zpr.fer.hr.lumen.coingame.objects.ContainerComponent;
  */
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
+    /**
+     * Komparator za {@link CoinGameObject}, sortira tako je oznacen novcic na kraju liste
+     */
+    private static Comparator<CoinGameObject> coinGameObjectComparator = new Comparator<CoinGameObject>() {
+        @Override
+        public int compare(CoinGameObject c1, CoinGameObject c2) {
+            boolean s1 = c1.getSelection();
+            boolean s2 = c2.getSelection();
+
+            if (s1 && !s2) {
+                return 1;
+            }
+            if (!s1 && s2) {
+                return -1;
+            }
+            return 0;
+        }
+    };
     /**
      * Dretva koja osvjezava stanje ove igre
      */
@@ -42,7 +63,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Generira trazene iznose i provjerava tocna rjesenja
      */
     private ProblemGenerator generator = new ProblemGenerator();
-
     /**
      * Komponenta koja prikazuje trenutni broj bodova
      */
@@ -51,17 +71,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Kontekst
      */
     private Context context;
-
-//    private static Comparator<CoinGameObject> coinGameObjectComparator= ((c1,c2) -> {
-//       if(!c1.getSelection()) {
-//           return -1;
-//       }
-//       if(!c2.getSelection()) {
-//           return 1;
-//       }
-//
-//       return 0;
-//    });
 
     /**
      * Konstruktor.
@@ -199,7 +208,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         container.draw(canvas);
 
-//        Collections.sort(coins, );
+        Collections.sort(coins, coinGameObjectComparator);
 
         for (CoinGameComponent coin : coins) {
             coin.draw(canvas);
