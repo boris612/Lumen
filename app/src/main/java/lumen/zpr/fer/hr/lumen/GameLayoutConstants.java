@@ -22,9 +22,9 @@ public class GameLayoutConstants {
     static int COIN_NUMBER_FONT_SIZE = 150;
     static double COIN_IMAGE_AND_TEXT_GAP_WIDTH_FACTOR = 0.1;
 
-    static int WIN_TEXT_LABEL_SIZE = 300;
-    static double WIN_TEXT_LABEL_X_CENTER_COORDINATE_FACTOR = 0.5;
-    static double WIN_TEXT_LABEL_Y_CENTER_COORDINATE_FACTOR = 0.4;
+    static double WIN_IMAGE_X_CENTER_COORDINATE_FACTOR = 0.5;
+    static double WIN_IMAGE_Y_CENTER_COORDINATE_FACTOR = 0.4;
+    static double WIN_IMAGE_WIDTH_FACTOR = 0.9; //u odnosu na height
 
     static int RECT_SPACE_FACTOR=50;
     static int DEFAULT_RECT_WIDTH=100;
