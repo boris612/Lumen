@@ -112,6 +112,7 @@ public class ContainerComponent implements CoinGameObject {
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
+        paint.setTypeface(ConstantsUtil.LABEL_FONT);
 
         paint.setColor(stateColorMap.get(state));
         canvas.drawRect(rect, paint);
@@ -126,14 +127,14 @@ public class ContainerComponent implements CoinGameObject {
             case NOT_OPTIMAL_RESULT:
                 canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
                         currentValueLabelPoint.y, paint);
-                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
                 break;
             default:
                 paint.setColor(Color.BLACK);
-                canvas.drawText("Cilj: " + Integer.toString(generator.getCurrentNumber()),
+                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
-                canvas.drawText("Trenutni iznos: " + Integer.toString(value),
+                canvas.drawText(Integer.toString(value),
                         currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
         }
     }
@@ -169,6 +170,16 @@ public class ContainerComponent implements CoinGameObject {
     @Override
     public boolean isSelected(int x, int y) {
         return rect.contains(x, y);
+    }
+
+    @Override
+    public boolean getSelection() {
+        return false;
+    }
+
+    @Override
+    public void setSelection(boolean selection) {
+
     }
 
     /**

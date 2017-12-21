@@ -30,6 +30,7 @@ public class CoinGameComponent implements CoinGameObject {
      * Duljina/sirina komponente
      */
     private int size;
+    private boolean selected;
 
     /**
      * Konstruktor.
@@ -71,6 +72,16 @@ public class CoinGameComponent implements CoinGameObject {
     @Override
     public boolean isSelected(int x, int y) {
         return img.getBounds().contains(x, y);
+    }
+
+    @Override
+    public boolean getSelection() {
+        return selected;
+    }
+
+    @Override
+    public void setSelection(boolean selected) {
+        this.selected = selected;
     }
 
     /**

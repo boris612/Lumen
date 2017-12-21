@@ -28,4 +28,8 @@ public interface CoinGameObject {
      * @return true ako su dane koordinate unutar komponente, inace false
      */
     boolean isSelected(int x, int y);
+
+    boolean getSelection();
+
+    void setSelection(boolean selection);
 }
