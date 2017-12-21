@@ -246,13 +246,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Drawable getDrawable(int value) {
         switch (value) {
             case 1:
-                return getResources().getDrawable(R.drawable.euro_1);
+                return getResources().getDrawable(R.drawable.kuna_1);
             case 2:
-                return getResources().getDrawable(R.drawable.euro_2);
+                return getResources().getDrawable(R.drawable.kuna_2);
             case 5:
-                return getResources().getDrawable(R.drawable.euro_5);
+                return getResources().getDrawable(R.drawable.kuna_5);
             case 10:
-                return getResources().getDrawable(R.drawable.euro_10);
+                return getResources().getDrawable(R.drawable.kuna_10);
             default:
                 throw new IllegalArgumentException("Coin with given value does not exist: " + value);
         }
