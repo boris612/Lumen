@@ -8,13 +8,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import lumen.zpr.fer.hr.lumen.GameSettingsActivity;
 import lumen.zpr.fer.hr.lumen.R;
 import lumen.zpr.fer.hr.lumen.database.DBHelper;
 
 public class MainMenuActivity extends Activity {
     DBHelper helper;
-
+    private Collection<String> categories;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +25,7 @@ public class MainMenuActivity extends Activity {
         helper = new DBHelper(this,
                 getAssets());
         helper.onCreate(helper.getWritableDatabase());
-
+        categories = helper.getAllCategories();
         ImageButton startLetterGameBtn = findViewById(R.id.pokreniIgru);
         startLetterGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +53,13 @@ public class MainMenuActivity extends Activity {
             public void onClick(View view) {
                 Intent startGameIntent = new Intent(MainMenuActivity.this,
                         GameSettingsActivity.class);
+                startGameIntent.putStringArrayListExtra("categories",(ArrayList<String>)categories);
                 startActivity(startGameIntent);
             }
         });
+    }
+
+    public Collection<String> getCurrentCategories(){
+        return categories;
     }
 }
