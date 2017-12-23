@@ -3,19 +3,27 @@ package lumen.zpr.fer.hr.lumen;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lumen.zpr.fer.hr.lumen.menus.MainMenuActivity;
+
+import static java.security.AccessController.getContext;
 
 public class CategorySelectionActivity extends Activity {
 
@@ -33,14 +41,17 @@ public class CategorySelectionActivity extends Activity {
         final ImageButton returnBtn= findViewById(R.id.returnButton);
         String currentCategory = pref.getString("category","sve");
         System.out.println("Trenutna kategorija "+ currentCategory);
-        categories.add("sve");
+        if (!categories.contains("sve")) categories.add("sve");
         for (String category : categories) {
             final RadioButton button = new RadioButton(this);
+
             button.setText(category);
             button.setTextSize(30);
-
+            button.setLayoutDirection(RadioButton.LAYOUT_DIRECTION_RTL);
+            button.setBackgroundResource(R.drawable.custom_divider);
             radioGroup.addView(button);
             button.getLayoutParams().width=RadioGroup.LayoutParams.MATCH_PARENT;
+
             if (category.equals(currentCategory)) button.setChecked(true);
 
         }
