@@ -104,7 +104,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenHeight=p.y;
 
         //TODO: promjeniti za finalnu verziju
-        supply = new WordSupply(this.getContext(), "hrvatski", "priroda");
+
+        supply = new WordSupply(this.getContext(), "hrvatski",pref.getString("category","sve"));
 
         try {
             initNewWord();
