@@ -5,12 +5,14 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import lumen.zpr.fer.hr.lumen.database.DBHelper;
-
-import static java.sql.DriverManager.println;
+import lumen.zpr.fer.hr.lumen.math.ProbabilityDistribution;
 
 
 /**
@@ -18,32 +20,36 @@ import static java.sql.DriverManager.println;
  */
 
 public class WordSupply {
-
     private DBHelper helper;
-    private List<Integer> wordIds;
+    //private List<Integer> wordIds;
     private String language;
-
-    int current;
+    private Random rand;
+    private ProbabilityDistribution wordProbDistr;
+    private double PROBABILITY_SCALE_FACTOR = 0.8;
+    int currentWordId;
 
     public WordSupply(Context context, String lang, String cat) {
         helper = new DBHelper(context);
-        wordIds = helper.getWordIds(lang, cat);
         language = lang;
 
-        Random rand = new Random();
-        current = rand.nextInt(wordIds.size());
+        wordProbDistr = new ProbabilityDistribution();
+        for(int wordId: helper.getWordIds(lang, cat)) {
+            wordProbDistr.addChoice(wordId);
+        }
+        rand = new Random();
+        goToNext();
    }
 
     public LangDependentString getWord() {
-        return new CroatianString(helper.getWord(wordIds.get(current)));
+        return new CroatianString(helper.getWord(currentWordId));
     }
 
     public String getImagePath() {
-        return helper.getWordImagePath(wordIds.get(current));
+        return helper.getWordImagePath(currentWordId);
     }
 
     public String getWordRecordingPath() {
-        return helper.getWordSoundPath(wordIds.get(current));
+        return helper.getWordSoundPath(currentWordId);
     }
 
     public List<String> getLettersRecordingPaths() {
@@ -58,9 +64,17 @@ public class WordSupply {
         return paths;
     }
 
-    public void goToNext() { //TODO algoritam za odabir
-        Random rand = new Random();
-        current = rand.nextInt(wordIds.size());
+    public void goToNext() {
+        double selection = rand.nextDouble();
+        Log.d("DISTR","selection: "+Double.toString(selection));
+        for(ProbabilityDistribution.DistributionInterval interval: wordProbDistr.getDistributionAsIntervalCollection()) {
+            if(interval.getIntervalStart() <= selection && interval.getIntervalEnd() >= selection) {
+                currentWordId = (int)interval.getIntervalChoice();
+                Log.d("DISTR","selection id: "+currentWordId);
+                wordProbDistr.increaseChoiceProbabilityByScaleFactor(interval.getIntervalChoice(), PROBABILITY_SCALE_FACTOR);
+                return;
+            }
+        }
     }
 
 }

@@ -8,13 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.nfc.NfcEvent;
@@ -28,7 +25,6 @@ import android.util.SparseArray;
 
 import android.view.Display;
 
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -36,14 +32,11 @@ import android.view.WindowManager;
 
 import java.io.IOException;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import lumen.zpr.fer.hr.lumen.guicomponents.Label;
 
 /**
  * Created by Alen on 6.11.2017..
@@ -64,7 +57,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private List<CharacterField> fields;
     private List<CharacterField> hintFields;
     private CoinComponent coinComponent;
-    private Label winTextLabel;
+    private Drawable winImage;
 
     private StartingHint startingHint;
     private int screenWidth;
@@ -79,6 +72,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private CharacterField hintField;
     private List<LetterImage> hintImageList;
     private long hintStart;
+    private LetterImage letterBeingDragged;
+    private CharacterField letterBeingDraggedOutOfField;
     private SharedPreferences pref;
 
     private boolean moreLetters;
@@ -118,17 +113,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //TODO: maknuti fixani coin
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int disp_width = dm.widthPixels;
-        int disp_height = dm.heightPixels;
-        int winTLPosX = (int)(disp_width*GameLayoutConstants.WIN_TEXT_LABEL_X_CENTER_COORDINATE_FACTOR);
-        int winTLPosY = (int)(disp_height*GameLayoutConstants.WIN_TEXT_LABEL_Y_CENTER_COORDINATE_FACTOR);
-        Point winTLPosition = new Point(winTLPosX,winTLPosY);
-        winTextLabel = new Label("TOČNO!",winTLPosition, Color.GREEN, GameLayoutConstants.WIN_TEXT_LABEL_SIZE);
+        initWinImage();
     }
 
-
-
+    private void initWinImage() {
+        DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+        int disp_width = dm.widthPixels;
+        int disp_height = dm.heightPixels;
+        int winImgWidth = (int)(disp_height*GameLayoutConstants.WIN_IMAGE_WIDTH_FACTOR);
+        int winImgPosX = (int)(disp_width*GameLayoutConstants.WIN_IMAGE_X_CENTER_COORDINATE_FACTOR - winImgWidth/2);
+        int winImgPosY = (int)(disp_height*GameLayoutConstants.WIN_IMAGE_Y_CENTER_COORDINATE_FACTOR - winImgWidth/2);
+        winImage = getResources().getDrawable(R.drawable.win_image);
+        winImage.setBounds(winImgPosX,winImgPosY,winImgPosX+winImgWidth,winImgPosY+winImgWidth);
+    }
 
     private GameImage loadImage(String imageName) throws  IOException {
         return new GameImage(imageName,getContext());
@@ -269,40 +266,94 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() throws InterruptedException {
+    public void update() throws InterruptedException {    
+        updateAddingLettersToFields(false);
+        for (LetterImage letter : listOfLetters) {
+            letter.update();
+        }
 
-
-
-        Collections.shuffle(fields);
-        outerLoop:
-        for(CharacterField field: fields) {
-           field.setCharacterInsideField((String)null);
-           for (LetterImage letter : listOfLetters) {
-               if(field.collision(letter)){
-                   Point newCenter =field.getCenterPoint();
-                   field.setCharacterInsideField(letter.getLetter());
-                   if(!letter.getCenter().equals(newCenter)) {
-                       letter.setCenter(newCenter);
-                       if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
-                           field.setColorWithTime(Color.GREEN);
-                           continue outerLoop;
-                       }
-                   }
-               }
-
-               letter.update();
-
-           }
-
-            if(field!=hintField && phase!=GamePhase.ENDING)field.setColor(Color.RED);
-       }
-
-        if(phase==GamePhase.TYPING_WORD){
+        if(phase == GamePhase.TYPING_WORD){
             if(hintActive) updateHint();
         }
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
+        }
+    }
+
+    private void updateAddingLettersToFields(boolean actionUpJustOccured) {
+        outerLoop:  
+        for(CharacterField field: fields) {
+            LetterImage letterInside = field.getCharacterInsideField();
+          
+            for (LetterImage letter : listOfLetters) {
+                if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
+                    Point newCenter = field.getCenterPoint();
+                    if(letterInside!=null && letterInside!=letter) {
+                        if(!actionUpJustOccured) {
+                            continue;
+                        }
+                        if(letterBeingDraggedOutOfField!=null) {
+                            letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
+                            letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
+                            letterBeingDraggedOutOfField = null;
+                        } else {
+                            Point center = letterInside.getCenter();
+                            letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
+                        }
+                    }
+
+                    field.setCharacterInsideField(letter);
+                    if(!letter.getCenter().equals(newCenter)) {
+                        letter.setCenter(newCenter);
+                        if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
+                           field.setColorWithTime(Color.GREEN);
+                           continue outerLoop;
+                        }
+                    }
+                }
+            }
+            if(field!=hintField && phase!=GamePhase.ENDING)field.setColor(Color.RED);
+        }
+    }
+
+    private Point findAPlaceToKickLetterOut(LetterImage letter, CharacterField field) {
+        Point center = letter.getCenter();
+        center.y = center.y+field.getHeight();
+        int direction = 1; //smjer pomaka
+        int jumpLength = fields.get(1).getCenterPoint().x - fields.get(0).getCenterPoint().x;
+        int leftBorder = 0;
+        int rightBorder = getContext().getResources().getDisplayMetrics().widthPixels - field.getWidth();
+        int bottomBorder = getContext().getResources().getDisplayMetrics().heightPixels - field.getHeight();
+
+        while(true) {
+            boolean hasCollision = false;
+            for(LetterImage limg: listOfLetters) {
+                if(limg == letter) {
+                    continue;
+                }
+                if(limg.getCenter().equals(center)) {
+                    hasCollision = true;
+                }
+            }
+          
+            if(!hasCollision) {
+                return center;
+            }
+            center.x += direction*jumpLength;
+            if(center.x > rightBorder) {
+                center.x = letter.getCenter().x;
+                direction=-1;
+            }
+            if(center.x < leftBorder) {
+                if(bottomBorder > center.y + jumpLength) {
+                    //ovo se fizicki nebi trebalo moc dogodit jer se onda ni u samom pocetku ne bi
+                    //gdje imala sva ta slova smjestit
+                    return center;
+                }
+                center.y += jumpLength;
+                direction=1;
+            }
         }
 
 
@@ -327,7 +378,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             hintStart=System.currentTimeMillis();
         }
-        if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().equals(hintField.getCorrectCharacter())){
+        if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().getLetter().equals(hintField.getCorrectCharacter())){
             hintActive=false;
             hintField.setColor(Color.RED);
             hintField=null;
@@ -342,17 +393,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
             if(!f.hasCharacterInsideField()) {
-
                 return;
             }
-
-            Log.d("CHARS",f.getCharacterInsideField()+" : "+f.getCorrectCharacter());
-            if(!f.getCharacterInsideField().equals(f.getCorrectCharacter())) {
+          
+            if(!f.getCharacterInsideField().getLetter().equals(f.getCorrectCharacter())) {
                 correct = false;
             }
         }
-
-        Log.d("CORRECT",Boolean.toString(correct));
+      
         if(correct) {
             phase = GamePhase.ENDING;
 
@@ -393,7 +441,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if(phase == GamePhase.ENDING) {
             charactersFields.setColor(Color.GREEN);
-            winTextLabel.draw(canvas);
+            winImage.draw(canvas);
 
             if(System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
                 try{
@@ -428,7 +476,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int pointerId;
         int actionIndex = event.getActionIndex();
 
-
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 // it's the first pointer, so clear all existing pointers data
@@ -445,6 +492,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if(touchedLetter == null) return true;
                 touchedLetter.setCenter(new Point(xTouch,yTouch));
+                setLetterBeingDragged(touchedLetter);
+
 
                 mLetterPointer.put(event.getPointerId(0), touchedLetter);
 
@@ -497,7 +546,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 clearLetterPointer();
                 invalidate();
                 handled = true;
-
+                updateAddingLettersToFields(true);
+                setLetterBeingDragged(null);
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
@@ -525,6 +575,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         mLetterPointer.clear();
     }
 
+    public void setLetterBeingDragged(LetterImage letterBeingDragged) {
+        if(letterBeingDragged == null) {
+            letterBeingDraggedOutOfField = null;
+            return;
+        }
+        this.letterBeingDragged = letterBeingDragged;
+        
+        for(CharacterField field: fields) {
+            if(field.getCharacterInsideField()==letterBeingDragged) {
+                letterBeingDraggedOutOfField = field;
+                field.setCharacterInsideField(null);
+                break;
+            }
+        }
+    }
+
     private void executeCoinHint() {
         if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
             coinComponent.addCoins(-1);
@@ -534,7 +600,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             int size=hintFields.size();
             for(int i=0;i<size;i++){
                 CharacterField c=hintFields.get(i);
-                if(c.getCharacterInsideField()==null || !c.getCharacterInsideField().equals(c.getCorrectCharacter())){
+                if(c.getCharacterInsideField()==null || !c.getCharacterInsideField().getLetter().equals(c.getCorrectCharacter())){
                     hintField=c;
                     break;
                 }
