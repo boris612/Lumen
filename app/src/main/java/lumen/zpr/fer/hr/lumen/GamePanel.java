@@ -1,6 +1,11 @@
 package lumen.zpr.fer.hr.lumen;
 
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -8,6 +13,12 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.nfc.NfcEvent;
+import android.preference.PreferenceManager;
+import android.support.constraint.solver.widgets.Rectangle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -40,7 +51,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameImage currentImage;
     private LangDependentString currentWord;
     private GameSound currentSound;
-    private Thread spelling;
+    public Thread spelling;
 
     private CharactersFields charactersFields;
     private List<CharacterField> fields;
@@ -63,14 +74,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private long hintStart;
     private LetterImage letterBeingDragged;
     private CharacterField letterBeingDraggedOutOfField;
+    private SharedPreferences pref;
 
+    private boolean moreLetters;
+    private boolean greenOnCorrect;
+    private Context context;
+    public boolean paused = false;
+    public boolean terminated=false;
 
-    public GamePanel(Context context, int initCoins) {
+    public GamePanel(Context context) {
+
         super(context);
+        this.context=context;
         getHolder().addCallback(this);
-
+        pref= this.getContext().getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+        this.updateSettings();
         thread = new MainThread(getHolder(), this);
-
         setFocusable(true);
         WindowManager wm=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display disp=wm.getDefaultDisplay();
@@ -80,7 +99,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         screenHeight=p.y;
 
         //TODO: promjeniti za finalnu verziju
-        supply = new WordSupply(this.getContext(), "hrvatski", "priroda");
+
+        supply = new WordSupply(this.getContext(), "hrvatski",pref.getString("category","sve"));
 
         try {
             initNewWord();
@@ -89,6 +109,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             ex.printStackTrace();
             //TODO: pronaći odgovarajući postupak u ovoj situaciji
         }
+        int initCoins=pref.getInt(getResources().getString(R.string.coins),0);
         //TODO: maknuti fixani coin
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
@@ -111,7 +132,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
-        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath);
+        return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath,this,Thread.currentThread());
     }
 
     private enum GamePhase {
@@ -128,12 +149,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentWord = supply.getWord();
 
         currentImage = loadImage(supply.getImagePath());
-        currentSound = loadSound(supply.getWordRecordingPath(), supply.getLettersRecordingPaths());
-        startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight);
-        startingHint.setRect(currentImage.getRect());
+        currentSound = loadSound(null,supply.getLettersRecordingPaths());
+        startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
         phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
+        charactersFields = new CharactersFields(currentWord,getContext());
         listOfLetters=createLetters();
         spelling = new Thread(new Runnable() {
             @Override
@@ -153,11 +174,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 phase=GamePhase.TYPING_WORD;
             }
         });
-        spelling.start();
-
+       spelling.start();
+       currentSound.setPlaying(true);
         //TODO: uskladiti igru i slovkanje rijeci
 
-        charactersFields = new CharactersFields(currentWord,getContext());
         fields=charactersFields.getFields();
         hintFields=new ArrayList<>(fields);
 
@@ -169,27 +189,38 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         Drawable img;
         LetterImage letter;
         int width,height;
-        width=(int)(GameLayoutConstants.DEFAULT_RECT_WIDTH*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
-        height=(int)(GameLayoutConstants.DEFAULT_RECT_HEIGHT*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
-        //currentWord=currentWord.toLowerCase();
-        //TODO: shuffle slova (paziti na hrvatska slova) i raspored na ekranu
-        //TODO: bolji nacin za generiranje slova (skaliranje!)
-        int space=getResources().getDisplayMetrics().widthPixels-currentWord.length()*GameLayoutConstants.DEFAULT_RECT_WIDTH;
-        space/=(int)(currentWord.length());
-        int spaceStart=getResources().getDisplayMetrics().widthPixels;
-        spaceStart-=space*currentWord.length();
-        spaceStart-=GameLayoutConstants.DEFAULT_RECT_WIDTH;
-        spaceStart/=2;
+        width=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
+        height=(int)(charactersFields.getFieldDimension()*GameLayoutConstants.LETTER_IMAGE_SCALE_FACTOR);
+        int space;
+        int startingSpace=getResources().getDisplayMetrics().widthPixels/50;
+        if(moreLetters){
+            space=getResources().getDisplayMetrics().widthPixels-(GameLayoutConstants.MAX_NUM_OF_LETTERS-1)*width-startingSpace;
+            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS;
+        }
+        else {
+            space = getResources().getDisplayMetrics().widthPixels - (currentWord.length()-1) *width-startingSpace;
+            space/=(int)(currentWord.length());
+        }
+        space-=space/10;
+
+
         List<LetterImage> list=new ArrayList<>();
         for(int i=0,len=currentWord.length();i<len;i++){
-            Point center=new Point(spaceStart+i*space + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
-
-                int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
-                img=getResources().getDrawable(id);
-                list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
-
+            Point center=new Point(startingSpace+i*(space+width) + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
+            int id=getContext().getResources().getIdentifier(LetterMap.letters.get(currentWord.charAt(i)),"drawable", this.getContext().getPackageName());
+            img=getResources().getDrawable(id);
+            list.add(new LetterImage(center,img,currentWord.toUpperCase().charAt(i),width,height));
         }
-        List<Rect> rects=new ArrayList<>();
+
+        if(moreLetters){
+            while(list.size()<GameLayoutConstants.MAX_NUM_OF_LETTERS){
+                String[] values=LetterMap.getRandom();
+                Point center=new Point(startingSpace+ list.size()*(space+width) + GameLayoutConstants.RECT_SPACE_FACTOR, (int) (getResources().getDisplayMetrics().heightPixels*GameLayoutConstants.LETTER_IMAGE_Y_COORDINATE_FACTOR));
+                int id=getContext().getResources().getIdentifier(values[1],"drawable", this.getContext().getPackageName());
+                img=getResources().getDrawable(id);
+                list.add(new LetterImage(center,img,values[0],width,height));
+            }
+        }
         List<Point> points=new ArrayList<>();
         for(int i=0,size=list.size();i<size;i++){
             points.add(list.get(i).getCenter());
@@ -206,6 +237,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        if (thread!=null && thread.isInterrupted()){
+            thread.setRunning(true);
+            return;
+        }
+        for (int i=0;i<10;i++)  System.err.println("STVORENA NOVA GLAVNA DRETVA................................................");
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -221,6 +257,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         while(true) {
             try {
                  thread.setRunning(false);
+                 currentSound.setPlaying(false);
                  thread.join();
                  break;
             } catch (Exception ex) {
@@ -229,17 +266,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() throws InterruptedException {
-        if(phase==GamePhase.TYPING_WORD){
-            if(hintActive) updateHint();
-        }
-
-        //Collections.shuffle(fields);
+    public void update() throws InterruptedException {    
         updateAddingLettersToFields(false);
         for (LetterImage letter : listOfLetters) {
             letter.update();
         }
 
+        if(phase == GamePhase.TYPING_WORD){
+            if(hintActive) updateHint();
+        }
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
@@ -247,11 +282,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void updateAddingLettersToFields(boolean actionUpJustOccured) {
+        outerLoop:  
         for(CharacterField field: fields) {
             LetterImage letterInside = field.getCharacterInsideField();
-            //field.setCharacterInsideField((LetterImage) null);
-            Log.d("LINS",field.getCorrectCharacter()+" : "+(letterInside!=null?letterInside.getLetter():"NEMA"));
-
+          
             for (LetterImage letter : listOfLetters) {
                 if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
                     Point newCenter = field.getCenterPoint();
@@ -267,15 +301,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                             Point center = letterInside.getCenter();
                             letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
                         }
-
                     }
 
                     field.setCharacterInsideField(letter);
                     if(!letter.getCenter().equals(newCenter)) {
                         letter.setCenter(newCenter);
+                        if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
+                           field.setColorWithTime(Color.GREEN);
+                           continue outerLoop;
+                        }
                     }
                 }
             }
+            if(field!=hintField && phase!=GamePhase.ENDING)field.setColor(Color.RED);
         }
     }
 
@@ -298,7 +336,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                     hasCollision = true;
                 }
             }
-
+          
             if(!hasCollision) {
                 return center;
             }
@@ -317,6 +355,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 direction=1;
             }
         }
+
+
     }
 
     private void updateHint() {
@@ -329,6 +369,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             }
             else{
+
                 hintField.setColor(Color.RED);
                 for(LetterImage img:hintImageList){
                     img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
@@ -340,6 +381,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if(hintField.hasCharacterInsideField() && hintField.getCharacterInsideField().getLetter().equals(hintField.getCorrectCharacter())){
             hintActive=false;
             hintField.setColor(Color.RED);
+            hintField=null;
             for(LetterImage img:hintImageList){
                 img.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
             }
@@ -351,21 +393,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
             if(!f.hasCharacterInsideField()) {
-                Log.d("INC",Integer.toString(i));
-                return; //nije complete
+                return;
             }
-
-            Log.d("CHARS",f.getCharacterInsideField().getLetter().equals(f.getCorrectCharacter())?"true":"false");
+          
             if(!f.getCharacterInsideField().getLetter().equals(f.getCorrectCharacter())) {
                 correct = false;
             }
         }
-
-        Log.d("CORRECT",Boolean.toString(correct));
+      
         if(correct) {
             phase = GamePhase.ENDING;
 
             coinComponent.addCoins(1);
+           SharedPreferences.Editor editor= pref.edit();
+           editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
+           editor.commit();
             endingTime = System.currentTimeMillis();
 
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
@@ -376,8 +418,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        //TODO dodati crtanje objekata zajedničkih objema fazama
-
+     //   System.out.println(spelling.getState());
         canvas.drawColor(Color.WHITE); //zamjena za background
 
         canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
@@ -386,12 +427,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
         if(phase == GamePhase.PRESENTING_WORD) {
-            //TODO dodati crtanje objekata karakterističnih za PRESENTING_WORD fazu
             canvas.drawBitmap(currentImage.getBitmap(),null,currentImage.getRect(),null);
             canvas.drawBitmap(startingHint.getHintBitmap(),null,startingHint.getRect(),null);
             return;
         }
-        //TODO dodati crtanje objekata karakterističnih za TYPING_WORD fazu
+
 
         charactersFields.draw(canvas);
 
@@ -405,7 +445,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             if(System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
                 try{
-                initNewWord();
+
+                    initNewWord();
                 }catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -449,7 +490,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 // check if we've touched inside some rect
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
-                if(touchedLetter == null) return true; //ok?
+                if(touchedLetter == null) return true;
                 touchedLetter.setCenter(new Point(xTouch,yTouch));
                 setLetterBeingDragged(touchedLetter);
 
@@ -540,11 +581,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             return;
         }
         this.letterBeingDragged = letterBeingDragged;
-        Log.d("SETT", letterBeingDragged.getLetter().toString());
+        
         for(CharacterField field: fields) {
             if(field.getCharacterInsideField()==letterBeingDragged) {
                 letterBeingDraggedOutOfField = field;
-                Log.d("SETT", "FIELD: "+letterBeingDraggedOutOfField.getCorrectCharacter());
                 field.setCharacterInsideField(null);
                 break;
             }
@@ -554,6 +594,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void executeCoinHint() {
         if( !hintActive && phase==GamePhase.TYPING_WORD && coinComponent.getCoins()>0) {
             coinComponent.addCoins(-1);
+            SharedPreferences.Editor edit=pref.edit();
+            edit.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
+            edit.commit();
             int size=hintFields.size();
             for(int i=0;i<size;i++){
                 CharacterField c=hintFields.get(i);
@@ -576,5 +619,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+
+    public void updateSettings(){
+        moreLetters=pref.getBoolean(getResources().getString(R.string.add_more_letters),false);
+        greenOnCorrect=pref.getBoolean(getResources().getString(R.string.green_on_correct),false);
+    }
 
 }

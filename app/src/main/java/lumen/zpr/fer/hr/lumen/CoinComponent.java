@@ -1,7 +1,6 @@
 package lumen.zpr.fer.hr.lumen;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -18,6 +17,8 @@ import lumen.zpr.fer.hr.lumen.guicomponents.Label;
  */
 
 public class CoinComponent {
+    private static final double COMPONENT_X_AXIS = .022;
+    private static final int COMPONENT_Y_AXIS = 300;
     private static double IMAGE_X_COORDINATE_FACTOR = GameLayoutConstants.COIN_IMAGE_X_COORDINATE_FACTOR;
     private static double IMAGE_Y_COORDINATE_FACTOR = GameLayoutConstants.COIN_IMAGE_Y_COORDINATE_FACTOR;
     private static double IMAGE_WIDTH_FACTOR = GameLayoutConstants.COIN_IMAGE_WIDTH_FACTOR;
@@ -32,6 +33,10 @@ public class CoinComponent {
         this.coinImage = coinImage;
         this.coins = coins;
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
+
+        label = new Label("Coins: " + Integer.toString(coins),
+                new Point((int) (COMPONENT_X_AXIS * dm.widthPixels), COMPONENT_Y_AXIS),
+                Color.BLACK, GameLayoutConstants.COIN_NUMBER_FONT_SIZE);
         int display_width = dm.widthPixels;
         int display_height = dm.heightPixels;
         int coinWidth = (int)(display_width*IMAGE_WIDTH_FACTOR);

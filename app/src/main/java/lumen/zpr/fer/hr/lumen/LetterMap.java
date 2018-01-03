@@ -1,6 +1,8 @@
 package lumen.zpr.fer.hr.lumen;
 
 import java.util.HashMap;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by Marko on 15.11.2017..
@@ -47,4 +49,14 @@ public class LetterMap {
 
 
     }};
+
+    public static String[] getRandom(){
+        String[] result=new String[2];
+        String[] set=letters.keySet().toArray(new String[0]);
+        Random rand=new Random();
+        String key=set[rand.nextInt(set.length)];
+        result[1]=letters.get(key);
+        result[0]=key;
+        return result;
+    }
 }

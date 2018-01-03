@@ -11,6 +11,7 @@ public class CharacterField extends DropArea {
     private LetterImage characterInsideField=null;
     private String correctCharacter;
     private Rect rectangle;
+    private long  timeStartGreen;
 
     public CharacterField(Rect rectangle, int color, String correctCharacter) {
         super(rectangle, color);
@@ -19,9 +20,6 @@ public class CharacterField extends DropArea {
     }
 
     public void setCharacterInsideField(LetterImage characterInsideField) {
-        if(this.characterInsideField!=characterInsideField && characterInsideField!=null) {
-            Log.d("SETT","POSTAVA SLOVA "+characterInsideField.getLetter()+", A TOČNO JE " + getCorrectCharacter());
-        }
         this.characterInsideField = characterInsideField;
     }
 
@@ -35,6 +33,16 @@ public class CharacterField extends DropArea {
     }
 
     public void setColor(int color) {
+        if(timeStartGreen>0 && System.currentTimeMillis()-timeStartGreen<GameLayoutConstants.GREEN_HINT_TIME){
+            return;
+        }
+        timeStartGreen=0;
+        super.setColor(color);
+    }
+
+
+    public void setColorWithTime(int color){
+        this.timeStartGreen=System.currentTimeMillis();
         super.setColor(color);
     }
 

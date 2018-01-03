@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">Lumen</string>
-    <string name="pokreniIgru">Pokreni igru</string>
+    <string name="pokreniPrvuIgru">Pokreni igru sa slovima</string>
+    <string name="pokreniDruguIgru">Pokreni igru sa kovanicama</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="add_more_letters">addMoreLetters</string>
+    <string name="green_on_correct">greenOnCorrect</string>
+    <string name="language">language</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="preference_file">preferences</string>
+    <string name="coins">coins</string>
 </resources>

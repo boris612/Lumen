@@ -31,6 +31,11 @@ public class GameLayoutConstants {
     static int DEFAULT_RECT_HEIGHT=100;
 
     static double STARTING_HINT_HEIGHT_SCALE_FACTOR=0.25;
-    static double LETTER_IMAGE_SCALE_FACTOR=1.2;
+    static double LETTER_IMAGE_SCALE_FACTOR=0.9;
 
+    static int SPACE_FROM_BORDER_TO_HINT=50;
+    static int SPACE_FROM_LETTER_TO_LETTER=50;
+
+    static int MAX_NUM_OF_LETTERS=10;
+    static int GREEN_HINT_TIME=500;
 }

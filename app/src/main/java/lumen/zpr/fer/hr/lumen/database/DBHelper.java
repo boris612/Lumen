@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import static java.sql.DriverManager.println;
@@ -622,6 +624,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return catId;
     }
+    public Collection<String> getAllCategories(){
+        Collection<String> categories = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(true,WORDS_TABLE_NAME,new String[]{WORDS_CATEGORY},null,null,null,null,WORDS_CATEGORY,null);
+        System.out.println("pozvano");
+        while (cursor.moveToNext()){
+            categories.add(cursor.getString(0));
+            System.out.println(cursor.getString(0));
+        }
+        return categories;
+    }
 
     /**
      * Za dano slovo vraca njegov identifikator
@@ -694,10 +708,20 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Integer> getWordIds (String language, String category) {
         List<Integer> words = new ArrayList<Integer>();
 
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_ID},
-                WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
-                new String[] {language, category}, null, null, null, null);
+        Cursor cursor;
+
+        if (category.equals("sve")){
+            cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_ID},
+                    WORDS_LANGUAGE + "= ?",
+                    new String[] {language}, null, null, null, null);
+        }
+        else {
+             cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
+                    WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
+                    new String[]{language, category}, null, null, null, null);
+        }
 
         if (cursor.moveToFirst()) {
             do {

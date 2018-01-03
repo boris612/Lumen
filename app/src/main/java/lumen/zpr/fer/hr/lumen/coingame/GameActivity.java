@@ -1,26 +1,23 @@
-package lumen.zpr.fer.hr.lumen;
+package lumen.zpr.fer.hr.lumen.coingame;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.SurfaceView;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import lumen.zpr.fer.hr.lumen.database.DBHelper;
-
+/**
+ * Activity koji pokrece igru s novcicima.
+ */
 public class GameActivity extends Activity {
-    DBHelper helper = new DBHelper(this);
+    public static AssetManager assetManager;
 
+    private  GamePanel view=null;
 
-    private GamePanel view=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (view!=null) return;
+        assetManager = getAssets();
         view=new GamePanel(this);
         setContentView(view);
     }
@@ -35,7 +32,6 @@ public class GameActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        view.updateSettings();
         view.paused=false;
     }
 
