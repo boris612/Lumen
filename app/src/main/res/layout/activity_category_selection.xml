@@ -11,13 +11,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary">
+        android:background="@android:color/transparent">
 
         <ImageButton
             android:id="@+id/returnButton"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/back_arrow" />
