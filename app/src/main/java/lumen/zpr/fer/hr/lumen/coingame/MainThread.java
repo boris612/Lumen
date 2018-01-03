@@ -26,6 +26,8 @@ public class MainThread extends Thread {
      */
     private boolean running;
 
+    public static Canvas canvas;
+
     /**
      * Konstruktor.
      *
@@ -44,28 +46,22 @@ public class MainThread extends Thread {
         long timeMilis;
         long waitTime;
         long targetTime = 1000 / MAX_FPS;
-        Canvas canvas = null;
 
         while (running) {
             startTime = System.nanoTime();
+            canvas=null;
 
             try {
                 canvas = surfaceHolder.lockCanvas();
-                synchronized (surfaceHolder) {
-                    gamePanel.update();
-                    gamePanel.draw(canvas);
+                if (canvas != null) {
+                        synchronized (surfaceHolder) {
+                            gamePanel.update();
+                            gamePanel.draw(canvas);
+                        }
+                        surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (canvas != null) {
-                    try {
-                        surfaceHolder.unlockCanvasAndPost(canvas);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
             }
 
             timeMilis = (System.nanoTime() - startTime) / 1000000;

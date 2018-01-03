@@ -104,6 +104,10 @@ public class GameSound {
 
     /**
      * Reproducira pojedinu riječ i slovkanje riječi
+     *
+     * E/MediaPlayerNative: internal/external state mismatch corrected
+     * popraviti ove exceptione potencijalno bug
+     *
      * @param letterPauseLength Duljina pauze između izgovora pojedinog slova u milisekundama
      */
     public void playSpelling(int letterPauseLength){

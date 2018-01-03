@@ -88,17 +88,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public GamePanel(Context context) {
         super(context);
         this.context = context;
-        preferences=context.getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
         getHolder().addCallback(this);
+        preferences=context.getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+
 
         generator.generirajBroj();
         //Todo maknuti u metodu
         generator.setCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
         generateCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
         int coins=preferences.getInt(getResources().getString(R.string.coins),0);
-        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), coins, context);
+        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), coins, getContext());
 
         thread = new MainThread(getHolder(), this);
+        setFocusable(true);
 
         int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
         int heightPixels = context.getResources().getDisplayMetrics().heightPixels;
@@ -209,10 +211,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     public void update() {
         container.update();
+        Collections.sort(coins, coinGameObjectComparator);
     }
 
     @Override
     public void draw(Canvas canvas) {
+        /*
+        Za testiranje, postoji memory leak ??? performanse slabe
+        u drugoj igri prilikom klika na back igra nije responsive na par sek, baca exceptione
+        pogledat i testirat u debugeru, bez doljnjeg ifa
+         */
+        if(canvas == null) return;
+
+
         super.draw(canvas);
 
         canvas.drawColor(Color.WHITE);
@@ -221,7 +232,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         container.draw(canvas);
 
-        Collections.sort(coins, coinGameObjectComparator);
+
 
         for (CoinGameComponent coin : coins) {
             coin.draw(canvas);
