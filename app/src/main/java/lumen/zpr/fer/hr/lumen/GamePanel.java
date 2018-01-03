@@ -235,38 +235,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //Collections.shuffle(fields);
-        for(CharacterField field: fields) {
-           LetterImage letterInside = field.getCharacterInsideField();
-           //field.setCharacterInsideField((LetterImage) null);
-           Log.d("LINS",field.getCorrectCharacter()+" : "+(letterInside!=null?letterInside.getLetter():"NEMA"));
-
-           for (LetterImage letter : listOfLetters) {
-               if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
-                   Point newCenter = field.getCenterPoint();
-                   if(letterInside!=null && letterInside!=letter) {
-
-                       if(letterBeingDraggedOutOfField!=null) {
-                           letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
-                           Log.d("SETT","POZIV POSTAVE U 250");
-                           letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
-                           letterBeingDraggedOutOfField = null;
-                       } else {
-                           Point center = letterInside.getCenter();
-                           letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
-                       }
-
-                   }
-
-                   if(letter!=field.getCharacterInsideField()) {
-                       Log.d("SETT", "POZIV POSTAVE U 257");
-                   }
-                   field.setCharacterInsideField(letter);
-                   if(!letter.getCenter().equals(newCenter)) {
-                       letter.setCenter(newCenter);
-                   }
-               }
-           }
-        }
+        updateAddingLettersToFields(false);
         for (LetterImage letter : listOfLetters) {
             letter.update();
         }
@@ -274,6 +243,39 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if (phase != GamePhase.ENDING) {
             checkIfInputComplete();
+        }
+    }
+
+    private void updateAddingLettersToFields(boolean actionUpJustOccured) {
+        for(CharacterField field: fields) {
+            LetterImage letterInside = field.getCharacterInsideField();
+            //field.setCharacterInsideField((LetterImage) null);
+            Log.d("LINS",field.getCorrectCharacter()+" : "+(letterInside!=null?letterInside.getLetter():"NEMA"));
+
+            for (LetterImage letter : listOfLetters) {
+                if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
+                    Point newCenter = field.getCenterPoint();
+                    if(letterInside!=null && letterInside!=letter) {
+                        if(!actionUpJustOccured) {
+                            continue;
+                        }
+                        if(letterBeingDraggedOutOfField!=null) {
+                            letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
+                            letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
+                            letterBeingDraggedOutOfField = null;
+                        } else {
+                            Point center = letterInside.getCenter();
+                            letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
+                        }
+
+                    }
+
+                    field.setCharacterInsideField(letter);
+                    if(!letter.getCenter().equals(newCenter)) {
+                        letter.setCenter(newCenter);
+                    }
+                }
+            }
         }
     }
 
@@ -503,6 +505,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 clearLetterPointer();
                 invalidate();
                 handled = true;
+                updateAddingLettersToFields(true);
                 setLetterBeingDragged(null);
                 break;
 
