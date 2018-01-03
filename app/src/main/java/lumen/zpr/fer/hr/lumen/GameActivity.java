@@ -24,8 +24,8 @@ public class GameActivity extends Activity {
         view=new GamePanel(this);
         setContentView(view);
     }
-    @Override
 
+    @Override
     protected void onPause(){
         super.onPause();
         view.paused=true;

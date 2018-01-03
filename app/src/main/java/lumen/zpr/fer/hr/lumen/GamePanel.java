@@ -259,7 +259,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         while(true) {
             try {
-
                  thread.setRunning(false);
                  currentSound.setPlaying(false);
                  thread.join();

@@ -73,6 +73,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private Context context;
 
+    /**
+     *Za zeljeno ponasanje prilikom pritiska na back ili lockscreena
+     */
+    public boolean paused = false;
+    public boolean terminated=false;
 
     private SharedPreferences preferences;
     /**
@@ -125,22 +130,27 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        if (thread!=null && thread.isInterrupted()){
+            thread.setRunning(true);
+            return;
+        }
+        thread = new MainThread(getHolder(), this);
+        thread.setRunning(true);
+        thread.start();
+    }
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        thread = new MainThread(getHolder(), this);
-
-        thread.setRunning(true);
-        thread.start();
-    }
-
-    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        while (true) {
+        while(true) {
             try {
                 thread.setRunning(false);
                 thread.join();
