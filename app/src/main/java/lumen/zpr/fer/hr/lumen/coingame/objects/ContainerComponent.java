@@ -152,7 +152,7 @@ public class ContainerComponent implements CoinGameObject {
 
             if (nextGameTime == null) {
                 nextGameTime = System.currentTimeMillis() + ConstantsUtil.MILLIS_WAITING;
-                scoreComponent.addCoins(1);
+                scoreComponent.addCoins(2);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putInt(context.getResources().getString(R.string.coins),scoreComponent.getCoins());
                 editor.commit();

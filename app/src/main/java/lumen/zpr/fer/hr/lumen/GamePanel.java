@@ -404,7 +404,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if(correct) {
             phase = GamePhase.ENDING;
 
-            coinComponent.addCoins(1);
+            coinComponent.addCoins(2);
            SharedPreferences.Editor editor= pref.edit();
            editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
            editor.commit();
