@@ -306,7 +306,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                     field.setCharacterInsideField(letter);
                     if(!letter.getCenter().equals(newCenter)) {
                         letter.setCenter(newCenter);
-                        if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField())){
+                        if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField().getLetter())){
                            field.setColorWithTime(Color.GREEN);
                            continue outerLoop;
                         }

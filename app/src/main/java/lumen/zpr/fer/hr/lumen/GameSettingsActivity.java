@@ -94,6 +94,7 @@ public class GameSettingsActivity extends Activity {
         returnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(coinNumber.getText().toString().isEmpty()) coinNumber.setText("0");
                 editor.putInt(getResources().getString(R.string.coins),Integer.parseInt(String.valueOf(coinNumber.getText())));
                 editor.commit();
 
