@@ -217,7 +217,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         /*
-        Za testiranje, postoji memory leak ??? performanse slabe
+        Za testiranje,  performanse slabe
         u drugoj igri prilikom klika na back igra nije responsive na par sek, baca exceptione
         pogledat i testirat u debugeru, bez doljnjeg ifa
          */
