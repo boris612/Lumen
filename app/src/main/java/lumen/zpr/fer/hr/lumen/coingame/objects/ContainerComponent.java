@@ -112,7 +112,6 @@ public class ContainerComponent implements CoinGameObject {
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setTypeface(ConstantsUtil.LABEL_FONT);
 
         paint.setColor(stateColorMap.get(state));
         canvas.drawRect(rect, paint);

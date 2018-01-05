@@ -9,7 +9,8 @@ import android.os.Bundle;
  * Activity koji pokrece igru s novcicima.
  */
 public class GameActivity extends Activity {
-    public static AssetManager assetManager;
+    //potrebno nema fonta?
+   // public static AssetManager assetManager;
 
     private  GamePanel view=null;
 
@@ -17,7 +18,7 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (view!=null) return;
-        assetManager = getAssets();
+        //assetManager = getAssets();
         view=new GamePanel(this);
         setContentView(view);
     }

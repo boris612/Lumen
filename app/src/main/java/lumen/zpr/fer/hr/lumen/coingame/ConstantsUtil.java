@@ -54,8 +54,5 @@ public class ConstantsUtil {
      * Vrijeme cekanja izmedu dva zadatka u milisekundama
      */
     public static final long MILLIS_WAITING = 2000;
-    private static final String PATH_TO_FONT = "Sandbox Melodrama.ttf";
-    public static final Typeface LABEL_FONT = Typeface.createFromAsset
-            (GameActivity.assetManager, PATH_TO_FONT);
 
 }
