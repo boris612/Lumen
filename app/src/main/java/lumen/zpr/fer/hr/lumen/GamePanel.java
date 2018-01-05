@@ -287,12 +287,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             LetterImage letterInside = field.getCharacterInsideField();
           
             for (LetterImage letter : listOfLetters) {
+                if(!actionUpJustOccured) {
+                    continue;
+                }
                 if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
                     Point newCenter = field.getCenterPoint();
                     if(letterInside!=null && letterInside!=letter) {
-                        if(!actionUpJustOccured) {
-                            continue;
-                        }
                         if(letterBeingDraggedOutOfField!=null) {
                             letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
                             letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
