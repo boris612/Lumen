@@ -75,6 +75,8 @@ public class ContainerComponent implements CoinGameObject {
 
     private Context context;
 
+    private boolean allCoinsUp = false;
+
     /**
      * Konstruktor.
      *
@@ -113,7 +115,11 @@ public class ContainerComponent implements CoinGameObject {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
 
-        paint.setColor(stateColorMap.get(state));
+        if (allCoinsUp) {
+            paint.setColor(stateColorMap.get(state));
+        } else {
+            paint.setColor(stateColorMap.get(ContainerState.INVALID_RESULT));
+        }
         canvas.drawRect(rect, paint);
 
         paint.setTextSize(ConstantsUtil.CONTAINER_LABEL_FONT);
@@ -121,11 +127,19 @@ public class ContainerComponent implements CoinGameObject {
 
         switch (state) {
             case OPTIMAL_RESULT:
-                canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
+                if (allCoinsUp) {
+                    canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
+                } else {
+                    paint.setColor(Color.BLACK);
+                    canvas.drawText(Integer.toString(generator.getCurrentNumber()),
+                            targetLabelPoint.x, targetLabelPoint.y, paint);
+                    canvas.drawText(Integer.toString(value),
+                            currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
+                }
                 break;
             case NOT_OPTIMAL_RESULT:
-                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
-                        currentValueLabelPoint.y, paint);
+//                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
+//                        currentValueLabelPoint.y, paint);
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
                 break;
@@ -147,14 +161,15 @@ public class ContainerComponent implements CoinGameObject {
             }
         }
 
-        if (state == ContainerState.OPTIMAL_RESULT) {
+        if (state == ContainerState.OPTIMAL_RESULT && allCoinsUp) {
 
             if (nextGameTime == null) {
                 nextGameTime = System.currentTimeMillis() + ConstantsUtil.MILLIS_WAITING;
                 scoreComponent.addCoins(2);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putInt(context.getResources().getString(R.string.coins),scoreComponent.getCoins());
-                editor.commit();
+//                editor.commit();
+                editor.apply();
                 return;
             }
             if (System.currentTimeMillis() >= nextGameTime) {
@@ -218,6 +233,7 @@ public class ContainerComponent implements CoinGameObject {
         updateState();
     }
 
+
     /**
      * Vraca trenutnu vrijednost komponenti unutar kontejnera.
      *
@@ -244,12 +260,20 @@ public class ContainerComponent implements CoinGameObject {
      * Resetira pozicije svih komponenti unutar kontejnera na inicijalne pozicije.
      */
     private void resetCoinPositions() {
-        for (CoinGameComponent coin : coinsInside) {
+        for (CoinGameComponent coin : gamePanel.getCoins()) {
             coin.resetPosition();
         }
     }
 
     public ContainerState getState() {
         return state;
+    }
+
+    public boolean isAllCoinsUp() {
+        return allCoinsUp;
+    }
+
+    public void setAllCoinsUp(boolean allCoinsDown) {
+        this.allCoinsUp = allCoinsDown;
     }
 }

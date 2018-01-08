@@ -49,6 +49,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     };
     /**
+     * Za zeljeno ponasanje prilikom pritiska na back ili lockscreena
+     */
+    public boolean paused = false;
+    public boolean terminated = false;
+    /**
      * Dretva koja osvjezava stanje ove igre
      */
     private MainThread thread;
@@ -72,13 +77,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Kontekst
      */
     private Context context;
-
-    /**
-     *Za zeljeno ponasanje prilikom pritiska na back ili lockscreena
-     */
-    public boolean paused = false;
-    public boolean terminated=false;
-
     private SharedPreferences preferences;
     /**
      * Konstruktor.
@@ -170,20 +168,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 for (CoinGameComponent coin : coins) {
                     if (coin.isSelected((int) event.getX(), (int) event.getY())) {
                         coin.setSelection(true);
+                        container.setAllCoinsUp(false);
                         break;
                     }
-//                    else {
-//                        coin.setSelection(false);
-//                    }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 CoinGameComponent component = null;
                 for (CoinGameComponent coin : coins) {
-//                    if (coin.isSelected((int) event.getX(), (int) event.getY())) {
-//                        coin.update(new Point((int) event.getX(), (int) event.getY()));
-//                        break;
-//                    }
                     if (coin.getSelection()) {
                         component = coin;
                         break;
@@ -192,18 +184,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 if (component != null) {
                     component.update(new Point((int) event.getX(), (int) event.getY()));
+                    updateContainer(component);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                for (CoinGameComponent coin : coins) {
-                    Point position = coin.getPosition();
-                    if (container.isSelected(position.x, position.y)) {
-                        container.addCoin(coin);
-                    }
-                    coin.setSelection(false);
-                }
+                updateContainer();
+                container.setAllCoinsUp(true);
         }
         return true;
+    }
+
+    /**
+     * Metoda provjerava
+     */
+    private void updateContainer() {
+        for (CoinGameComponent coin : coins) {
+            updateContainer(coin);
+            coin.setSelection(false);
+        }
+    }
+
+    private void updateContainer(CoinGameComponent coin) {
+        Point position = coin.getPosition();
+        if (container.isSelected(position.x, position.y)) {
+            container.addCoin(coin);
+        }
     }
 
     /**
@@ -280,5 +285,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             default:
                 throw new IllegalArgumentException("Coin with given value does not exist: " + value);
         }
+    }
+
+    public List<CoinGameComponent> getCoins() {
+        return coins;
     }
 }
