@@ -23,7 +23,7 @@ import lumen.zpr.fer.hr.lumen.coingame.ProblemGenerator;
  * Spremnik u koji se dovlace komponente {@link CoinGameComponent}.
  * Created by Zlatko on 12-Dec-17.
  */
-
+//TODO: Zakomentirane metode zasad mogu biti izbrisane
 public class ContainerComponent implements CoinGameObject {
     /**
      * Color specification of the {@linkplain ContainerState#INVALID_RESULT}
@@ -126,6 +126,7 @@ public class ContainerComponent implements CoinGameObject {
         paint.setTextAlign(Paint.Align.CENTER);
 
         switch (state) {
+            //TODO: odvoji crtanje brojki u zasebnu metodu
             case OPTIMAL_RESULT:
                 if (allCoinsUp) {
                     canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
@@ -140,8 +141,11 @@ public class ContainerComponent implements CoinGameObject {
             case NOT_OPTIMAL_RESULT:
 //                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
 //                        currentValueLabelPoint.y, paint);
+                paint.setColor(Color.BLACK);
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
+                canvas.drawText(Integer.toString(value),
+                        currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
                 break;
             default:
                 paint.setColor(Color.BLACK);
@@ -227,28 +231,28 @@ public class ContainerComponent implements CoinGameObject {
      *
      * @param coin komponenta izvucena izvan kontejnera
      */
-    public void removeCoin(CoinGameComponent coin) {
+    private void removeCoin(CoinGameComponent coin) {
         coinsInside.remove(coin);
         value -= coin.getValue();
         updateState();
     }
 
 
-    /**
-     * Vraca trenutnu vrijednost komponenti unutar kontejnera.
-     *
-     * @return trenutna vrijednost unutar kontejnera
-     */
-    public int getValue() {
-        return value;
-    }
+//    /**
+//     * Vraca trenutnu vrijednost komponenti unutar kontejnera.
+//     *
+//     * @return trenutna vrijednost unutar kontejnera
+//     */
+//    public int getValue() {
+//        return value;
+//    }
 
     /**
      * Vraca listu vrijednosti komponenti koje se nalaze u kontejneru.
      *
      * @return lista vrijednosti
      */
-    public List<Integer> getValues() {
+    private List<Integer> getValues() {
         List<Integer> values = new ArrayList<>();
         for (CoinGameComponent coin : coinsInside) {
             values.add(coin.getValue());
@@ -265,13 +269,13 @@ public class ContainerComponent implements CoinGameObject {
         }
     }
 
-    public ContainerState getState() {
-        return state;
-    }
+//    public ContainerState getState() {
+//        return state;
+//    }
 
-    public boolean isAllCoinsUp() {
-        return allCoinsUp;
-    }
+//    public boolean isAllCoinsUp() {
+//        return allCoinsUp;
+//    }
 
     public void setAllCoinsUp(boolean allCoinsDown) {
         this.allCoinsUp = allCoinsDown;
