@@ -38,4 +38,9 @@ public class GameLayoutConstants {
 
     static int MAX_NUM_OF_LETTERS=10;
     static int GREEN_HINT_TIME=500;
+
+    static double HAND_IMAGE_WIDTH_FACTOR = 0.15;
+    static double HAND_IMAGE_HEIGHT_FACTOR = 1.4145*HAND_IMAGE_WIDTH_FACTOR;
+    static double HAND_IMAGE_FOREFINGER_X_COORDINATE_FACTOR = 0.3615;
+    static double HAND_IMAGE_FOREFINGER_Y_COORDINATE_FACTOR = 0.0736;
 }

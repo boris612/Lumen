@@ -82,6 +82,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean paused = false;
     public boolean terminated=false;
 
+    private WordGameTutorial tutorial;
+
     public GamePanel(Context context) {
 
         super(context);
@@ -114,6 +116,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         initWinImage();
+
+        tutorial = new WordGameTutorial(listOfLetters,fields.get(0),getContext());
     }
 
     private void initWinImage() {
@@ -172,6 +176,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void wholeSpellingDone() {
                 phase=GamePhase.TYPING_WORD;
+                tutorial.gameStarted(5000);
             }
         });
        spelling.start();
@@ -274,6 +279,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if(phase == GamePhase.TYPING_WORD){
             if(hintActive) updateHint();
+            tutorial.update();
         }
 
         if (phase != GamePhase.ENDING) {
@@ -304,6 +310,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                     }
 
                     field.setCharacterInsideField(letter);
+                    tutorial.shutDown();
                     if(!letter.getCenter().equals(newCenter)) {
                         letter.setCenter(newCenter);
                         if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField().getLetter())){
@@ -403,7 +410,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
       
         if(correct) {
             phase = GamePhase.ENDING;
-
             coinComponent.addCoins(2);
            SharedPreferences.Editor editor= pref.edit();
            editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
@@ -438,6 +444,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         for (LetterImage letter:listOfLetters){
             letter.draw(canvas);
         }
+
+        tutorial.draw(canvas);
 
         if(phase == GamePhase.ENDING) {
             charactersFields.setColor(Color.GREEN);
@@ -478,6 +486,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                tutorial.restartIfActive();
                 // it's the first pointer, so clear all existing pointers data
                 clearLetterPointer();
 
