@@ -149,7 +149,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentWord = supply.getWord();
 
         currentImage = loadImage(supply.getImagePath());
-        currentSound = loadSound(null,supply.getLettersRecordingPaths());
+        currentSound = loadSound(supply.getWordRecordingPath(),supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
         phase = GamePhase.PRESENTING_WORD;
@@ -159,7 +159,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
-                currentSound.playSpelling();
+                while (thread.isAlive()==false)
+                    ;
+                currentSound.playSpelling(350);
             }
         });
         currentSound.registerListener(new GameSoundListener() {

@@ -27,7 +27,7 @@ public class GameSound {
     private Thread thread;
     private GamePanel gamePanel;
     public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath,GamePanel gamePanel, Thread thread){
-       //wordRecording = loadWordRecording(context, wordRecordingPath);
+       wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRecording = loadLettersRecording(context, lettersRecordingPath);
         listeners = new ArrayList<>();
         this.context=context;
@@ -117,6 +117,7 @@ public class GameSound {
             e.printStackTrace();
         }
 
+        int i=0;
 
         for (MediaPlayer mp : this.lettersRecording) {
             if (gamePanel.terminated) return;
@@ -129,19 +130,35 @@ public class GameSound {
             }
 
             mp.start();
-            notifyListenersForLetterDone();
-            while (mp.isPlaying()) ;
             try {
-                Thread.sleep(letterPauseLength);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
+            notifyListenersForLetterDone();
+            while (mp.isPlaying()) ;
+
+            i++;
+            if (i<lettersRecording.size())
+               try {
+                    Thread.sleep(letterPauseLength);
+                 } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+
 
         }
 
-       /*ordRecording.start();
-        while (wordRecording.isPlaying()) ;*/
+       wordRecording.start();
+        while (wordRecording.isPlaying()) ;
+
+        try {
+            Thread.sleep(letterPauseLength);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         notifyListenersForWholeSpellingDone();
     }
 
