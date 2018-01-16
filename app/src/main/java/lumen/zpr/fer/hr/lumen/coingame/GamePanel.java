@@ -66,10 +66,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private ContainerComponent container;
     /**
-     * Generira trazene iznose i provjerava tocna rjesenja
-     */
-    private ProblemGenerator generator = new ProblemGenerator();
-    /**
      * Komponenta koja prikazuje trenutni broj bodova
      */
     private CoinComponent scoreView;
@@ -77,7 +73,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      * Kontekst
      */
     private Context context;
-    private SharedPreferences preferences;
+
     /**
      * Konstruktor.
      *
@@ -87,15 +83,45 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
         this.context = context;
         getHolder().addCallback(this);
-        preferences=context.getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences
+                (getResources().getString(R.string.preference_file), Context.MODE_PRIVATE);
 
-
+        /*
+      Generira trazene iznose i provjerava tocna rjesenja
+     */
+        ProblemGenerator generator = new ProblemGenerator();
         generator.generirajBroj();
-        //Todo maknuti u metodu
+        createComponents(generator, preferences);
+
+    }
+
+    /**
+     * Metoda koja nasumicno mijesa vrijednosti u polju.
+     *
+     * @param ar polje
+     */
+    private static void shuffleArray(int[] ar) {
+        Random rnd = new Random();
+        for (int i = 0; i < ar.length; i++) {
+            int index = rnd.nextInt(ar.length);
+            int a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
+    }
+
+    /**
+     * Crta komponente na ekran.
+     *
+     * @param generator
+     * @param preferences
+     */
+    private void createComponents(ProblemGenerator generator, SharedPreferences preferences) {
         generator.setCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
         generateCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
-        int coins=preferences.getInt(getResources().getString(R.string.coins),0);
-        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), coins, getContext());
+        int coins = preferences.getInt(getResources().getString(R.string.coins), 0);
+        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin),
+                coins, getContext());
 
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
@@ -115,26 +141,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 generator, scoreView, preferences, context);
     }
 
-    /**
-     * Metoda koja nasumicno mijesa vrijednosti u polju.
-     *
-     * @param ar polje
-     */
-    private static void shuffleArray(int[] ar) {
-        Random rnd = new Random();
-        for (int i = 0; i < ar.length; i++) {
-            int index = rnd.nextInt(ar.length);
-            int a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
-        }
-    }
-
-
-
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (thread!=null && thread.isInterrupted()){
+        if (thread != null && thread.isInterrupted()) {
             thread.setRunning(true);
             return;
         }
@@ -150,7 +159,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        while(true) {
+        while (true) {
             try {
                 thread.setRunning(false);
                 thread.join();
@@ -226,7 +235,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         u drugoj igri prilikom klika na back igra nije responsive na par sek, baca exceptione
         pogledat i testirat u debugeru, bez doljnjeg ifa
          */
-        if(canvas == null) return;
+        if (canvas == null) return;
 
 
         super.draw(canvas);
@@ -236,7 +245,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         scoreView.draw(canvas);
 
         container.draw(canvas);
-
 
 
         for (CoinGameComponent coin : coins) {
@@ -287,6 +295,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * @return {@linkplain #coins}
+     */
     public List<CoinGameComponent> getCoins() {
         return coins;
     }

@@ -23,12 +23,14 @@ import lumen.zpr.fer.hr.lumen.coingame.ProblemGenerator;
  * Spremnik u koji se dovlace komponente {@link CoinGameComponent}.
  * Created by Zlatko on 12-Dec-17.
  */
-//TODO: Zakomentirane metode zasad mogu biti izbrisane
 public class ContainerComponent implements CoinGameObject {
     /**
      * Color specification of the {@linkplain ContainerState#INVALID_RESULT}
      */
     private static final int NEUTRAL_CONTAINER_COLOR = Color.rgb(203, 217, 255);
+    /**
+     * Mapa tipa <<stanje-rješenja>> -> <<boja kontejnera>>
+     */
     private static Map<ContainerState, Integer> stateColorMap = new HashMap<>();
     /**
      * Graficka reprezentacija kontejnera
@@ -89,11 +91,11 @@ public class ContainerComponent implements CoinGameObject {
      */
     public ContainerComponent(GamePanel gamePanel, Rect rect, Point targetLabelPoint,
                               Point currentValueLabelPoint, ProblemGenerator generator,
-                              CoinComponent scoreComponent,SharedPreferences pref,Context context) {
-        preferences=pref;
+                              CoinComponent scoreComponent, SharedPreferences pref, Context context) {
+        preferences = pref;
         this.gamePanel = gamePanel;
         this.rect = rect;
-        this.context=context;
+        this.context = context;
         this.targetLabelPoint = targetLabelPoint;
         this.currentValueLabelPoint = currentValueLabelPoint;
         this.generator = generator;
@@ -104,56 +106,43 @@ public class ContainerComponent implements CoinGameObject {
     /**
      * Popunjava mapu bojama za određeni {@linkplain ContainerState}.
      */
-    private void fillStateColorMap() {
+    private static void fillStateColorMap() {
         stateColorMap.put(ContainerState.OPTIMAL_RESULT, Color.GREEN);
         stateColorMap.put(ContainerState.NOT_OPTIMAL_RESULT, Color.YELLOW);
         stateColorMap.put(ContainerState.INVALID_RESULT, NEUTRAL_CONTAINER_COLOR);
-
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
 
-        if (allCoinsUp) {
-            paint.setColor(stateColorMap.get(state));
-        } else {
-            paint.setColor(stateColorMap.get(ContainerState.INVALID_RESULT));
-        }
+        paint.setColor(allCoinsUp ? stateColorMap.get(state) :
+                stateColorMap.get(ContainerState.INVALID_RESULT));
         canvas.drawRect(rect, paint);
 
         paint.setTextSize(ConstantsUtil.CONTAINER_LABEL_FONT);
         paint.setTextAlign(Paint.Align.CENTER);
 
-        switch (state) {
-            //TODO: odvoji crtanje brojki u zasebnu metodu
-            case OPTIMAL_RESULT:
-                if (allCoinsUp) {
-                    canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
-                } else {
-                    paint.setColor(Color.BLACK);
-                    canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                            targetLabelPoint.x, targetLabelPoint.y, paint);
-                    canvas.drawText(Integer.toString(value),
-                            currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
-                }
-                break;
-            case NOT_OPTIMAL_RESULT:
-//                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
-//                        currentValueLabelPoint.y, paint);
-                paint.setColor(Color.BLACK);
-                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                        targetLabelPoint.x, targetLabelPoint.y, paint);
-                canvas.drawText(Integer.toString(value),
-                        currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
-                break;
-            default:
-                paint.setColor(Color.BLACK);
-                canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                        targetLabelPoint.x, targetLabelPoint.y, paint);
-                canvas.drawText(Integer.toString(value),
-                        currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
+        if (state == ContainerState.OPTIMAL_RESULT && allCoinsUp) {
+            //TODO: dodati zvučni zapis za točno
+            canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
+        } else {
+            drawValues(canvas, paint);
         }
+    }
+
+    /**
+     * Crta brojke na njihova mjesta
+     *
+     * @param canvas canvas na koji se crta
+     * @param paint  {@linkplain Paint} objekt za crtanje
+     */
+    private void drawValues(Canvas canvas, Paint paint) {
+        paint.setColor(Color.BLACK);
+        canvas.drawText(Integer.toString(generator.getCurrentNumber()),
+                targetLabelPoint.x, targetLabelPoint.y, paint);
+        canvas.drawText(Integer.toString(value),
+                currentValueLabelPoint.x, currentValueLabelPoint.y, paint);
     }
 
     @Override
@@ -170,8 +159,8 @@ public class ContainerComponent implements CoinGameObject {
             if (nextGameTime == null) {
                 nextGameTime = System.currentTimeMillis() + ConstantsUtil.MILLIS_WAITING;
                 scoreComponent.addCoins(2);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.putInt(context.getResources().getString(R.string.coins),scoreComponent.getCoins());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt(context.getResources().getString(R.string.coins), scoreComponent.getCoins());
 //                editor.commit();
                 editor.apply();
                 return;
@@ -237,16 +226,6 @@ public class ContainerComponent implements CoinGameObject {
         updateState();
     }
 
-
-//    /**
-//     * Vraca trenutnu vrijednost komponenti unutar kontejnera.
-//     *
-//     * @return trenutna vrijednost unutar kontejnera
-//     */
-//    public int getValue() {
-//        return value;
-//    }
-
     /**
      * Vraca listu vrijednosti komponenti koje se nalaze u kontejneru.
      *
@@ -269,15 +248,12 @@ public class ContainerComponent implements CoinGameObject {
         }
     }
 
-//    public ContainerState getState() {
-//        return state;
-//    }
-
-//    public boolean isAllCoinsUp() {
-//        return allCoinsUp;
-//    }
-
-    public void setAllCoinsUp(boolean allCoinsDown) {
-        this.allCoinsUp = allCoinsDown;
+    /**
+     * Postavlja {@linkplain #allCoinsUp}.
+     *
+     * @param allCoinsUp nova vrijednost zastavice
+     */
+    public void setAllCoinsUp(boolean allCoinsUp) {
+        this.allCoinsUp = allCoinsUp;
     }
 }
