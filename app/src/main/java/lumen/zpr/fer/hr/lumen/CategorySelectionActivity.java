@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ButtonBarLayout;
+import android.util.ArraySet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -15,10 +16,12 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import lumen.zpr.fer.hr.lumen.menus.CategoryAdapter;
@@ -40,41 +43,44 @@ public class CategorySelectionActivity extends Activity {
         final SharedPreferences.Editor editor=pref.edit();
 
         final ImageButton returnBtn= findViewById(R.id.returnButton);
-        String currentCategory = pref.getString("category","sve");
-        System.out.println("Trenutna kategorija "+ currentCategory);
-        if (!categories.contains("sve")) categories.add("sve");
+        final Button allBtn = findViewById(R.id.allBtn);
+        final Button noneBtn = findViewById(R.id.noneBtn);
+        final Button saveBtn = findViewById(R.id.saveBtn);
 
         String[] cats = new String[categories.size()];
         cats = categories.toArray(cats);
-        CategoryAdapter adapter = new CategoryAdapter(this, cats);
+        final CategoryAdapter adapter = new CategoryAdapter(this, cats, pref.getStringSet("category", null));
         listView.setAdapter(adapter);
 
-        /*
-        for (String category : categories) {
-            final RadioButton button = new RadioButton(this);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Set<String> set = adapter.getChecked();
 
-            button.setText(category);
-            button.setTextSize(30);
-            button.setLayoutDirection(RadioButton.LAYOUT_DIRECTION_RTL);
-            button.setBackgroundResource(R.drawable.custom_divider);
-            radioGroup.addView(button);
-            button.getLayoutParams().width=RadioGroup.LayoutParams.MATCH_PARENT;
+                if (set.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Odaberite najmanje jednu kategoriju.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (category.equals(currentCategory)) button.setChecked(true);
-
-        }
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Button current = findViewById(checkedId);
-                System.out.println(current.getText().toString());
-                editor.putString("category",current.getText().toString());
+                editor.putStringSet("category", set);
                 editor.commit();
+
+                onBackPressed();
             }
-
         });
-        */
 
+        allBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.selectAll();
+            }
+        });
+        noneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.unselectAll();
+            }
+        });
         returnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

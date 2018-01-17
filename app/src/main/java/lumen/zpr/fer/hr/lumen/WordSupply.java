@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import lumen.zpr.fer.hr.lumen.database.DBHelper;
 import lumen.zpr.fer.hr.lumen.math.ProbabilityDistribution;
@@ -28,12 +30,19 @@ public class WordSupply {
     private double PROBABILITY_SCALE_FACTOR = 0.8;
     int currentWordId;
 
-    public WordSupply(Context context, String lang, String cat) {
+    public WordSupply(Context context, String lang, Set<String> cat) {
         helper = new DBHelper(context);
         language = lang;
 
+        Set<Integer> wordIds = new TreeSet<>();
+        for (String s : cat) {
+            for (int id : helper.getWordIds(lang, s)) {
+                wordIds.add(id);
+            }
+        }
+
         wordProbDistr = new ProbabilityDistribution();
-        for(int wordId: helper.getWordIds(lang, cat)) {
+        for(int wordId: wordIds) {
             wordProbDistr.addChoice(wordId);
         }
         rand = new Random();

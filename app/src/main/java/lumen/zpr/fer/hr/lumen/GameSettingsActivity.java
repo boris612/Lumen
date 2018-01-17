@@ -52,9 +52,6 @@ public class GameSettingsActivity extends Activity {
             addMoreLetters.setBackgroundColor(Color.GREEN);
         else addMoreLetters.setBackgroundColor(Color.RED);
 
-        String currentCategory = pref.getString("category", "sve");
-        categoryBtn.setText("Kategorija: " + currentCategory, TextView.BufferType.EDITABLE);
-
 
         greenWhenCorrectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,17 +98,6 @@ public class GameSettingsActivity extends Activity {
                 onBackPressed();
             }
         });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        final SharedPreferences pref = this.getSharedPreferences(getResources().getString(R.string.preference_file), Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = pref.edit();
-        String currentCategory = pref.getString("category", "sve");
-        categoryBtn.setText("Kategorija: " + currentCategory, TextView.BufferType.EDITABLE);
-
 
     }
 

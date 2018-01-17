@@ -37,6 +37,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+
+import lumen.zpr.fer.hr.lumen.database.DBHelper;
 
 /**
  * Created by Alen on 6.11.2017..
@@ -75,6 +79,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private LetterImage letterBeingDragged;
     private CharacterField letterBeingDraggedOutOfField;
     private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     private boolean moreLetters;
     private boolean greenOnCorrect;
@@ -82,12 +87,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean paused = false;
     public boolean terminated=false;
 
+    private DBHelper helper;
+
     public GamePanel(Context context) {
 
         super(context);
         this.context=context;
         getHolder().addCallback(this);
         pref= this.getContext().getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+        editor = pref.edit();
         this.updateSettings();
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
@@ -100,7 +108,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         //TODO: promjeniti za finalnu verziju
 
-        supply = new WordSupply(this.getContext(), "hrvatski",pref.getString("category","sve"));
+        helper = new DBHelper(context);
+        Set<String> categorySet = pref.getStringSet("category", null);
+        if (categorySet == null) {
+            categorySet = new TreeSet<>();
+            for (String cat : helper.getAllCategories())
+                categorySet.add(cat);
+            editor.putStringSet("category", categorySet);
+            editor.commit();
+        }
+        supply = new WordSupply(this.getContext(), "hrvatski", categorySet);
 
         try {
             initNewWord();
