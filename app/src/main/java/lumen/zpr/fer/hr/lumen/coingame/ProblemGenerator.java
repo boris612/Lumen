@@ -79,14 +79,15 @@ public class ProblemGenerator {
     /**
      * @return {@linkplain #coins}
      */
+    @Deprecated
     public List<Integer> getCoins() {
         return coins;
     }
 
-    public void setCoins(List<Integer> coins) {
+    void setCoins(List<Integer> coins) {
         this.coins = coins;
         generateSolution();
-    }
+    } //promjena pristupa
 
     /**
      * Racuna optimalno rjesenje problema koji je zadan kroz {@linkplain #coins} i
@@ -126,10 +127,11 @@ public class ProblemGenerator {
         return currentNumber;
     }
 
-    public Queue<Integer> getRecentNumbers() {
+    Queue<Integer> getRecentNumbers() {
         return recentNumbers;
-    }
+    } //promjena privatnosti
 
+    @Deprecated
     public List<Integer> getOptimalSolution() {
         return optimalSolution;
     }
@@ -137,10 +139,10 @@ public class ProblemGenerator {
     /**
      * Resetira parametre razreda.
      */
-    public void reset() {
+    void reset() {
         numberGenerator = new Random();
         currentNumber = 0;
         optimalSolution = null;
         recentNumbers = new ArrayDeque<>(QUEUE_SIZE);
-    }
+    } //promjena privatnosti
 }
