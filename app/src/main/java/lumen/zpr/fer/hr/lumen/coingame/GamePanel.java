@@ -49,6 +49,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     };
     /**
+     * Za zeljeno ponasanje prilikom pritiska na back ili lockscreena
+     */
+    public boolean paused = false;
+    public boolean terminated = false;
+    /**
      * Dretva koja osvjezava stanje ove igre
      */
     private MainThread thread;
@@ -61,10 +66,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
      */
     private ContainerComponent container;
     /**
-     * Generira trazene iznose i provjerava tocna rjesenja
-     */
-    private ProblemGenerator generator = new ProblemGenerator();
-    /**
      * Komponenta koja prikazuje trenutni broj bodova
      */
     private CoinComponent scoreView;
@@ -74,13 +75,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Context context;
 
     /**
-     *Za zeljeno ponasanje prilikom pritiska na back ili lockscreena
-     */
-    public boolean paused = false;
-    public boolean terminated=false;
-
-    private SharedPreferences preferences;
-    /**
      * Konstruktor.
      *
      * @param context kontekst
@@ -89,15 +83,45 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
         this.context = context;
         getHolder().addCallback(this);
-        preferences=context.getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences
+                (getResources().getString(R.string.preference_file), Context.MODE_PRIVATE);
 
-
+        /*
+      Generira trazene iznose i provjerava tocna rjesenja
+     */
+        ProblemGenerator generator = new ProblemGenerator();
         generator.generirajBroj();
-        //Todo maknuti u metodu
+        createComponents(generator, preferences);
+
+    }
+
+    /**
+     * Metoda koja nasumicno mijesa vrijednosti u polju.
+     *
+     * @param ar polje
+     */
+    private static void shuffleArray(int[] ar) {
+        Random rnd = new Random();
+        for (int i = 0; i < ar.length; i++) {
+            int index = rnd.nextInt(ar.length);
+            int a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
+    }
+
+    /**
+     * Crta komponente na ekran.
+     *
+     * @param generator
+     * @param preferences
+     */
+    private void createComponents(ProblemGenerator generator, SharedPreferences preferences) {
         generator.setCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
         generateCoins(Arrays.asList(1, 1, 1, 2, 2, 2, 5, 5, 10));
-        int coins=preferences.getInt(getResources().getString(R.string.coins),0);
-        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin), coins, getContext());
+        int coins = preferences.getInt(getResources().getString(R.string.coins), 0);
+        scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin),
+                coins, getContext());
 
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
@@ -117,26 +141,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 generator, scoreView, preferences, context);
     }
 
-    /**
-     * Metoda koja nasumicno mijesa vrijednosti u polju.
-     *
-     * @param ar polje
-     */
-    private static void shuffleArray(int[] ar) {
-        Random rnd = new Random();
-        for (int i = 0; i < ar.length; i++) {
-            int index = rnd.nextInt(ar.length);
-            int a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
-        }
-    }
-
-
-
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (thread!=null && thread.isInterrupted()){
+        if (thread != null && thread.isInterrupted()) {
             thread.setRunning(true);
             return;
         }
@@ -152,7 +159,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        while(true) {
+        while (true) {
             try {
                 thread.setRunning(false);
                 thread.join();
@@ -170,20 +177,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 for (CoinGameComponent coin : coins) {
                     if (coin.isSelected((int) event.getX(), (int) event.getY())) {
                         coin.setSelection(true);
+                        container.setAllCoinsUp(false);
                         break;
                     }
-//                    else {
-//                        coin.setSelection(false);
-//                    }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 CoinGameComponent component = null;
                 for (CoinGameComponent coin : coins) {
-//                    if (coin.isSelected((int) event.getX(), (int) event.getY())) {
-//                        coin.update(new Point((int) event.getX(), (int) event.getY()));
-//                        break;
-//                    }
                     if (coin.getSelection()) {
                         component = coin;
                         break;
@@ -192,18 +193,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
                 if (component != null) {
                     component.update(new Point((int) event.getX(), (int) event.getY()));
+                    updateContainer(component);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                for (CoinGameComponent coin : coins) {
-                    Point position = coin.getPosition();
-                    if (container.isSelected(position.x, position.y)) {
-                        container.addCoin(coin);
-                    }
-                    coin.setSelection(false);
-                }
+                updateContainer();
+                container.setAllCoinsUp(true);
         }
         return true;
+    }
+
+    /**
+     * Metoda provjerava
+     */
+    private void updateContainer() {
+        for (CoinGameComponent coin : coins) {
+            updateContainer(coin);
+            coin.setSelection(false);
+        }
+    }
+
+    private void updateContainer(CoinGameComponent coin) {
+        Point position = coin.getPosition();
+        if (container.isSelected(position.x, position.y)) {
+            container.addCoin(coin);
+        }
     }
 
     /**
@@ -221,7 +235,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         u drugoj igri prilikom klika na back igra nije responsive na par sek, baca exceptione
         pogledat i testirat u debugeru, bez doljnjeg ifa
          */
-        if(canvas == null) return;
+        if (canvas == null) return;
 
 
         super.draw(canvas);
@@ -231,7 +245,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         scoreView.draw(canvas);
 
         container.draw(canvas);
-
 
 
         for (CoinGameComponent coin : coins) {
@@ -280,5 +293,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             default:
                 throw new IllegalArgumentException("Coin with given value does not exist: " + value);
         }
+    }
+
+    /**
+     * @return {@linkplain #coins}
+     */
+    public List<CoinGameComponent> getCoins() {
+        return coins;
     }
 }
