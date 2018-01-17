@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import lumen.zpr.fer.hr.lumen.CoinComponent;
+
 import lumen.zpr.fer.hr.lumen.R;
 import lumen.zpr.fer.hr.lumen.coingame.ConstantsUtil;
 import lumen.zpr.fer.hr.lumen.coingame.GamePanel;
 import lumen.zpr.fer.hr.lumen.coingame.ProblemGenerator;
+
 
 /**
  * Spremnik u koji se dovlace komponente {@link CoinGameComponent}.
@@ -75,6 +77,13 @@ public class ContainerComponent implements CoinGameObject {
 
     private Context context;
 
+    private MessageSound messageSoundManager;
+
+    private boolean tryAgainMessagePlayed=false;
+    private boolean confirmationMessagePlayed=false;
+
+    private Thread messageThread;
+
     /**
      * Konstruktor.
      *
@@ -96,6 +105,7 @@ public class ContainerComponent implements CoinGameObject {
         this.currentValueLabelPoint = currentValueLabelPoint;
         this.generator = generator;
         this.scoreComponent = scoreComponent;
+        messageSoundManager = new MessageSound(Thread.currentThread(),context,gamePanel);
         fillStateColorMap();
     }
 
@@ -121,15 +131,55 @@ public class ContainerComponent implements CoinGameObject {
 
         switch (state) {
             case OPTIMAL_RESULT:
-                canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);
+                /*canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);*/
+
+                if (confirmationMessagePlayed==false) {
+                    messageThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            messageSoundManager.playCorrect();
+                        }
+                    });
+                    messageSoundManager.setPlaying(true);
+                    confirmationMessagePlayed=true;
+                    messageThread.start();
+                }
                 break;
             case NOT_OPTIMAL_RESULT:
-                canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
-                        currentValueLabelPoint.y, paint);
+               /* canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
+                        currentValueLabelPoint.y, paint);*/
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
+
+                if (tryAgainMessagePlayed==false) {
+                    messageThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            messageSoundManager.playTryAgain();
+                        }
+                    });
+                    messageSoundManager.setPlaying(true);
+                    tryAgainMessagePlayed=true;
+                    messageThread.start();
+                }
+
                 break;
             default:
+                tryAgainMessagePlayed=false;
+                confirmationMessagePlayed=false;
                 paint.setColor(Color.BLACK);
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
                         targetLabelPoint.x, targetLabelPoint.y, paint);
@@ -147,7 +197,7 @@ public class ContainerComponent implements CoinGameObject {
             }
         }
 
-        if (state == ContainerState.OPTIMAL_RESULT) {
+        if (state == ContainerState.OPTIMAL_RESULT && gamePanel.paused==false) {
 
             if (nextGameTime == null) {
                 nextGameTime = System.currentTimeMillis() + ConstantsUtil.MILLIS_WAITING;
@@ -159,6 +209,7 @@ public class ContainerComponent implements CoinGameObject {
             }
             if (System.currentTimeMillis() >= nextGameTime) {
                 nextGameTime = null;
+                System.out.println("generirano");
                 generator.generirajBroj();
                 resetCoinPositions();
                 updateState();

@@ -1,4 +1,4 @@
-package lumen.zpr.fer.hr.lumen;
+package lumen.zpr.fer.hr.lumen.coingame.objects;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lumen.zpr.fer.hr.lumen.GameSoundListener;
+import lumen.zpr.fer.hr.lumen.coingame.GamePanel;
 /**
  * Created by Korisnik on 16.1.2018..
  */
@@ -34,8 +36,7 @@ public class MessageSound {
         this.gamePanel=gamePanel;
         addMessage("zvucniZapisi/poruke/točno.mp3",correctSounds);
         addMessage("zvucniZapisi/poruke/bravo.mp3",correctSounds);
-        addMessage("zvucniZapisi/poruke/pokusaj opet.mp3",tryAgainSounds);
-
+        addMessage("zvucniZapisi/poruke/tocno, ali moze bolje.mp3",tryAgainSounds);
     }
 
     public void playCorrect() {
@@ -85,8 +86,7 @@ public class MessageSound {
         for(GameSoundListener l: listeners) {
             l.wholeSpellingDone();
         }
-
-
+        playing=false;
 
     }
 
