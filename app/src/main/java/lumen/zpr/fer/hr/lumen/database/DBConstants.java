@@ -78,9 +78,9 @@ final class DBConstants {
 //     * naziv atributa "kategorija"
 //     */
 //    static final String WORDS_CATEGORY = "kategorija";
-    /**
-     * naziv atributa "idslika"
-     */
+//    /**
+//     * naziv atributa "idslika"
+//     */
 //    static final String WORDS_IMAGE_PATH = "stazaslika";
 //    /**
 //     * naziv atributa "idzvuk"

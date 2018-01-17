@@ -16,7 +16,40 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.sql.DriverManager.println;
-import static lumen.zpr.fer.hr.lumen.database.DBConstants.*;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_VALUE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORDS_PAIRS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_CATEGORY;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_WORD;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.DATABASE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_PATH;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_VALUE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_IDSOUND;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_LANGUAGE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_LETTER;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.PATH_TO_IMAGES;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.PATH_TO_SOUND_WORD;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_PATH;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_LANGUAGE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_VALUE;
 
 /**
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća
@@ -95,10 +128,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 LETTER_SOUND_IDSOUND + " varchar references " + SOUND_ID + ")");
 
         db.execSQL("create table if not exists " + CATEGORY_WORD_PAIRS_TABLE_NAME + "(" +
-                CATEGORY_WORD_PAIRS_CATEGORY + " varchar primary key references " + CATEGORIES_TABLE_NAME + " (" +
+                CATEGORY_WORD_PAIRS_CATEGORY + " varchar references " + CATEGORIES_TABLE_NAME + " (" +
                 CATEGORIES_VALUE + ")," +
-                CATEGORY_WORD_PAIRS_WORD + " varchar primary key references " + WORDS_TABLE_NAME + " (" +
-                WORDS_VALUE + "))");
+                CATEGORY_WORD_PAIRS_WORD + " varchar references " + WORDS_TABLE_NAME + " (" +
+                WORDS_VALUE + ")," +
+                "primary key (" + CATEGORY_WORD_PAIRS_CATEGORY + "," + CATEGORY_WORD_PAIRS_WORD + "))");
 
         //popuni tablice
         try {
@@ -117,6 +151,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    //TODO: populiraj ovu tablicu
     private void fillCategoryWordPairsTable(SQLiteDatabase db) throws IOException {
         if (tableFilled(db, CATEGORY_WORD_PAIRS_TABLE_NAME)) {
             return;
@@ -598,13 +633,12 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param category kategorija
      * @return lista identifikatora svih odgovaraućih riječi u bazi
      */
-    public List<String> getWords(String language, String category) {
-        List<String> words = new ArrayList<>();
-        String joinQuery = "select * from" +
-                WORDS_TABLE_NAME + " left join " + CATEGORY_WORD_PAIRS_TABLE_NAME + " on " +
-                WORDS_VALUE + " = " + CATEGORY_WORD_PAIRS_WORD +
-                " where " + WORDS_LANGUAGE + "=" + language + " and " + CATEGORY_WORD_PAIRS_CATEGORY +
-                "=" + category;
+    public List<Integer> getWords(String language, String category) {
+        List<Integer> ids = new ArrayList<>();
+        String joinQuery = "select * from " +
+                WORDS_TABLE_NAME + " natural join " + CATEGORY_WORD_PAIRS_TABLE_NAME +
+                " where " + WORDS_LANGUAGE + "='" + language + "' and " + CATEGORY_WORD_PAIRS_CATEGORY +
+                "='" + category + "'";
 
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -615,7 +649,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     WORDS_LANGUAGE + "= ?",
                     new String[]{language}, null, null, null, null);
         } else {
-            cursor = db.rawQuery(joinQuery, new String[]{WORDS_VALUE});
+            cursor = db.rawQuery(joinQuery, null);
 //            cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
 //                    WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
 //                    new String[]{language, category}, null, null, null, null);
@@ -623,13 +657,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                words.add(cursor.getString(0));
+                ids.add(Integer.parseInt(cursor.getString(0)));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
 
-        return words;
+        return ids;
     }
 
 //    /**
@@ -659,12 +693,12 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 //        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_IMAGE_PATH}, WORDS_ID + " = ?",
 //                new String[]{Integer.toString(id)}, null, null, null, null);
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_VALUE}, WORDS_ID + " = ?",
-                new String[] {Integer.toString(id)}, null, null, null);
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null);
 
         cursor.moveToFirst();
-        cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_PATH + " = ?",
-                new String[]{PATH_TO_IMAGES + cursor.getString(0)},
+        cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_PATH + " like ?",
+                new String[]{PATH_TO_IMAGES + cursor.getString(0) + "%"},
                 null, null, null);
         cursor.moveToFirst();
 //        imageId = Integer.parseInt(cursor.getString(0));
@@ -690,8 +724,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
-        cursor = db.query(SOUND_TABLE_NAME, new String[] {SOUND_ID}, SOUND_PATH + " = ?",
-                new String[] {PATH_TO_SOUND_WORD + cursor.getString(0)}, null, null, null);
+        cursor = db.query(SOUND_TABLE_NAME, new String[]{SOUND_ID}, SOUND_PATH + " like ?",
+                new String[]{PATH_TO_SOUND_WORD + cursor.getString(0) + "%"}, null, null, null);
+        cursor.moveToFirst();
         soundId = Integer.parseInt(cursor.getString(0));
 
         cursor.close();
