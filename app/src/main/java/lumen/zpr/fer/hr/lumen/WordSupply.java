@@ -33,8 +33,8 @@ public class WordSupply {
         language = lang;
 
         wordProbDistr = new ProbabilityDistribution();
-        for(int wordId: helper.getWordIds(lang, cat)) {
-            wordProbDistr.addChoice(wordId);
+        for(String word: helper.getWords(lang, cat)) {
+            wordProbDistr.addChoice(word);
         }
         rand = new Random();
         goToNext();

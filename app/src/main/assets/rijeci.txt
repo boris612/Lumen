@@ -1,8 +1,35 @@
-hrvatski priroda 1 32 kamen
-hrvatski priroda 2 33 kiša
-hrvatski predmet 3 34 kišobran
-hrvatski priroda 4 31 mjesec
-hrvatski priroda 5 35 oblak
-hrvatski priroda 6 36 svemir
-hrvatski priroda 7 37 trava
-hrvatski priroda 8 38 vjetar
+hrvatski auto
+hrvatski čokolada
+hrvatski kruh
+hrvatski vrata
+hrvatski kornjača
+hrvatski stol
+hrvatski sunce
+hrvatski rijeci.txt
+hrvatski riba
+hrvatski lampa.jpeg
+hrvatski sat
+hrvatski jagoda.jpeg
+hrvatski gitara
+hrvatski jabuka
+hrvatski motocikl
+hrvatski knjiga
+hrvatski naranča
+hrvatski bicikl
+hrvatski lubenica
+hrvatski krevet
+hrvatski banana
+hrvatski stolica
+hrvatski panda
+hrvatski list
+hrvatski olovka
+hrvatski ključ
+hrvatski avion
+hrvatski pas
+hrvatski limun
+hrvatski žirafa
+hrvatski lav
+hrvatski torba
+hrvatski mlijeko
+hrvatski mačka
+hrvatski krava
