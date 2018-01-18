@@ -83,7 +83,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public boolean terminated=false;
     private MessageSound messageSoundManager;
     private boolean tryAgainActivated=false;
-
+    private boolean confirmationMessageActivated=false;
     private WordGameTutorial tutorial;
 
     public GamePanel(Context context) {
@@ -172,6 +172,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         currentWord = supply.getWord();
 
         phase = GamePhase.PRESENTING_WORD;
+        confirmationMessageActivated = false;
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(supply.getWordRecordingPath(),supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
@@ -420,7 +421,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void checkIfInputComplete() {
-        if (messageSoundManager.isPlaying()==true) return;
+        if (messageSoundManager.isPlaying()==true && confirmationMessageActivated==true) return;
         boolean correct = true;
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
@@ -440,7 +441,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
            SharedPreferences.Editor editor= pref.edit();
            editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
            editor.commit();
-
+            confirmationMessageActivated=true;
             Thread messageThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
