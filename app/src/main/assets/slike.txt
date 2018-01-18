@@ -5,7 +5,6 @@ slike/vrata.jpg
 slike/kornjača.png
 slike/stol.jpg
 slike/sunce.png
-slike/rijeci.txt
 slike/riba.png
 slike/lampa.jpeg
 slike/sat.jpg
