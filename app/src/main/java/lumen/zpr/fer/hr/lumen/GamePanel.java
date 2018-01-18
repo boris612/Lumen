@@ -117,7 +117,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         initWinImage();
 
-        tutorial = new WordGameTutorial(listOfLetters,fields.get(0),getContext());
+        tutorial = new WordGameTutorial(listOfLetters,fields.get(0),getContext(),GameConstants.TIME_TO_TRIGGER_TUTORIAL_MILISECONDS);
     }
 
     private void initWinImage() {
@@ -132,14 +132,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private GameImage loadImage(String imageName) throws  IOException {
-        return new GameImage(imageName,getContext());
+        if(phase == GamePhase.PRESENTING_WORD) {
+            return new GameImage(imageName,getContext(),true);
+        }
+        return new GameImage(imageName,getContext(),false);
     }
 
     private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
         return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath,this,Thread.currentThread());
     }
 
-    private enum GamePhase {
+    public enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
         PRESENTING_WORD,
         //faza u kojoj igrač piše (drag and dropanjem slova) riječ
@@ -152,11 +155,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void initNewWord() throws  IOException{
         currentWord = supply.getWord();
 
+        phase = GamePhase.PRESENTING_WORD;
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(null,supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
-        phase = GamePhase.PRESENTING_WORD;
+
         presentingTimeStart=System.currentTimeMillis();
         charactersFields = new CharactersFields(currentWord,getContext());
         listOfLetters=createLetters();
@@ -176,7 +180,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void wholeSpellingDone() {
                 phase=GamePhase.TYPING_WORD;
-                tutorial.gameStarted(5000);
+                try {
+                    currentImage = loadImage(currentImage.getImageName());
+                } catch(IOException ex) {
+                    ex.printStackTrace();
+                }
+                tutorial.gameStarted();
             }
         });
        spelling.start();
@@ -200,7 +209,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int startingSpace=getResources().getDisplayMetrics().widthPixels/50;
         if(moreLetters){
             space=getResources().getDisplayMetrics().widthPixels-(GameLayoutConstants.MAX_NUM_OF_LETTERS-1)*width-startingSpace;
-            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS;
+            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS*1.4;
         }
         else {
             space = getResources().getDisplayMetrics().widthPixels - (currentWord.length()-1) *width-startingSpace;
@@ -299,14 +308,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
                     Point newCenter = field.getCenterPoint();
                     if(letterInside!=null && letterInside!=letter) {
-                        if(letterBeingDraggedOutOfField!=null) {
-                            letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
-                            letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
-                            letterBeingDraggedOutOfField = null;
-                        } else {
-                            Point center = letterInside.getCenter();
-                            letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
-                        }
+                        Point center = letterInside.getCenter();
+                        letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
                     }
 
                     field.setCharacterInsideField(letter);
@@ -486,7 +489,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                tutorial.restartIfActive();
+                tutorial.restartIfNotShutDown();
                 // it's the first pointer, so clear all existing pointers data
                 clearLetterPointer();
 

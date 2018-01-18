@@ -13,17 +13,18 @@ public abstract class GameTutorial {
     protected TutorialState tutorialState;
 
     private enum TutorialState {
-        WAITING,ACTIVE,SHUT_DOWN,ENDED,GAME_NOT_STARTED
+        WAITING,ACTIVE,SHUT_DOWN,GAME_NOT_STARTED
     }
 
-    public GameTutorial() {
+    public GameTutorial(long timeToActivate) {
         tutorialState = TutorialState.GAME_NOT_STARTED;
+        this.timeToActivate = timeToActivate;
     }
 
-    public void gameStarted(long timeToActivate) {
-        timeOfGameStart = System.currentTimeMillis();
-        this.timeToActivate = timeToActivate;
-        tutorialState = TutorialState.WAITING;
+    public void gameStarted() {
+        if(tutorialState!=TutorialState.SHUT_DOWN) {
+            restart();
+        }
     }
 
     public void update() {
@@ -52,8 +53,8 @@ public abstract class GameTutorial {
         tutorialState = TutorialState.SHUT_DOWN;
     }
 
-    public void restartIfActive() {
-        if(tutorialState == TutorialState.ACTIVE) {
+    public void restartIfNotShutDown() {
+        if(tutorialState != TutorialState.SHUT_DOWN) {
             restart();
         }
     }
@@ -63,9 +64,10 @@ public abstract class GameTutorial {
         timeOfGameStart = System.currentTimeMillis();
     }
 
-    protected void tutorialEnded() {
-        restart();
-    }
+
+  //  protected void tutorialEnded() {
+  //     tutorialState = TutorialState.ENDED;
+   //}
 
 
 }
