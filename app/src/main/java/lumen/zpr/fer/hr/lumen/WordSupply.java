@@ -33,13 +33,13 @@ public class WordSupply {
 
         Set<Integer> wordIds = new TreeSet<>();
         for (String s : cat) {
-            for (int id : helper.getWordIds(lang, s)) {
+            for (int id : helper.getWords(lang, s)) {
                 wordIds.add(id);
             }
         }
 
         wordProbDistr = new ProbabilityDistribution();
-        for (int id : helper.getWords(lang, cat)) {
+        for (int id : wordIds) {
             wordProbDistr.addChoice(id);
         }
         rand = new Random();
