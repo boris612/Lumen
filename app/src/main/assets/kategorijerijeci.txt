@@ -1,4 +1,4 @@
-prijevozna sredstva auto
+﻿prijevozna sredstva auto
 hrana čokolada
 hrana kruh
 predmeti vrata
@@ -36,3 +36,10 @@ predmeti torba
 hrana mlijeko
 životinje mačka
 životinje krava
+priroda svemir
+priroda kamen
+priroda mjesec
+priroda oblak
+priroda trava
+priroda vjetar
+predmeti kišobran

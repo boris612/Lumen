@@ -1,4 +1,4 @@
-hrvatski auto
+﻿hrvatski auto
 hrvatski čokolada
 hrvatski kruh
 hrvatski vrata
@@ -32,3 +32,11 @@ hrvatski torba
 hrvatski mlijeko
 hrvatski mačka
 hrvatski krava
+hrvatski svemir
+hrvatski kamen
+hrvatski kiša
+hrvatski kišobran
+hrvatski mjesec
+hrvatski oblak
+hrvatski trava
+hrvatski vjetar
