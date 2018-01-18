@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import lumen.zpr.fer.hr.lumen.database.DBHelper;
 import lumen.zpr.fer.hr.lumen.menus.CategoryAdapter;
 import lumen.zpr.fer.hr.lumen.menus.MainMenuActivity;
 
@@ -49,7 +50,18 @@ public class CategorySelectionActivity extends Activity {
 
         String[] cats = new String[categories.size()];
         cats = categories.toArray(cats);
-        final CategoryAdapter adapter = new CategoryAdapter(this, cats, pref.getStringSet("category", null));
+
+        Set<String> categorySet = pref.getStringSet("category", null);
+        if (categorySet == null) {
+            categorySet = new TreeSet<>();
+            DBHelper helper = new DBHelper(getApplicationContext());
+            for (String cat : helper.getAllCategories())
+                categorySet.add(cat);
+            editor.putStringSet("category", categorySet);
+            editor.commit();
+        }
+
+        final CategoryAdapter adapter = new CategoryAdapter(this, cats, categorySet);
         listView.setAdapter(adapter);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
