@@ -84,6 +84,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private MessageSound messageSoundManager;
     private boolean tryAgainActivated=false;
 
+    private WordGameTutorial tutorial;
+
     public GamePanel(Context context) {
 
         super(context);
@@ -130,6 +132,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         coinComponent = new CoinComponent(getResources().getDrawable(R.drawable.coin),initCoins,getContext());
 
         initWinImage();
+
+        tutorial = new WordGameTutorial(listOfLetters,fields.get(0),getContext(),GameConstants.TIME_TO_TRIGGER_TUTORIAL_MILISECONDS);
     }
 
     private void initWinImage() {
@@ -144,14 +148,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private GameImage loadImage(String imageName) throws  IOException {
-        return new GameImage(imageName,getContext());
+        if(phase == GamePhase.PRESENTING_WORD) {
+            return new GameImage(imageName,getContext(),true);
+        }
+        return new GameImage(imageName,getContext(),false);
     }
 
     private GameSound loadSound(String wordRecordingPath, Collection<String> lettersRecordingPath){
         return new GameSound(getContext(),wordRecordingPath,lettersRecordingPath,this,Thread.currentThread());
     }
 
-    private enum GamePhase {
+    public enum GamePhase {
         //faza u kojoj igra prikazuje sliku, slovka i ispisuje riječ
         PRESENTING_WORD,
         //faza u kojoj igrač piše (drag and dropanjem slova) riječ
@@ -164,6 +171,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void initNewWord() throws  IOException{
         currentWord = supply.getWord();
 
+        phase = GamePhase.PRESENTING_WORD;
         currentImage = loadImage(supply.getImagePath());
         currentSound = loadSound(supply.getWordRecordingPath(),supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
@@ -193,6 +201,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void wholeSpellingDone() {
                 phase=GamePhase.TYPING_WORD;
+                try {
+                    currentImage = loadImage(currentImage.getImageName());
+                } catch(IOException ex) {
+                    ex.printStackTrace();
+                }
+                tutorial.gameStarted();
             }
         });
        spelling.start();
@@ -216,7 +230,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int startingSpace=getResources().getDisplayMetrics().widthPixels/50;
         if(moreLetters){
             space=getResources().getDisplayMetrics().widthPixels-(GameLayoutConstants.MAX_NUM_OF_LETTERS-1)*width-startingSpace;
-            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS;
+            space/=GameLayoutConstants.MAX_NUM_OF_LETTERS*1.4;
         }
         else {
             space = getResources().getDisplayMetrics().widthPixels - (currentWord.length()-1) *width-startingSpace;
@@ -295,6 +309,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if(phase == GamePhase.TYPING_WORD){
             if(hintActive) updateHint();
+            tutorial.update();
         }
 
         if (phase != GamePhase.ENDING) {
@@ -314,17 +329,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 if(field.collision(letter) && letter==letterBeingDragged && letterBeingDraggedOutOfField!=field){ //and to je onaj koji je beingDragged
                     Point newCenter = field.getCenterPoint();
                     if(letterInside!=null && letterInside!=letter) {
-                        if(letterBeingDraggedOutOfField!=null) {
-                            letterInside.setCenter(letterBeingDraggedOutOfField.getCenterPoint());
-                            letterBeingDraggedOutOfField.setCharacterInsideField(letterInside);
-                            letterBeingDraggedOutOfField = null;
-                        } else {
-                            Point center = letterInside.getCenter();
-                            letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
-                        }
+                        Point center = letterInside.getCenter();
+                        letterInside.setCenter(findAPlaceToKickLetterOut(letterInside,field));
                     }
 
                     field.setCharacterInsideField(letter);
+                    tutorial.shutDown();
                     if(!letter.getCenter().equals(newCenter)) {
                         letter.setCenter(newCenter);
                         if(greenOnCorrect && field.getCorrectCharacter().equals(field.getCharacterInsideField().getLetter())){
@@ -425,7 +435,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
       
         if(correct) {
-            phase=GamePhase.ENDING;
+            phase = GamePhase.ENDING;
             coinComponent.addCoins(2);
            SharedPreferences.Editor editor= pref.edit();
            editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
@@ -497,6 +507,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             letter.draw(canvas);
         }
 
+        tutorial.draw(canvas);
+
         if(phase == GamePhase.ENDING) {
             charactersFields.setColor(Color.GREEN);
             winImage.draw(canvas);
@@ -536,6 +548,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                tutorial.restartIfNotShutDown();
                 // it's the first pointer, so clear all existing pointers data
                 clearLetterPointer();
 

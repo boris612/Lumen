@@ -21,17 +21,31 @@ import java.util.function.IntFunction;
 public class GameImage {
     private Bitmap bitmap;
     private Rect rect;
-    private static double MAX_WIDTH_FACTOR = GameLayoutConstants.IMAGE_MAX_WIDTH_FACTOR; //za 0.7 -> slika može u širinu ici najviše do 70% veličine displaya
-    private  static double MAX_HEIGHT_FACTOR = GameLayoutConstants.IMAGE_MAX_HEIGHT_FACTOR;
+    private String imageName;
+    private double maxWidthFactor = GameLayoutConstants.IMAGE_MAX_WIDTH_FACTOR; //za 0.7 -> slika može u širinu ici najviše do 70% veličine displaya
+    private  double maxHeightFactor = GameLayoutConstants.IMAGE_MAX_HEIGHT_FACTOR;
     private static double Y_COORDINATE_FACTOR = GameLayoutConstants.IMAGE_Y_COORDINATE_FACTOR; //za 0.1 -> y koordinata slike je na 10% visine ekrana (s obzirom da je landscape, pod visinom se misli na širinu)
 
 
-    public GameImage(String imageName, Context context) throws IOException {
+    public GameImage(String imageName, Context context, boolean usePresentingPhaseDimensions) throws IOException {
+        this.imageName = imageName;
         byte[] imageBytes = loadImageToByteArray(imageName,context);
 
         bitmap = BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
 
+        if(usePresentingPhaseDimensions) {
+            maxWidthFactor = GameLayoutConstants.IMAGE_PRESENTING_MAX_WIDTH_FACTOR;
+            maxHeightFactor = GameLayoutConstants.IMAGE_PRESENTING_MAX_HEIGHT_FACTOR;
+        } else {
+            maxWidthFactor = GameLayoutConstants.IMAGE_MAX_WIDTH_FACTOR;
+            maxHeightFactor = GameLayoutConstants.IMAGE_MAX_HEIGHT_FACTOR;
+        }
+
         rect = determineOptimalRect(context);
+    }
+
+    public String getImageName() {
+        return imageName;
     }
 
     public Bitmap getBitmap() {
@@ -51,11 +65,11 @@ public class GameImage {
         double scaleFactorW = 1;
         double scaleFactorH = 1;
 
-        if(width > display_width*MAX_WIDTH_FACTOR) {
-            scaleFactorW = display_width*MAX_WIDTH_FACTOR/width;
+        if(width > display_width*maxWidthFactor) {
+            scaleFactorW = display_width*maxWidthFactor/width;
         }
-        if(height > display_height*MAX_HEIGHT_FACTOR) {
-            scaleFactorH = display_height*MAX_HEIGHT_FACTOR/height;
+        if(height > display_height*maxHeightFactor) {
+            scaleFactorH = display_height*maxHeightFactor/height;
         }
 
         if(scaleFactorH < scaleFactorW) {
