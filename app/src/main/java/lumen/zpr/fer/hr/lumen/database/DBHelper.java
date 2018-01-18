@@ -547,6 +547,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return catId;
     }
 
+
     public Collection<String> getAllCategories() {
         Collection<String> categories = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();

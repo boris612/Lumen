@@ -7,6 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import lumen.zpr.fer.hr.lumen.database.DBHelper;
 import lumen.zpr.fer.hr.lumen.math.ProbabilityDistribution;
@@ -25,9 +27,16 @@ public class WordSupply {
     private ProbabilityDistribution wordProbDistr;
     private double PROBABILITY_SCALE_FACTOR = 0.8;
 
-    public WordSupply(Context context, String lang, String cat) {
+    public WordSupply(Context context, String lang, Set<String> cat) {
         helper = new DBHelper(context);
         language = lang;
+
+        Set<Integer> wordIds = new TreeSet<>();
+        for (String s : cat) {
+            for (int id : helper.getWordIds(lang, s)) {
+                wordIds.add(id);
+            }
+        }
 
         wordProbDistr = new ProbabilityDistribution();
         for (int id : helper.getWords(lang, cat)) {

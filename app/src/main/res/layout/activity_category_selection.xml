@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent">
 
         <ImageButton
@@ -18,9 +18,9 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
             android:src="@drawable/back_arrow" />
 
         <TextView
@@ -28,25 +28,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Kategorija"
+            android:text="Kategorije"
             android:textSize="36sp" />
+
     </RelativeLayout>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ScrollView01"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <RadioGroup
-            android:id="@+id/categoryGroup"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/allBtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            >
+            android:layout_weight="1"
+            android:text="Odaberi sve" />
 
+        <Button
+            android:id="@+id/noneBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Očisti odabir" />
 
-        </RadioGroup>
-    </ScrollView>
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Spremi odabir" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView01"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
 
 
 </LinearLayout>
