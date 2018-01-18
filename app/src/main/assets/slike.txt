@@ -33,3 +33,11 @@ slike/torba.jpg
 slike/mlijeko.jpg
 slike/mačka.png
 slike/krava.png
+slike/svemir.png
+slike/kamen.png
+slike/kiša.png
+slike/kišobran.png
+slike/mjesec.png
+slike/oblak.png
+slike/trava.png
+slike/vjetar.png
