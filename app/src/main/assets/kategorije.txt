@@ -1,5 +1,6 @@
-priroda
+prijevozna sredstva
+hrana
 predmeti
 životinje
-prijevozna sredstva
-oblici
+priroda
+voće

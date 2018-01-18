@@ -169,10 +169,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void insertCategoryWordEntity(SQLiteDatabase db, String line) {
         ContentValues values = new ContentValues();
-        String[] attributes = line.split(" ");
-
-        values.put(CATEGORY_WORD_PAIRS_CATEGORY, attributes[0]);
-        values.put(CATEGORY_WORD_PAIRS_WORD, attributes[1]);
+        String[] attributes = line.split("\\s");
+        if (attributes.length == 3) { //ako je kategorija prijevozno sredstvo
+            values.put(CATEGORY_WORD_PAIRS_CATEGORY, attributes[0] + " " + attributes[1]);
+            values.put(CATEGORY_WORD_PAIRS_WORD, attributes[2]);
+        } else {
+            values.put(CATEGORY_WORD_PAIRS_CATEGORY, attributes[0]);
+            values.put(CATEGORY_WORD_PAIRS_WORD, attributes[1]);
+        }
 
         db.insert(CATEGORY_WORD_PAIRS_TABLE_NAME, null, values);
     }

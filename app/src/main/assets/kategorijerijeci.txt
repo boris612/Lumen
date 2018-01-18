@@ -1,0 +1,38 @@
+prijevozna sredstva auto
+hrana čokolada
+hrana kruh
+predmeti vrata
+životinje kornjača
+predmeti stol
+priroda sunce
+životinje riba
+predmeti lampa
+predmeti sat
+hrana jagoda
+voće jagoda
+predmeti gitara
+hrana jabuka
+voće jabuka
+prijevozna sredstva motocikl
+predmeti knjiga
+hrana naranča
+voće naranča
+prijevozna sredstva bicikl
+hrana lubenica
+voće lubenica
+predmeti krevet
+hrana banana
+voće banana
+predmeti stolica
+životinje panda
+priroda list
+predmeti olovka
+prijevozna sredstva avion
+životinje pas
+voće limun
+životinje žirafa
+životinje lav
+predmeti torba
+hrana mlijeko
+životinje mačka
+životinje krava
