@@ -37,7 +37,6 @@ slike/svemir.png
 slike/kamen.png
 slike/kiša.png
 slike/kišobran.png
-slike/mjesec.png
 slike/oblak.png
 slike/trava.png
 slike/vjetar.png
