@@ -6,7 +6,8 @@ import android.graphics.drawable.Drawable;
 
 /**
  * Komponenta koja reprezentira kovanicu. Sadrzi sliku, poziciju i vrijednost.
- * Created by Zlatko on 12-Dec-17.
+ * @author Zlatko Verk
+ * @author Darian Šarić
  */
 
 public class CoinGameComponent implements CoinGameObject {
@@ -89,6 +90,7 @@ public class CoinGameComponent implements CoinGameObject {
      *
      * @return slika komponente
      */
+    @Deprecated
     public Drawable getImg() {
         return img;
     }
@@ -98,7 +100,7 @@ public class CoinGameComponent implements CoinGameObject {
      *
      * @return vrijednost komponente
      */
-    public int getValue() {
+    int getValue() {
         return value;
     }
 
@@ -114,7 +116,7 @@ public class CoinGameComponent implements CoinGameObject {
     /**
      * Postavlja komponentu na poziciju na kojoj je bila pri stvaranju.
      */
-    public void resetPosition() {
+    void resetPosition() {
         update(initPosition);
     }
 }

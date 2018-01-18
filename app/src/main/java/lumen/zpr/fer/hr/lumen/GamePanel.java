@@ -81,6 +81,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Context context;
     public boolean paused = false;
     public boolean terminated=false;
+    private MessageSound messageSoundManager;
+    private boolean tryAgainActivated=false;
 
     private WordGameTutorial tutorial;
 
@@ -99,6 +101,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         disp.getSize(p);
         screenWidth=p.x;
         screenHeight=p.y;
+        messageSoundManager = new MessageSound(Thread.currentThread(),getContext(),this);
+
+        messageSoundManager.registerListener(new GameSoundListener() {
+            @Override
+            public void letterDone() {
+                startingHint.showNextLetter();
+                Log.d("LETT","show next letter");
+            }
+
+            @Override
+            public void wholeSpellingDone() {
+                messageSoundManager.setPlaying(false);
+            }
+        });
 
         //TODO: promjeniti za finalnu verziju
 
@@ -157,17 +173,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         phase = GamePhase.PRESENTING_WORD;
         currentImage = loadImage(supply.getImagePath());
-        currentSound = loadSound(null,supply.getLettersRecordingPaths());
+        currentSound = loadSound(supply.getWordRecordingPath(),supply.getLettersRecordingPaths());
         startingHint= new StartingHint(currentWord,this,screenWidth,screenHeight,new Rect(0,currentImage.getRect().bottom,this.screenWidth,getResources().getDisplayMetrics().heightPixels-currentImage.getRect().top));
 
+        messageSoundManager.setThread(Thread.currentThread());
+        messageSoundManager.setContext(getContext());
 
+        phase = GamePhase.PRESENTING_WORD;
         presentingTimeStart=System.currentTimeMillis();
         charactersFields = new CharactersFields(currentWord,getContext());
         listOfLetters=createLetters();
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
-                currentSound.playSpelling();
+                while (thread.isAlive()==false)
+                    ;
+                currentSound.playSpelling(800);
             }
         });
         currentSound.registerListener(new GameSoundListener() {
@@ -255,7 +276,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             thread.setRunning(true);
             return;
         }
-        for (int i=0;i<10;i++)  System.err.println("STVORENA NOVA GLAVNA DRETVA................................................");
+
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -270,10 +291,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         while(true) {
             try {
-                 thread.setRunning(false);
-                 currentSound.setPlaying(false);
-                 thread.join();
-                 break;
+               currentSound.setPlaying(false);
+               thread.setRunning(false);
+               thread.join();
+               break;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -399,10 +420,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void checkIfInputComplete() {
+        if (messageSoundManager.isPlaying()==true) return;
         boolean correct = true;
         for(int i = 0, n = fields.size(); i < n; i++) {
             CharacterField f = fields.get(i);
             if(!f.hasCharacterInsideField()) {
+                tryAgainActivated=false;
                 return;
             }
           
@@ -417,10 +440,46 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
            SharedPreferences.Editor editor= pref.edit();
            editor.putInt(getResources().getString(R.string.coins),coinComponent.getCoins());
            editor.commit();
+
+            Thread messageThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (thread.isAlive()==false)
+                        ;
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    messageSoundManager.playCorrect();
+                }
+            });
+
+            messageSoundManager.setPlaying(true);
+            messageThread.start();
+
             endingTime = System.currentTimeMillis();
 
             //TODO: reproducirat glasovnu poruku s porukom tipa "Bravo! Tocan odgovor! Klikni na ekran kako bi presao na sljedecu rijec."
 
+        }
+        else if (tryAgainActivated==false){
+
+            Thread messageThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (thread.isAlive()==false)
+                        ;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    messageSoundManager.playTryAgain();
+                }
+            });
+            tryAgainActivated=true;
+            messageThread.start();
         }
     }
 
@@ -454,7 +513,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             charactersFields.setColor(Color.GREEN);
             winImage.draw(canvas);
 
-            if(System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
+            if(messageSoundManager.isPlaying()==false && System.currentTimeMillis()-endingTime>=GameConstants.ENDING_TIME) {
                 try{
 
                     initNewWord();

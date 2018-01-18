@@ -12,7 +12,8 @@ public class MainThread extends Thread {
     /**
      * Maksimalni broj osvjezavanja u sekundi
      */
-    public static final int MAX_FPS = 30;
+    private static final int MAX_FPS = 30;
+    public static Canvas canvas;
     /**
      * Surface na koji se iscrtava igra
      */
@@ -26,15 +27,13 @@ public class MainThread extends Thread {
      */
     private boolean running;
 
-    public static Canvas canvas;
-
     /**
      * Konstruktor.
      *
      * @param surfaceHolder surface na koji se iscrtava igra
      * @param gamePanel     game panel koji sadrzi trenutno stanje igre
      */
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
+    MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gamePanel = gamePanel;
@@ -49,16 +48,16 @@ public class MainThread extends Thread {
 
         while (running) {
             startTime = System.nanoTime();
-            canvas=null;
+            canvas = null;
 
             try {
                 canvas = surfaceHolder.lockCanvas();
                 if (canvas != null) {
-                        synchronized (surfaceHolder) {
-                            gamePanel.update();
-                            gamePanel.draw(canvas);
-                        }
-                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    synchronized (surfaceHolder) {
+                        gamePanel.update();
+                        gamePanel.draw(canvas);
+                    }
+                    surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -81,7 +80,7 @@ public class MainThread extends Thread {
      *
      * @param running igra se zaustavlja postavljanjem na false
      */
-    public void setRunning(boolean running) {
+    void setRunning(boolean running) {
         this.running = running;
     }
 }

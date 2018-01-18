@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import static java.sql.DriverManager.println;
@@ -203,7 +202,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("STVARANJE BAZE","sdgs");
+        Log.d("STVARANJE BAZE", "sdgs");
         //stvori tablicu "jezici"
 
         db.execSQL("create table if not exists " + LANGUAGES_TABLE_NAME + "(" +
@@ -440,7 +439,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void addLetterSoundEntity(SQLiteDatabase db, String letterSound) {
         String[] attributes = letterSound.split(" ");
-        Log.d("LSE",letterSound);
+        Log.d("LSE", letterSound);
         ContentValues values = new ContentValues();
         values.put(LETTER_SOUND_LETTER, attributes[0]);
         values.put(LETTER_SOUND_LANGUAGE, attributes[1]);
@@ -504,7 +503,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
     /**
      * Za dani identifikator riječi vraća pripadnu riječ
      *
@@ -521,6 +519,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         word = cursor.getString(0);
+        cursor.close();
 
         return word;
     }
@@ -542,6 +541,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         lang = cursor.getString(0);
 
+        cursor.close();
+
         return lang;
     }
 
@@ -561,6 +562,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         cat = cursor.getString(0);
+
+        cursor.close();
 
         return cat;
     }
@@ -582,6 +585,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         letter = cursor.getString(0);
 
+        cursor.close();
+
         return letter;
     }
 
@@ -601,6 +606,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         langId = Integer.parseInt(cursor.getString(0));
+
+        cursor.close();
 
         return langId;
     }
@@ -622,18 +629,23 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         catId = Integer.parseInt(cursor.getString(0));
 
+        cursor.close();
+
         return catId;
     }
-    public Collection<String> getAllCategories(){
+
+    public Collection<String> getAllCategories() {
         Collection<String> categories = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(true,WORDS_TABLE_NAME,new String[]{WORDS_CATEGORY},null,null,null,null,WORDS_CATEGORY,null);
+        Cursor cursor = db.query(true, WORDS_TABLE_NAME, new String[]{WORDS_CATEGORY}, null, null, null, null, WORDS_CATEGORY, null);
         System.out.println("pozvano");
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             categories.add(cursor.getString(0));
             System.out.println(cursor.getString(0));
         }
+
+        cursor.close();
         return categories;
     }
 
@@ -653,6 +665,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cursor.moveToFirst();
         letterId = Integer.parseInt(cursor.getString(0));
+
+        cursor.close();
 
         return letterId;
     }
@@ -674,6 +688,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         imgPath = cursor.getString(0);
 
+        cursor.close();
+
         return imgPath;
     }
 
@@ -694,6 +710,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         sndPath = cursor.getString(0);
 
+        cursor.close();
+
         return sndPath;
     }
 
@@ -705,20 +723,19 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param category kategorija
      * @return lista identifikatora svih odgovaraućih riječi u bazi
      */
-    public List<Integer> getWordIds (String language, String category) {
+    public List<Integer> getWordIds(String language, String category) {
         List<Integer> words = new ArrayList<Integer>();
 
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
-        if (category.equals("sve")){
-            cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_ID},
+        if (category.equals("sve")) {
+            cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
                     WORDS_LANGUAGE + "= ?",
-                    new String[] {language}, null, null, null, null);
-        }
-        else {
-             cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
+                    new String[]{language}, null, null, null, null);
+        } else {
+            cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
                     WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
                     new String[]{language, category}, null, null, null, null);
         }
@@ -729,6 +746,8 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+
         return words;
     }
 
@@ -736,10 +755,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * Vraća listu identifikatora svih riječi danog jezika i kategorije.
      *
      * @param langId identifikator jezika
-     * @param catId idetifikator kategorije
+     * @param catId  idetifikator kategorije
      * @return lista identifikatora svih odgovaraućih riječi u bazi
      */
-    public List<Integer> getWordIds (int langId, int catId) {
+    public List<Integer> getWordIds(int langId, int catId) {
         String language = getLanguage(langId);
         String category = getCategory(catId);
 
@@ -757,11 +776,13 @@ public class DBHelper extends SQLiteOpenHelper {
         int imageId;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_IMAGE_ID}, WORDS_ID + " = ?",
-                new String[] {Integer.toString(id)}, null, null, null, null);
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_IMAGE_ID}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
         imageId = Integer.parseInt(cursor.getString(0));
+
+        cursor.close();
 
         return getImagePath(imageId);
     }
@@ -777,11 +798,13 @@ public class DBHelper extends SQLiteOpenHelper {
         int soundId;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[] {WORDS_SOUND_ID}, WORDS_ID + " = ?",
-                new String[] {Integer.toString(id)}, null, null, null, null);
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_SOUND_ID}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
         soundId = Integer.parseInt(cursor.getString(0));
+
+        cursor.close();
 
         return getSoundPath(soundId);
     }
@@ -791,13 +814,15 @@ public class DBHelper extends SQLiteOpenHelper {
         int soundId;
         println(letter);
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(LETTER_SOUND_TABLE_NAME, new String[] {LETTER_SOUND_IDSOUND},
+        Cursor cursor = db.query(LETTER_SOUND_TABLE_NAME, new String[]{LETTER_SOUND_IDSOUND},
                 LETTER_SOUND_LETTER + " = ? AND " + LETTER_SOUND_LANGUAGE + "= ?",
-                new String[] {letter, language}, null, null, null, null);
+                new String[]{letter, language}, null, null, null, null);
 
         cursor.moveToFirst();
-        Log.d("LETTERSOUND",letter);
+        Log.d("LETTERSOUND", letter);
         soundId = Integer.parseInt(cursor.getString(0));
+
+        cursor.close();
 
         return getSoundPath(soundId);
     }

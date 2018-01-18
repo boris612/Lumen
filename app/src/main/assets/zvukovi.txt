@@ -29,3 +29,11 @@ zvucniZapisi/hrvatskaAbeceda/v.mp3
 zvucniZapisi/hrvatskaAbeceda/z.mp3
 zvucniZapisi/hrvatskaAbeceda/ž.mp3
 zvucniZapisi/dummy.mp3
+zvucniZapisi/rijeci/kamen.mp3
+zvucniZapisi/rijeci/kiša.mp3
+zvucniZapisi/rijeci/kišobran.mp3
+zvucniZapisi/rijeci/oblak.mp3
+zvucniZapisi/rijeci/svemir.mp3
+zvucniZapisi/rijeci/trava.mp3
+zvucniZapisi/rijeci/vjetar.mp3
+

@@ -1,8 +1,8 @@
-hrvatski priroda 1 31 kamen
-hrvatski priroda 2 31 kiša
-hrvatski predmet 3 31 kišobran
+hrvatski priroda 1 32 kamen
+hrvatski priroda 2 33 kiša
+hrvatski predmet 3 34 kišobran
 hrvatski priroda 4 31 mjesec
-hrvatski priroda 5 31 oblak
-hrvatski priroda 6 31 svemir
-hrvatski priroda 7 31 trava
-hrvatski priroda 8 31 vjetar
+hrvatski priroda 5 35 oblak
+hrvatski priroda 6 36 svemir
+hrvatski priroda 7 37 trava
+hrvatski priroda 8 38 vjetar
