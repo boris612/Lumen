@@ -21,7 +21,7 @@ slike/krevet.jpg
 slike/banana.png
 slike/stolica.jpg
 slike/panda.png
-slike/list.png
+slike/list.jpg
 slike/olovka.png
 slike/ključ.jpg
 slike/avion.png
