@@ -5,10 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import lumen.zpr.fer.hr.lumen.database.DBHelper;
@@ -20,21 +17,21 @@ import lumen.zpr.fer.hr.lumen.math.ProbabilityDistribution;
  */
 
 public class WordSupply {
+    int currentWordId;
     private DBHelper helper;
     //private List<Integer> wordIds;
     private String language;
     private Random rand;
     private ProbabilityDistribution wordProbDistr;
     private double PROBABILITY_SCALE_FACTOR = 0.8;
-    int currentWordId;
 
     public WordSupply(Context context, String lang, String cat) {
         helper = new DBHelper(context);
         language = lang;
 
         wordProbDistr = new ProbabilityDistribution();
-        for(int wordId: helper.getWordIds(lang, cat)) {
-            wordProbDistr.addChoice(wordId);
+        for (int id : helper.getWords(lang, cat)) {
+            wordProbDistr.addChoice(id);
         }
         rand = new Random();
         goToNext();

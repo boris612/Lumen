@@ -16,6 +16,40 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.sql.DriverManager.println;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORIES_VALUE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORDS_PAIRS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_CATEGORY;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.CATEGORY_WORD_PAIRS_WORD;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.DATABASE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_PATH;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.IMAGES_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTERS_VALUE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_IDSOUND;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_LANGUAGE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_LETTER;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.LETTER_SOUND_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.PATH_TO_IMAGES;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.PATH_TO_SOUND_WORD;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_PATH;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.SOUND_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_FILENAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_ID;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_LANGUAGE;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_TABLE_NAME;
+import static lumen.zpr.fer.hr.lumen.database.DBConstants.WORDS_VALUE;
 
 /**
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća
@@ -26,154 +60,6 @@ import static java.sql.DriverManager.println;
  */
 
 public class DBHelper extends SQLiteOpenHelper {
-    /**
-     * naziv datoteke baze podataka
-     */
-    private static final String DATABASE_NAME = "lumeni.db";
-
-    /**
-     * naziv tablice "jezici"
-     */
-    private static final String LANGUAGES_TABLE_NAME = "jezici";
-    /**
-     * naziv atributa "idjezik"
-     */
-    private static final String LANGUAGES_ID = "idjezik";
-    /**
-     * naziv atributa "jezik"
-     */
-    private static final String LANGUAGES_VALUE = "jezik";
-    /**
-     * naziv datoteke koja sadrži dostupne jezike
-     */
-    private static final String LANGUAGES_FILENAME = "jezici.txt";
-
-    /**
-     * naziv tablice "kategorije"
-     */
-    private static final String CATEGORIES_TABLE_NAME = "kategorije";
-    /**
-     * naziv atributa "idkategorija"
-     */
-    private static final String CATEGORIES_ID = "idkategorija";
-    /**
-     * naziv atributa "kategorija"
-     */
-    private static final String CATEGORIES_VALUE = "kategorija";
-    /**
-     * naziv datoteke iz koje se čitaju dostupne kategorije
-     */
-    private static final String CATEGORIES_FILENAME = "kategorije.txt";
-
-    /**
-     * naziv tablice "slike"
-     */
-    private static final String IMAGES_TABLE_NAME = "slike";
-    /**
-     * naziv atributa "idslika
-     */
-    private static final String IMAGES_ID = "idslika";
-    /**
-     * naziv atributa "stazaslike"
-     */
-    private static final String IMAGES_PATH = "stazaSlike";
-    /**
-     * naziv datoteke iz koje se čitaju dostupne slike
-     */
-    private static final String IMAGES_FILENAME = "slike.txt";
-
-    /**
-     * naziv tablice "rijeci"
-     */
-    private static final String WORDS_TABLE_NAME = "rijeci";
-    /**
-     * naziv atributa "idrijec"
-     */
-    private static final String WORDS_ID = "idrijec";
-    /**
-     * naziv atributa jezik
-     */
-    private static final String WORDS_LANGUAGE = "jezik";
-    /**
-     * naziv atributa "kategorija"
-     */
-    private static final String WORDS_CATEGORY = "kategorija";
-    /**
-     * naziv atributa "idslika"
-     */
-    private static final String WORDS_IMAGE_ID = "idslika";
-    /**
-     * naziv atributa "idzvuk"
-     */
-    private static final String WORDS_SOUND_ID = "idzvuk";
-    /**
-     * naziv atributa "rijec"
-     */
-    private static final String WORDS_VALUE = "rijec";
-    /**
-     * naziv datoteke koja sadrži zapise o riječima
-     */
-    private static final String WORDS_FILENAME = "rijeci.txt";
-
-    /**
-     * naziv tablice "slova"
-     */
-    private static final String LETTERS_TABLE_NAME = "slova";
-    /**
-     * naziv atributa "idslovo"
-     */
-    private static final String LETTERS_ID = "idslovo";
-    /**
-     * naziv atributa "slovo"
-     */
-    private static final String LETTERS_VALUE = "slovo";
-    /**
-     * naziv datoteke iz kojih se čitaju slova
-     */
-    private static final String LETTERS_FILENAME = "slova.txt";
-
-    /**
-     * naziv tablice "zvukovislova"
-     */
-    private static final String LETTER_SOUND_TABLE_NAME = "zvukovislova";
-    /**
-     * naziv atributa "idzvucnizapis"
-     */
-    private static final String LETTER_SOUND_ID = "idzvucnizapis";
-    /**
-     * naziv atributa "slovo"
-     */
-    private static final String LETTER_SOUND_LETTER = "slovo";
-    /**
-     * naziv atributa "jezik"
-     */
-    private static final String LETTER_SOUND_LANGUAGE = "jezik";
-    /**
-     * naziv atributa "idzvuk"
-     */
-    private static final String LETTER_SOUND_IDSOUND = "idzvuk";
-    /**
-     * naziv datoteke iz koje se čitaju vrijednosti n-torki
-     */
-    private static final String LETTER_SOUND_FILENAME = "zvukoviSlova.txt";
-
-    /**
-     * naziv tablice "zvukovi"
-     */
-    private static final String SOUND_TABLE_NAME = "zvukovi";
-    /**
-     * naziv atributa "idzvuk"
-     */
-    private static final String SOUND_ID = "idzvuk";
-    /**
-     * naziv atributa "staza zvuka"
-     */
-    private static final String SOUND_PATH = "stazaZvuk";
-    /**
-     * naziv datoteke iz koje se čitaju zvučni zapisi izgovora riječi
-     */
-    private static final String SOUND_FILENAME = "zvukovi.txt";
-
     /**
      * {@link AssetManager} preko kojeg se dohvaćaju datoteke koje sadrže podatke koje treba upisati
      * u bazu podataka
@@ -205,9 +91,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("STVARANJE BAZE", "sdgs");
         //stvori tablicu "jezici"
 
-        db.execSQL("create table if not exists " + LANGUAGES_TABLE_NAME + "(" +
-                LANGUAGES_ID + " integer primary key autoincrement," +
-                LANGUAGES_VALUE + " varchar unique)");
+//        db.execSQL("create table if not exists " + LANGUAGES_TABLE_NAME + "(" +
+//                LANGUAGES_ID + " integer primary key autoincrement," +
+//                LANGUAGES_VALUE + " varchar unique)");
 
         //stvori tablicu "kategorije"
         db.execSQL("create table if not exists " + CATEGORIES_TABLE_NAME + "(" +
@@ -222,14 +108,8 @@ public class DBHelper extends SQLiteOpenHelper {
         //stvori tablicu "rijeci"
         db.execSQL("create table if not exists " + WORDS_TABLE_NAME + "(" +
                 WORDS_ID + " integer primary key autoincrement," +
-                WORDS_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME +
-                "(" + LANGUAGES_VALUE + ")," +
-                WORDS_CATEGORY + " varchar references " + CATEGORIES_TABLE_NAME +
-                "(" + CATEGORIES_VALUE + ")," +
-                WORDS_IMAGE_ID + " integer references " + IMAGES_TABLE_NAME + "," +
-                WORDS_SOUND_ID + " integer references " + SOUND_TABLE_NAME + "," +
+                WORDS_LANGUAGE + " varchar ," +
                 WORDS_VALUE + " varchar unique)");
-
 
         //stvori tablicu "zvukovi"
         db.execSQL("create table if not exists " + SOUND_TABLE_NAME + "(" +
@@ -244,20 +124,26 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table if not exists " + LETTER_SOUND_TABLE_NAME + "(" +
                 LETTER_SOUND_ID + " integer primary key autoincrement," +
                 LETTER_SOUND_LETTER + " varchar," +
-                LETTER_SOUND_LANGUAGE + " varchar references " + LANGUAGES_TABLE_NAME + "(" +
-                LANGUAGES_VALUE + ")," +
+                LETTER_SOUND_LANGUAGE + " varchar ," +
                 LETTER_SOUND_IDSOUND + " varchar references " + SOUND_ID + ")");
 
+        db.execSQL("create table if not exists " + CATEGORY_WORD_PAIRS_TABLE_NAME + "(" +
+                CATEGORY_WORD_PAIRS_CATEGORY + " varchar references " + CATEGORIES_TABLE_NAME + " (" +
+                CATEGORIES_VALUE + ")," +
+                CATEGORY_WORD_PAIRS_WORD + " varchar references " + WORDS_TABLE_NAME + " (" +
+                WORDS_VALUE + ")," +
+                "primary key (" + CATEGORY_WORD_PAIRS_CATEGORY + "," + CATEGORY_WORD_PAIRS_WORD + "))");
 
         //popuni tablice
         try {
-            fillLanguageTable(db);
+//            fillLanguageTable(db);
             fillCategoryTable(db);
             fillImageTable(db);
             fillWordsTable(db);
             fillSoundTable(db);
             fillLetterTable(db);
             fillLetterSoundTable(db);
+            fillCategoryWordPairsTable(db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -265,39 +151,67 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    /**
-     * Puni tablicu "jezici" n-torkama.
-     *
-     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
-     * @throws IOException baca se ako dođe do greške pri čitanju prikladne datoteke
-     */
-    private void fillLanguageTable(SQLiteDatabase db) throws IOException {
-        if (tableFilled(db, LANGUAGES_TABLE_NAME)) {
+    //TODO: populiraj ovu tablicu
+    private void fillCategoryWordPairsTable(SQLiteDatabase db) throws IOException {
+        if (tableFilled(db, CATEGORY_WORD_PAIRS_TABLE_NAME)) {
             return;
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                assetManager.open(LANGUAGES_FILENAME)));
+                assetManager.open(CATEGORY_WORDS_PAIRS_FILENAME)));
 
         while (reader.ready()) {
-            insertLanguageEntity(db, reader.readLine());
+            insertCategoryWordEntity(db, reader.readLine());
         }
 
         reader.close();
     }
 
-    /**
-     * Zapisuje n-torku jezika s zadanim parametrima u tablicu "jezici".
-     *
-     * @param db   {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
-     * @param lang jezik koji zapisujemo u bazu
-     */
-    private void insertLanguageEntity(SQLiteDatabase db, String lang) {
+    private void insertCategoryWordEntity(SQLiteDatabase db, String line) {
         ContentValues values = new ContentValues();
-        values.put(LANGUAGES_VALUE, lang);
+        String[] attributes = line.split("\\s");
+        if (attributes.length == 3) { //ako je kategorija prijevozno sredstvo
+            values.put(CATEGORY_WORD_PAIRS_CATEGORY, attributes[0] + " " + attributes[1]);
+            values.put(CATEGORY_WORD_PAIRS_WORD, attributes[2]);
+        } else {
+            values.put(CATEGORY_WORD_PAIRS_CATEGORY, attributes[0]);
+            values.put(CATEGORY_WORD_PAIRS_WORD, attributes[1]);
+        }
 
-        db.insert(LANGUAGES_TABLE_NAME, null, values);
+        db.insert(CATEGORY_WORD_PAIRS_TABLE_NAME, null, values);
     }
+//    /**
+//     * Puni tablicu "jezici" n-torkama.
+//     *
+//     * @param db {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+//     * @throws IOException baca se ako dođe do greške pri čitanju prikladne datoteke
+//     */
+//    private void fillLanguageTable(SQLiteDatabase db) throws IOException {
+//        if (tableFilled(db, LANGUAGES_TABLE_NAME)) {
+//            return;
+//        }
+//
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(
+//                assetManager.open(LANGUAGES_FILENAME)));
+//
+//        while (reader.ready()) {
+//            insertLanguageEntity(db, reader.readLine());
+//        }
+//
+//        reader.close();
+//    }
+//    /**
+//     * Zapisuje n-torku jezika s zadanim parametrima u tablicu "jezici".
+//     *
+//     * @param db   {@linkplain SQLiteDatabase} objekt za izvršavanje SQL naredbi
+//     * @param lang jezik koji zapisujemo u bazu
+//     */
+//    private void insertLanguageEntity(SQLiteDatabase db, String lang) {
+//        ContentValues values = new ContentValues();
+//        values.put(LANGUAGES_VALUE, lang);
+//
+//        db.insert(LANGUAGES_TABLE_NAME, null, values);
+//    }
 
     /**
      * Puni tablicu "kategorije" n-torkama.
@@ -397,10 +311,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] attributes = wordEntry.split(" ");
         ContentValues values = new ContentValues();
         values.put(WORDS_LANGUAGE, attributes[0]);
-        values.put(WORDS_CATEGORY, attributes[1]);
-        values.put(WORDS_IMAGE_ID, attributes[2]);
-        values.put(WORDS_SOUND_ID, attributes[3]);
-        values.put(WORDS_VALUE, attributes[4]);
+//        values.put(WORDS_IMAGE_PATH, attributes[1]);
+//        values.put(WORDS_SOUND_ID, attributes[2]);
+        values.put(WORDS_VALUE, attributes[1]);
 
         db.insert(WORDS_TABLE_NAME, null, values);
     }
@@ -524,27 +437,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return word;
     }
 
-    /**
-     * Za dani identifikator jezika vraća pripadni jezik
-     *
-     * @param id identifikator jezika
-     * @return pripadni jezik
-     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
-     */
-    public String getLanguage(int id) {
-        String lang;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_VALUE}, LANGUAGES_ID + " = ?",
-                new String[]{Integer.toString(id)}, null, null, null, null);
-
-        cursor.moveToFirst();
-        lang = cursor.getString(0);
-
-        cursor.close();
-
-        return lang;
-    }
+//    /**
+//     * Za dani identifikator jezika vraća pripadni jezik
+//     *
+//     * @param id identifikator jezika
+//     * @return pripadni jezik
+//     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
+//     */
+//    public String getLanguage(int id) {
+//        String lang;
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_VALUE}, LANGUAGES_ID + " = ?",
+//                new String[]{Integer.toString(id)}, null, null, null, null);
+//
+//        cursor.moveToFirst();
+//        lang = cursor.getString(0);
+//
+//        cursor.close();
+//
+//        return lang;
+//    }
 
     /**
      * Za dani identifikator kategorije vraća pripadnu kategoriju
@@ -590,27 +503,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return letter;
     }
 
-    /**
-     * Za dani jezik vraca njegov identifikator
-     *
-     * @param language jezik
-     * @return pripadni identifikator
-     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani jezik
-     */
-    public int getLanguageId(String language) {
-        int langId;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_ID}, LANGUAGES_VALUE + " = ?",
-                new String[]{language}, null, null, null, null);
-
-        cursor.moveToFirst();
-        langId = Integer.parseInt(cursor.getString(0));
-
-        cursor.close();
-
-        return langId;
-    }
+//    /**
+//     * Za dani jezik vraca njegov identifikator
+//     *
+//     * @param language jezik
+//     * @return pripadni identifikator
+//     * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani jezik
+//     */
+//    public int getLanguageId(String language) {
+//        int langId;
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.query(LANGUAGES_TABLE_NAME, new String[]{LANGUAGES_ID}, LANGUAGES_VALUE + " = ?",
+//                new String[]{language}, null, null, null, null);
+//
+//        cursor.moveToFirst();
+//        langId = Integer.parseInt(cursor.getString(0));
+//
+//        cursor.close();
+//
+//        return langId;
+//    }
 
     /**
      * Za danu kategoriju vraca njezin identifikator
@@ -638,8 +551,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Collection<String> categories = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(true, WORDS_TABLE_NAME, new String[]{WORDS_CATEGORY}, null, null, null, null, WORDS_CATEGORY, null);
-        System.out.println("pozvano");
+        Cursor cursor = db.query(true, CATEGORIES_TABLE_NAME, new String[]{CATEGORIES_VALUE},
+                null, null, null, null, null, null);
+//        System.out.println("pozvano");
         while (cursor.moveToNext()) {
             categories.add(cursor.getString(0));
             System.out.println(cursor.getString(0));
@@ -682,7 +596,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String imgPath;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_ID + " = ?",
+        Cursor cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_PATH + " = ?",
                 new String[]{Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
@@ -723,8 +637,12 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param category kategorija
      * @return lista identifikatora svih odgovaraućih riječi u bazi
      */
-    public List<Integer> getWordIds(String language, String category) {
-        List<Integer> words = new ArrayList<Integer>();
+    public List<Integer> getWords(String language, String category) {
+        List<Integer> ids = new ArrayList<>();
+        String joinQuery = "select * from " +
+                WORDS_TABLE_NAME + " natural join " + CATEGORY_WORD_PAIRS_TABLE_NAME +
+                " where " + WORDS_LANGUAGE + "='" + language + "' and " + CATEGORY_WORD_PAIRS_CATEGORY +
+                "='" + category + "'";
 
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -735,35 +653,36 @@ public class DBHelper extends SQLiteOpenHelper {
                     WORDS_LANGUAGE + "= ?",
                     new String[]{language}, null, null, null, null);
         } else {
-            cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
-                    WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
-                    new String[]{language, category}, null, null, null, null);
+            cursor = db.rawQuery(joinQuery, null);
+//            cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_ID},
+//                    WORDS_LANGUAGE + "= ? AND " + WORDS_CATEGORY + "= ?",
+//                    new String[]{language, category}, null, null, null, null);
         }
 
         if (cursor.moveToFirst()) {
             do {
-                words.add(Integer.parseInt(cursor.getString(0)));
+                ids.add(Integer.parseInt(cursor.getString(0)));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
 
-        return words;
+        return ids;
     }
 
-    /**
-     * Vraća listu identifikatora svih riječi danog jezika i kategorije.
-     *
-     * @param langId identifikator jezika
-     * @param catId  idetifikator kategorije
-     * @return lista identifikatora svih odgovaraućih riječi u bazi
-     */
-    public List<Integer> getWordIds(int langId, int catId) {
-        String language = getLanguage(langId);
-        String category = getCategory(catId);
-
-        return getWordIds(language, category);
-    }
+//    /**
+//     * Vraća listu identifikatora svih riječi danog jezika i kategorije.
+//     *
+//     * @param langId identifikator jezika
+//     * @param catId  idetifikator kategorije
+//     * @return lista identifikatora svih odgovaraućih riječi u bazi
+//     */
+//    public List<Integer> getWordIds(int langId, int catId) {
+//        String language = getLanguage(langId);
+//        String category = getCategory(catId);
+//
+//        return getWordIds(language, category);
+//    }
 
     /**
      * Za dani identifikator riječi vraća path do pripadne slike.
@@ -773,18 +692,25 @@ public class DBHelper extends SQLiteOpenHelper {
      * @throws android.database.CursorIndexOutOfBoundsException u bazi ne postoji dani identifikator
      */
     public String getWordImagePath(int id) {
-        int imageId;
+        String imagePath;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_IMAGE_ID}, WORDS_ID + " = ?",
-                new String[]{Integer.toString(id)}, null, null, null, null);
+//        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_IMAGE_PATH}, WORDS_ID + " = ?",
+//                new String[]{Integer.toString(id)}, null, null, null, null);
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
+                new String[]{Integer.toString(id)}, null, null, null);
 
         cursor.moveToFirst();
-        imageId = Integer.parseInt(cursor.getString(0));
+        cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_PATH + " like ?",
+                new String[]{PATH_TO_IMAGES + cursor.getString(0) + "%"},
+                null, null, null);
+        cursor.moveToFirst();
+//        imageId = Integer.parseInt(cursor.getString(0));
+        imagePath = cursor.getString(0);
 
         cursor.close();
 
-        return getImagePath(imageId);
+        return imagePath;
     }
 
     /**
@@ -798,9 +724,12 @@ public class DBHelper extends SQLiteOpenHelper {
         int soundId;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_SOUND_ID}, WORDS_ID + " = ?",
+        Cursor cursor = db.query(WORDS_TABLE_NAME, new String[]{WORDS_VALUE}, WORDS_ID + " = ?",
                 new String[]{Integer.toString(id)}, null, null, null, null);
 
+        cursor.moveToFirst();
+        cursor = db.query(SOUND_TABLE_NAME, new String[]{SOUND_ID}, SOUND_PATH + " like ?",
+                new String[]{PATH_TO_SOUND_WORD + cursor.getString(0) + "%"}, null, null, null);
         cursor.moveToFirst();
         soundId = Integer.parseInt(cursor.getString(0));
 
@@ -829,9 +758,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public String getLetterSoundPath(int letterId, int langId) {
         String letter = getLetter(letterId);
-        String language = getLanguage(langId);
-
-        return getLetterSoundPath(letter, language);
+//        String language = getLanguage(langId);
+        //trenutno hardkodirano radi jednostavnosti
+        return getLetterSoundPath(letter, "hrvatski");
     }
 
 }
