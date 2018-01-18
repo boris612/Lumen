@@ -154,7 +154,7 @@ final class DBConstants {
      */
     static final String SOUND_FILENAME = "zvukovi.txt";
     static final String PATH_TO_SOUND_WORD = "zvucniZapisi/rijeci/";
-    static final String PATH_TO_SOUND_LETTER = "zvucniZapisi/abeceda/";
+    static final String PATH_TO_SOUND_LETTER = "zvucniZapisi/hrvatskaAbeceda/";
 
     static final String CATEGORY_WORD_PAIRS_TABLE_NAME = "kategorijerijeci";
 
