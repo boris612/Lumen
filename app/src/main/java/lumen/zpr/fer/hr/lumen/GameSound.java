@@ -26,13 +26,15 @@ public class GameSound {
     private Context context;
     private Thread thread;
     private GamePanel gamePanel;
+    private int maxDur;
     public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath,GamePanel gamePanel, Thread thread){
-       //wordRecording = loadWordRecording(context, wordRecordingPath);
+       wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRecording = loadLettersRecording(context, lettersRecordingPath);
         listeners = new ArrayList<>();
         this.context=context;
         this.gamePanel=gamePanel;
         this.thread=thread;
+        maxDur=2000;
     }
 
     public void registerListener(GameSoundListener listener) {
@@ -94,6 +96,8 @@ public class GameSound {
                 mediaPlayer.setDataSource(descriptor.getFileDescriptor(), start, end);
                 mediaPlayer.prepare();
                 mpList.add(mediaPlayer);
+                int duration=mediaPlayer.getDuration();
+                if (maxDur<duration) maxDur=duration;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,6 +121,7 @@ public class GameSound {
             e.printStackTrace();
         }
 
+        int i=0;
 
         for (MediaPlayer mp : this.lettersRecording) {
             if (gamePanel.terminated) return;
@@ -129,19 +134,36 @@ public class GameSound {
             }
 
             mp.start();
-            notifyListenersForLetterDone();
-            while (mp.isPlaying()) ;
-            try {
-                Thread.sleep(letterPauseLength);
+         /*  try {
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
+
+            notifyListenersForLetterDone();
+            while (mp.isPlaying()) ;
+
+            i++;
+           // System.out.println();
+            if (i<=lettersRecording.size())
+               try {
+                    Thread.sleep(letterPauseLength);
+                 } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
 
 
         }
 
-       /*ordRecording.start();
-        while (wordRecording.isPlaying()) ;*/
+       wordRecording.start();
+        while (wordRecording.isPlaying()) ;
+
+        try {
+            Thread.sleep(letterPauseLength);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         notifyListenersForWholeSpellingDone();
     }
 
