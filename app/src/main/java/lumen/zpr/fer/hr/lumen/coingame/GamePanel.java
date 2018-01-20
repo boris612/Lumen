@@ -122,7 +122,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         int coins = preferences.getInt(getResources().getString(R.string.coins), 0);
         scoreView = new CoinComponent(getResources().getDrawable(R.drawable.smaller_coin),
                 coins, getContext());
-
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
 
