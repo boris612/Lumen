@@ -18,7 +18,7 @@ public class GameLayoutConstants {
     static double LETTER_IMAGE_Y_COORDINATE_FACTOR=0.85;
     static double CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = 0.1;
 
-    static double COIN_IMAGE_WIDTH_FACTOR = 0.1;
+    public static double COIN_IMAGE_WIDTH_FACTOR = 0.1;
     static double COIN_IMAGE_X_COORDINATE_FACTOR = 0;
     static double COIN_IMAGE_Y_COORDINATE_FACTOR = 0;
     static int COIN_NUMBER_FONT_SIZE = 150;

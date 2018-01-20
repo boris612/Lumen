@@ -34,9 +34,7 @@ public class CoinComponent {
         this.coins = coins;
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
 
-        label = new Label("Coins: " + Integer.toString(coins),
-                new Point((int) (COMPONENT_X_AXIS * dm.widthPixels), COMPONENT_Y_AXIS),
-                Color.BLACK, GameLayoutConstants.COIN_NUMBER_FONT_SIZE);
+
         int display_width = dm.widthPixels;
         int display_height = dm.heightPixels;
         int coinWidth = (int)(display_width*IMAGE_WIDTH_FACTOR);
@@ -46,9 +44,10 @@ public class CoinComponent {
         Log.d("COIN",""+coinPosX+" "+coinPosY);
 
         coinImage.setBounds(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
+        label = new Label( Integer.toString(coins),
+                new Point(coinPosX+coinWidth/2,coinPosY+(int)(coinWidth*1.75) ),
+                Color.BLACK, coinWidth);
 
-        Point labelPosition = new Point(coinPosX+coinWidth/2,coinPosY+(int)(coinWidth*(1.5+COIN_IMAGE_AND_TEXT_GAP_WIDTH_FACTOR)));
-        label = new Label(Integer.toString(coins), labelPosition, Color.BLACK,NUMBER_FONT_SIZE);
     }
 
     public void addCoins(int coinsToAdd) {
