@@ -57,6 +57,16 @@ public class MainMenuActivity extends Activity {
                 startActivity(startGameIntent);
             }
         });
+
+        ImageButton seeInfo = findViewById(R.id.Info);
+        seeInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent seeInfoIntent = new Intent(MainMenuActivity.this,
+                        lumen.zpr.fer.hr.lumen.InfoActivity.class);
+                startActivity(seeInfoIntent);
+            }
+        });
     }
 
     public Collection<String> getCurrentCategories(){

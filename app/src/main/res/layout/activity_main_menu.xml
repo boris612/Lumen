@@ -70,6 +70,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pokreniIgru" />
 
+    <ImageButton
+        android:id="@+id/Info"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="560dp"
+        android:layout_marginTop="100dp"
+        android:adjustViewBounds="false"
+        android:background="@drawable/info"
+        android:textColor="#FF1F1F"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pokreniIgru" />
+
 
 </android.support.constraint.ConstraintLayout>
 

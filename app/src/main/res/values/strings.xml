@@ -12,4 +12,10 @@
     <string name="preference_file">preferences</string>
     <string name="coins">coins</string>
     <string name="add_more_letter">addMoreLetters</string>
+    <string name="oAplikaciji1">Ova aplikacija nastala je kao produkt rada na predmetu Projekt iz programske potpore</string>
+    <string name="oAplikaciji2">Na projektu su sudjelovali: Matija Čavlović, Karlo Čeh, Robin Fučko, Alen Magdić, Matija Puzjak, Marko Sopčić, Darian Šarić, Zlatko Verk i Kristijan Vukelić</string>
+    <string name="oAplikaciji3">Mentor: Boris Milašinović</string>
+    <string name="oAplikaciji4">FER 2018.</string>
+
+
 </resources>
