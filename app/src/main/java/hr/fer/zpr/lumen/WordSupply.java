@@ -66,17 +66,17 @@ public class WordSupply {
         for (int i=0;i<letters.length();i++){
             paths.add(helper.getLetterSoundPath(letters.charAt(i).toUpperCase(),language));
         }
-        Log.d("PATHS",paths.toString());
+        LogUtil.d("PATHS",paths.toString());
         return paths;
     }
 
     public void goToNext() {
         double selection = rand.nextDouble();
-        Log.d("DISTR","selection: "+Double.toString(selection));
+        LogUtil.d("DISTR","selection: "+Double.toString(selection));
         for(ProbabilityDistribution.DistributionInterval interval: wordProbDistr.getDistributionAsIntervalCollection()) {
             if(interval.getIntervalStart() <= selection && interval.getIntervalEnd() >= selection) {
                 currentWordId = (int)interval.getIntervalChoice();
-                Log.d("DISTR","selection id: "+currentWordId);
+                LogUtil.d("DISTR","selection id: "+currentWordId);
                 wordProbDistr.increaseChoiceProbabilityByScaleFactor(interval.getIntervalChoice(), PROBABILITY_SCALE_FACTOR);
                 return;
             }

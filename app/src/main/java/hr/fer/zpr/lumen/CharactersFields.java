@@ -56,7 +56,7 @@ public class CharactersFields {
     private int determineStartingX(int wordLength, Context context, int fieldWidthHeight, int gapWidth) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         int componentWidth = fieldWidthHeight*wordLength+(wordLength-1)*gapWidth;
-        Log.d("COMP WIDTH",Integer.toString(componentWidth));
+        LogUtil.d("COMP WIDTH",Integer.toString(componentWidth));
         return dm.widthPixels/2-componentWidth/2;
     }
 

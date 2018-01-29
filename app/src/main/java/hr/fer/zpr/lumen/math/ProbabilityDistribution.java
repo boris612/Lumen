@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hr.fer.zpr.lumen.LogUtil;
+
 /**
  * Created by Alen on 18.12.2017..
  */
@@ -102,13 +104,13 @@ public class ProbabilityDistribution {
     public Collection<DistributionInterval> getDistributionAsIntervalCollection() {
         List<DistributionInterval> intervals = new ArrayList<>();
         double intervalBorder = 0;
-        Log.d("DISTR",distributionMap.toString());
+        LogUtil.d("DISTR",distributionMap.toString());
         for(Map.Entry<Object,Double> entry: distributionMap.entrySet()) {
             double intervalStart = intervalBorder;
             double intervalEnd = intervalStart + entry.getValue();
             intervals.add(new DistributionInterval(entry.getKey(),intervalStart,intervalEnd));
             intervalBorder = intervalEnd;
-            Log.d("DISTR","INTERVAL" + intervalStart +" "+ intervalEnd + ", choice:"+entry.getKey());
+            LogUtil.d("DISTR","INTERVAL" + intervalStart +" "+ intervalEnd + ", choice:"+entry.getKey());
         }
         return intervals;
     }

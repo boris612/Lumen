@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import hr.fer.zpr.lumen.LogUtil;
+
 import static java.sql.DriverManager.println;
 import static hr.fer.zpr.lumen.database.DBConstants.CATEGORIES_FILENAME;
 import static hr.fer.zpr.lumen.database.DBConstants.CATEGORIES_ID;
@@ -88,7 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("STVARANJE BAZE", "sdgs");
+        LogUtil.d("STVARANJE BAZE", "sdgs");
         //stvori tablicu "jezici"
 
 //        db.execSQL("create table if not exists " + LANGUAGES_TABLE_NAME + "(" +
@@ -352,7 +354,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void addLetterSoundEntity(SQLiteDatabase db, String letterSound) {
         String[] attributes = letterSound.split(" ");
-        Log.d("LSE", letterSound);
+        LogUtil.d("LSE", letterSound);
         ContentValues values = new ContentValues();
         values.put(LETTER_SOUND_LETTER, attributes[0]);
         values.put(LETTER_SOUND_LANGUAGE, attributes[1]);
@@ -755,7 +757,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{letter, language}, null, null, null, null);
 
         cursor.moveToFirst();
-        Log.d("LETTERSOUND", letter);
+        LogUtil.d("LETTERSOUND", letter);
         soundId = Integer.parseInt(cursor.getString(0));
 
         cursor.close();

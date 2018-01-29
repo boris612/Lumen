@@ -40,7 +40,7 @@ public class CoinComponent {
         int coinPosX = (int)(display_width*IMAGE_X_COORDINATE_FACTOR);
         int coinPosY = (int)(display_height*IMAGE_Y_COORDINATE_FACTOR);
         rectangle=new Rect(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
-        Log.d("COIN",""+coinPosX+" "+coinPosY);
+        LogUtil.d("COIN",""+coinPosX+" "+coinPosY);
 
         coinImage.setBounds(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
         label = new Label( Integer.toString(coins),

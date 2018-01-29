@@ -105,7 +105,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void letterDone() {
                 startingHint.showNextLetter();
-                Log.d("LETT","show next letter");
+                LogUtil.d("LETT","show next letter");
             }
 
             @Override
@@ -203,7 +203,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             public void letterDone() {
                 startingHint.showNextLetter();
-                Log.d("LETT","show next letter");
+                LogUtil.d("LETT","show next letter");
             }
 
             @Override
