@@ -702,8 +702,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{Integer.toString(id)}, null, null, null);
 
         cursor.moveToFirst();
+        String word = cursor.getString(0); //radi lakšeg debugiranja
+
+        //problem su npr. stol i stolica, pa se ne smijeći ići s like slika/stol% već slika/stol.%
         cursor = db.query(IMAGES_TABLE_NAME, new String[]{IMAGES_PATH}, IMAGES_PATH + " like ?",
-                new String[]{PATH_TO_IMAGES + cursor.getString(0) + "%"},
+                new String[]{PATH_TO_IMAGES + word + ".%"},
                 null, null, null);
         cursor.moveToFirst();
 //        imageId = Integer.parseInt(cursor.getString(0));
@@ -729,8 +732,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{Integer.toString(id)}, null, null, null, null);
 
         cursor.moveToFirst();
+
+        String word = cursor.getString(0); //radi lakšeg debugiranja
+
         cursor = db.query(SOUND_TABLE_NAME, new String[]{SOUND_ID}, SOUND_PATH + " like ?",
-                new String[]{PATH_TO_SOUND_WORD + cursor.getString(0) + "%"}, null, null, null);
+                new String[]{PATH_TO_SOUND_WORD + word + ".%"}, null, null, null);
         cursor.moveToFirst();
         soundId = Integer.parseInt(cursor.getString(0));
 
