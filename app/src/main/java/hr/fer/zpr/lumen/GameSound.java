@@ -130,46 +130,38 @@ public class GameSound {
                 }
             }
 
-            mp.start();
-         /*  try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
 
             notifyListenersForLetterDone();
-            while (mp.isPlaying()) ;
+            mp.start();
+
+            //while (mp.isPlaying()) ;
 
             i++;
            // System.out.println();
-            if (i<=lettersRecording.size())
-               try {
+            if (i<=lettersRecording.size()) {
+                try {
                     Thread.sleep(letterPauseLength);
-                 } catch (InterruptedException e) {
-                   e.printStackTrace();
-               }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
-
+            mp.release();
         }
 
        wordRecording.start();
-        while (wordRecording.isPlaying()) ;
+       // while (wordRecording.isPlaying()) ;
 
         try {
-            Thread.sleep(letterPauseLength);
+            Thread.sleep(2 * letterPauseLength);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         notifyListenersForWholeSpellingDone();
+        wordRecording.release();
     }
 
-    /**
-     * Reproducira slovkanje pojedine riječi. Duljina pauze između izgovora pojedinog slova je jedna sekunda
-     */
-    public void playSpelling(){
-        this.playSpelling(1000);
-    }
 
     public void setPlaying (boolean play){
         this.playing=play;

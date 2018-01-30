@@ -91,7 +91,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         pref= this.getContext().getSharedPreferences(getResources().getString(R.string.preference_file),Context.MODE_PRIVATE);
         editor = pref.edit();
         this.updateSettings();
-        thread = new MainThread(getHolder(), this);
         setFocusable(true);
         WindowManager wm=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Display disp=wm.getDefaultDisplay();
@@ -194,9 +193,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         spelling = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (thread.isAlive()==false)
+                while (thread == null || !thread.isAlive())
                     ;
-                currentSound.playSpelling(800);
+                currentSound.playSpelling(1300);
             }
         });
         currentSound.registerListener(new GameSoundListener() {
@@ -280,11 +279,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        if (thread!=null && thread.isInterrupted()){
-            thread.setRunning(true);
-            return;
-        }
-
+//        if (thread!=null && thread.isInterrupted()){
+//            thread.setRunning(true);
+//            return;
+//        }
+//
         thread = new MainThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -297,15 +296,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        while(true) {
-            try {
-               currentSound.setPlaying(false);
-               thread.setRunning(false);
-               thread.join();
-               break;
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        try {
+           currentSound.setPlaying(false);
+           thread.setRunning(false);
+           thread.join();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
