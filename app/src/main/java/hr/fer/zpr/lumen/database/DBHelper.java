@@ -297,7 +297,9 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(WORDS_FILENAME)));
         while (reader.ready()) {
-            addWordEntity(db, reader.readLine());
+            String line = reader.readLine();
+            if (line != null && !line.trim().equals(""))
+                addWordEntity(db, line);
         }
 
         reader.close();
@@ -328,7 +330,9 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(LETTERS_FILENAME)));
         while (reader.ready()) {
-            addLetterEntity(db, reader.readLine());
+            String line = reader.readLine();
+            if (line != null && !line.trim().equals(""))
+                addLetterEntity(db, line);
         }
         reader.close();
     }
@@ -347,7 +351,9 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(LETTER_SOUND_FILENAME)));
         while (reader.ready()) {
-            addLetterSoundEntity(db, reader.readLine());
+            String line = reader.readLine();
+            if (line != null && !line.trim().equals(""))
+                addLetterSoundEntity(db, line);
         }
         reader.close();
     }
@@ -374,7 +380,9 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 assetManager.open(SOUND_FILENAME)));
         while (reader.ready()) {
-            addSoundEntity(db, reader.readLine());
+            String line = reader.readLine();
+            if (line != null && !line.trim().equals(""))
+                addSoundEntity(db, line);
         }
 
         reader.close();
