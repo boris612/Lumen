@@ -39,12 +39,12 @@ public class MessageSound {
     }
 
     public void playCorrect() {
-        MediaPlayer mp = correctSounds.get((int) System.currentTimeMillis() % 2);
+        MediaPlayer mp = correctSounds.get((int) System.currentTimeMillis() & 0x1);
         play(mp);
     }
 
     public void playTryAgain(){
-        MediaPlayer mp = tryAgainSounds.get((int) System.currentTimeMillis() % 1);
+        MediaPlayer mp = tryAgainSounds.get(0);
         play(mp);
     }
 
