@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import hr.fer.zpr.lumen.CoinComponent;
-
 import hr.fer.zpr.lumen.GameLayoutConstants;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.coingame.ConstantsUtil;
@@ -84,8 +83,8 @@ public class ContainerComponent implements CoinGameObject {
 
     private MessageSound messageSoundManager;
 
-    private boolean tryAgainMessagePlayed=false;
-    private boolean confirmationMessagePlayed=false;
+    private boolean tryAgainMessagePlayed = false;
+    private boolean confirmationMessagePlayed = false;
 
     private Thread messageThread;
 
@@ -113,8 +112,8 @@ public class ContainerComponent implements CoinGameObject {
         this.currentValueLabelPoint = currentValueLabelPoint;
         this.generator = generator;
         this.scoreComponent = scoreComponent;
-        messageSoundManager = new MessageSound(Thread.currentThread(),context,gamePanel);
-        textSize=(int)(context.getResources().getDisplayMetrics().widthPixels* GameLayoutConstants.COIN_IMAGE_WIDTH_FACTOR)/2;
+        messageSoundManager = new MessageSound(Thread.currentThread(), context, gamePanel);
+        textSize = (int) (context.getResources().getDisplayMetrics().widthPixels * GameLayoutConstants.COIN_IMAGE_WIDTH_FACTOR) / 2;
         fillStateColorMap();
     }
 
@@ -143,7 +142,7 @@ public class ContainerComponent implements CoinGameObject {
             case OPTIMAL_RESULT:
                 /*canvas.drawText("Bravo!!!", targetLabelPoint.x, targetLabelPoint.y, paint);*/
 
-                if (confirmationMessagePlayed==false) {
+                if (confirmationMessagePlayed == false) {
                     messageThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -158,7 +157,7 @@ public class ContainerComponent implements CoinGameObject {
                         }
                     });
                     messageSoundManager.setPlaying(true);
-                    confirmationMessagePlayed=true;
+                    confirmationMessagePlayed = true;
                     messageThread.start();
                 }
                 break;
@@ -166,9 +165,9 @@ public class ContainerComponent implements CoinGameObject {
                /* canvas.drawText("Točno je, ali može i bolje", currentValueLabelPoint.x,
                         currentValueLabelPoint.y, paint);*/
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                        targetLabelPoint.x, (int)(textSize), paint);
+                        targetLabelPoint.x, (int) (textSize), paint);
 
-                if (tryAgainMessagePlayed==false) {
+                if (tryAgainMessagePlayed == false) {
                     messageThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -182,19 +181,19 @@ public class ContainerComponent implements CoinGameObject {
                         }
                     });
                     messageSoundManager.setPlaying(true);
-                    tryAgainMessagePlayed=true;
+                    tryAgainMessagePlayed = true;
                     messageThread.start();
                 }
 
                 break;
             default:
-                tryAgainMessagePlayed=false;
-                confirmationMessagePlayed=false;
+                tryAgainMessagePlayed = false;
+                confirmationMessagePlayed = false;
                 paint.setColor(Color.BLACK);
                 canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                        targetLabelPoint.x, (int)(textSize), paint);
+                        targetLabelPoint.x, (int) (textSize), paint);
                 canvas.drawText(Integer.toString(value),
-                        currentValueLabelPoint.x, (int)(textSize), paint);
+                        currentValueLabelPoint.x, (int) (textSize), paint);
 
         }
     }
@@ -208,9 +207,9 @@ public class ContainerComponent implements CoinGameObject {
     private void drawValues(Canvas canvas, Paint paint) {
         paint.setColor(Color.BLACK);
         canvas.drawText(Integer.toString(generator.getCurrentNumber()),
-                targetLabelPoint.x, (int)(textSize), paint);
+                targetLabelPoint.x, (int) (textSize), paint);
         canvas.drawText(Integer.toString(value),
-                currentValueLabelPoint.x, (int)(textSize), paint);
+                currentValueLabelPoint.x, (int) (textSize), paint);
     }
 
     @Override
@@ -223,7 +222,7 @@ public class ContainerComponent implements CoinGameObject {
         }
 
 
-        if (state == ContainerState.OPTIMAL_RESULT && gamePanel.paused==false) {
+        if (state == ContainerState.OPTIMAL_RESULT && gamePanel.paused == false) {
 
 
             if (nextGameTime == null) {

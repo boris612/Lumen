@@ -10,6 +10,7 @@ import java.util.List;
 
 import hr.fer.zpr.lumen.GameSoundListener;
 import hr.fer.zpr.lumen.coingame.GamePanel;
+
 /**
  * Created by Korisnik on 16.1.2018..
  */
@@ -27,16 +28,16 @@ public class MessageSound {
     private GamePanel gamePanel;
 
 
-    public MessageSound(Thread thread,Context context,GamePanel gamePanel) {
+    public MessageSound(Thread thread, Context context, GamePanel gamePanel) {
         correctSounds = new ArrayList<>();
-        tryAgainSounds=new ArrayList<>();
+        tryAgainSounds = new ArrayList<>();
         listeners = new ArrayList<>();
-        this.thread=thread;
-        this.context=context;
-        this.gamePanel=gamePanel;
-        addMessage("zvucniZapisi/poruke/točno.mp3",correctSounds);
-        addMessage("zvucniZapisi/poruke/bravo.mp3",correctSounds);
-        addMessage("zvucniZapisi/poruke/tocno, ali moze bolje.mp3",tryAgainSounds);
+        this.thread = thread;
+        this.context = context;
+        this.gamePanel = gamePanel;
+        addMessage("zvucniZapisi/poruke/točno.mp3", correctSounds);
+        addMessage("zvucniZapisi/poruke/bravo.mp3", correctSounds);
+        addMessage("zvucniZapisi/poruke/tocno, ali moze bolje.mp3", tryAgainSounds);
     }
 
     public void playCorrect() {
@@ -44,15 +45,15 @@ public class MessageSound {
         play(mp);
     }
 
-    public void playTryAgain(){
+    public void playTryAgain() {
         MediaPlayer mp = tryAgainSounds.get((int) System.currentTimeMillis() % 1);
         play(mp);
     }
 
-    public void play(MediaPlayer mp){
+    public void play(MediaPlayer mp) {
 
         if (gamePanel.terminated) return;
-        while(gamePanel.paused){
+        while (gamePanel.paused) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -60,13 +61,13 @@ public class MessageSound {
             }
         }
         mp.start();
-        while(mp.isPlaying())
+        while (mp.isPlaying())
             ;
 
-        boolean wasPaused=false;
-        while(gamePanel.paused){
+        boolean wasPaused = false;
+        while (gamePanel.paused) {
             try {
-                wasPaused=true;
+                wasPaused = true;
                 Thread.sleep(1000);
 
             } catch (InterruptedException e) {
@@ -76,17 +77,17 @@ public class MessageSound {
 
         if (wasPaused)
             try {
-                wasPaused=true;
+                wasPaused = true;
                 Thread.sleep(1000);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-        for(GameSoundListener l: listeners) {
+        for (GameSoundListener l : listeners) {
             l.wholeSpellingDone();
         }
-        playing=false;
+        playing = false;
 
     }
 
@@ -94,16 +95,23 @@ public class MessageSound {
         listeners.add(listener);
     }
 
-    public void setPlaying (boolean play){
-        this.playing=play;
+    public void setPlaying(boolean play) {
+        this.playing = play;
     }
-    public boolean isPlaying (){
+
+    public boolean isPlaying() {
         return this.playing;
     }
-    public void setThread(Thread thread){this.thread=thread;}
-    public void setContext(Context context){this.context=context;}
 
-    private void addMessage(String path,List<MediaPlayer> list){
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    private void addMessage(String path, List<MediaPlayer> list) {
 
         AssetFileDescriptor descriptor = null;
         try {
@@ -113,7 +121,7 @@ public class MessageSound {
         }
         long start = descriptor.getStartOffset();
         long end = descriptor.getLength();
-        MediaPlayer mediaPlayer=new MediaPlayer();
+        MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(descriptor.getFileDescriptor(), start, end);
             mediaPlayer.prepare();

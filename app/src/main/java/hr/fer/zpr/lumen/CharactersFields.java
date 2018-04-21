@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,39 +28,40 @@ public class CharactersFields {
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         //int fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_FACTOR);
-        fieldWidthHeight = (int)(dm.widthPixels/(word.length()*(1+GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * WHOLE_ARRAY_WIDTH_FACTOR);
-        if (fieldWidthHeight > dm.widthPixels*FIELD_WIDTH_MAX_FACTOR) {
-            fieldWidthHeight = (int)(dm.widthPixels*FIELD_WIDTH_MAX_FACTOR);
+        fieldWidthHeight = (int) (dm.widthPixels / (word.length() * (1 + GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * WHOLE_ARRAY_WIDTH_FACTOR);
+        if (fieldWidthHeight > dm.widthPixels * FIELD_WIDTH_MAX_FACTOR) {
+            fieldWidthHeight = (int) (dm.widthPixels * FIELD_WIDTH_MAX_FACTOR);
         }
 
-        int gapWidth = (int)(fieldWidthHeight*GAP_WIDTH_TO_FIELD_WIDTH_FACTOR);
-        int x = determineStartingX(word.length(),context,fieldWidthHeight,gapWidth);
+        int gapWidth = (int) (fieldWidthHeight * GAP_WIDTH_TO_FIELD_WIDTH_FACTOR);
+        int x = determineStartingX(word.length(), context, fieldWidthHeight, gapWidth);
 
-        for(int i = 0, n = word.length(); i < n; i++) {
+        for (int i = 0, n = word.length(); i < n; i++) {
             Rect r = new Rect();
-            r.left = x+i*(fieldWidthHeight+gapWidth);
-            r.top = (int)(dm.heightPixels*Y_COORDINATE_FACTOR);
+            r.left = x + i * (fieldWidthHeight + gapWidth);
+            r.top = (int) (dm.heightPixels * Y_COORDINATE_FACTOR);
             r.right = r.left + fieldWidthHeight;
             r.bottom = r.top + fieldWidthHeight;
-            fields.add(new CharacterField(r,COLOR, word.charAt(i)));
+            fields.add(new CharacterField(r, COLOR, word.charAt(i)));
         }
     }
 
     /**
      * Određuje x koordinatu prvog polja.
+     *
      * @param wordLength
      * @param context
      * @return
      */
     private int determineStartingX(int wordLength, Context context, int fieldWidthHeight, int gapWidth) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int componentWidth = fieldWidthHeight*wordLength+(wordLength-1)*gapWidth;
-        LogUtil.d("COMP WIDTH",Integer.toString(componentWidth));
-        return dm.widthPixels/2-componentWidth/2;
+        int componentWidth = fieldWidthHeight * wordLength + (wordLength - 1) * gapWidth;
+        LogUtil.d("COMP WIDTH", Integer.toString(componentWidth));
+        return dm.widthPixels / 2 - componentWidth / 2;
     }
 
     public void draw(Canvas canvas) {
-        for(DropArea field: fields) {
+        for (DropArea field : fields) {
             field.draw(canvas);
         }
     }
@@ -72,7 +72,7 @@ public class CharactersFields {
     }
 
     public void setColor(int color) {
-        for(CharacterField f: fields) {
+        for (CharacterField f : fields) {
             f.setColor(color);
         }
     }

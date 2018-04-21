@@ -7,7 +7,7 @@ import android.util.Log;
  * Služi kao Wrapper za Log.* metode kako bi se izbacile iz RELEASE verzije
  * Alternativno, može se koristiti ProGuard i minifyEnable
  * -assumenosideeffects class Android.util.Log {
- *     public static *** d(...)
+ * public static *** d(...)
  * }
  */
 

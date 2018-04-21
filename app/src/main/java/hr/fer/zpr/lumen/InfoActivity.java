@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-import hr.fer.zpr.lumen.R;
-
 /**
  * Created by Zlatko on 21-Jan-18.
  */

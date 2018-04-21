@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.database.DBHelper;
 import hr.fer.zpr.lumen.menus.CategoryAdapter;
 
@@ -28,10 +27,10 @@ public class CategorySelectionActivity extends Activity {
         final ListView listView = findViewById(R.id.listView01);
         List<String> categories = getIntent().getStringArrayListExtra("categories");
 
-        final SharedPreferences pref=this.getSharedPreferences(getResources().getString(R.string.preference_file), Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor=pref.edit();
+        final SharedPreferences pref = this.getSharedPreferences(getResources().getString(R.string.preference_file), Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = pref.edit();
 
-        final ImageButton returnBtn= findViewById(R.id.returnButton);
+        final ImageButton returnBtn = findViewById(R.id.returnButton);
         final Button allBtn = findViewById(R.id.allBtn);
         final Button noneBtn = findViewById(R.id.noneBtn);
         final Button saveBtn = findViewById(R.id.saveBtn);

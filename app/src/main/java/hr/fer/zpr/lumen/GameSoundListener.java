@@ -7,5 +7,6 @@ package hr.fer.zpr.lumen;
 public interface GameSoundListener {
 
     void letterDone();
+
     void wholeSpellingDone();
 }

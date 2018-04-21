@@ -4,26 +4,27 @@ package wordgame.db.model;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "letter_sound_relation",
-        primaryKeys = {"letterId", "soundId"},
-        foreignKeys = {
-                @ForeignKey(entity = DBLetter.class, parentColumns = "id", childColumns = "letterId"),
-                @ForeignKey(entity = Sound.class, parentColumns = "id", childColumns = "soundId")
-        })
-public class LetterSoundRelation {
+@Entity(tableName="letter_sound_relation",
+primaryKeys = {"letterId","soundId"},
+foreignKeys = {
+        @ForeignKey(entity=DbLetter.class,parentColumns = "id",childColumns = "letterId"),
+        @ForeignKey(entity=DbSound.class,parentColumns = "id",childColumns = "soundId")
+})
+public class DbLetterSoundRelation {
 
     public int letterId;
 
     @Embedded
-    public DBLanguage DBLanguage;
+    public DbLanguage language;
 
 
     public int soundId;
 
-    public LetterSoundRelation(int letterId, DBLanguage DBLanguage, int soundId) {
+    public DbLetterSoundRelation(int letterId, DbLanguage language, int soundId) {
         this.letterId = letterId;
-        this.DBLanguage = DBLanguage;
+        this.language = language;
         this.soundId = soundId;
     }
 

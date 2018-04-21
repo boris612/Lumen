@@ -11,20 +11,21 @@ public class GameActivity extends Activity {
     DBHelper helper = new DBHelper(this);
 
 
-    private GamePanel view=null;
+    private GamePanel view = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (view!=null) return;
-        view=new GamePanel(this);
+        if (view != null) return;
+        view = new GamePanel(this);
         setContentView(view);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        view.paused=true;
+        view.paused = true;
     }
 
 
@@ -32,18 +33,18 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
         view.updateSettings();
-        view.paused=false;
+        view.paused = false;
     }
 
     @Override
-    public void onConfigurationChanged(Configuration configuration){
+    public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         setContentView(view);
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
-        view.terminated=true;
+        view.terminated = true;
     }
 }

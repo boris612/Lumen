@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import hr.fer.zpr.lumen.LogUtil;
 
-import static java.sql.DriverManager.println;
 import static hr.fer.zpr.lumen.database.DBConstants.CATEGORIES_FILENAME;
 import static hr.fer.zpr.lumen.database.DBConstants.CATEGORIES_ID;
 import static hr.fer.zpr.lumen.database.DBConstants.CATEGORIES_TABLE_NAME;
@@ -52,6 +50,7 @@ import static hr.fer.zpr.lumen.database.DBConstants.WORDS_ID;
 import static hr.fer.zpr.lumen.database.DBConstants.WORDS_LANGUAGE;
 import static hr.fer.zpr.lumen.database.DBConstants.WORDS_TABLE_NAME;
 import static hr.fer.zpr.lumen.database.DBConstants.WORDS_VALUE;
+import static java.sql.DriverManager.println;
 
 /**
  * Ovaj {@link SQLiteOpenHelper} objekt služi za komunikaciju s bazom. On stvara, puni, i dohvaća

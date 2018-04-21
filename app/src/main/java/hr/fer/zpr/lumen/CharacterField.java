@@ -7,15 +7,15 @@ import android.graphics.Rect;
  */
 
 public class CharacterField extends DropArea {
-    private LetterImage characterInsideField=null;
+    private LetterImage characterInsideField = null;
     private String correctCharacter;
     private Rect rectangle;
-    private long  timeStartGreen;
+    private long timeStartGreen;
 
     public CharacterField(Rect rectangle, int color, String correctCharacter) {
         super(rectangle, color);
         this.rectangle = rectangle;
-        this.correctCharacter=correctCharacter.toLowerCase();
+        this.correctCharacter = correctCharacter.toLowerCase();
     }
 
     public void setCharacterInsideField(LetterImage characterInsideField) {
@@ -25,23 +25,26 @@ public class CharacterField extends DropArea {
     public LetterImage getCharacterInsideField() {
         return characterInsideField;
     }
-    public String getCorrectCharacter(){return  correctCharacter;}
+
+    public String getCorrectCharacter() {
+        return correctCharacter;
+    }
 
     public boolean hasCharacterInsideField() {
-        return getCharacterInsideField()!=null;
+        return getCharacterInsideField() != null;
     }
 
     public void setColor(int color) {
-        if(timeStartGreen>0 && System.currentTimeMillis()-timeStartGreen<GameLayoutConstants.GREEN_HINT_TIME){
+        if (timeStartGreen > 0 && System.currentTimeMillis() - timeStartGreen < GameLayoutConstants.GREEN_HINT_TIME) {
             return;
         }
-        timeStartGreen=0;
+        timeStartGreen = 0;
         super.setColor(color);
     }
 
 
-    public void setColorWithTime(int color){
-        this.timeStartGreen=System.currentTimeMillis();
+    public void setColorWithTime(int color) {
+        this.timeStartGreen = System.currentTimeMillis();
         super.setColor(color);
     }
 

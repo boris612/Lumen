@@ -1,4 +1,7 @@
 package hr.fer.zpr.lumen.dagger.application;
 
-public class ApplicationComponentInjects {
+public interface ApplicationComponentInjects {
+
+    void inject(LumenApplication lumenApplication);
+
 }

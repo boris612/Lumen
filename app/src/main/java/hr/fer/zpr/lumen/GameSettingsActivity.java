@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import hr.fer.zpr.lumen.R;
-
 /**
  * Created by Marko on 18.12.2017..
  */
@@ -34,7 +32,7 @@ public class GameSettingsActivity extends Activity {
         final EditText coinNumber = findViewById(R.id.coinNumber);
         categoryBtn = findViewById(R.id.categoryButton);
         final ImageButton returnBtn = findViewById(R.id.returnButton);
-        coinNumber.setText(String.valueOf(pref.getInt(getResources().getString(R.string.coins),0)));
+        coinNumber.setText(String.valueOf(pref.getInt(getResources().getString(R.string.coins), 0)));
 
         if (pref.getBoolean(getResources().getString(R.string.green_on_correct), false))
             greenWhenCorrectButton.setBackgroundColor(Color.GREEN);
@@ -82,8 +80,8 @@ public class GameSettingsActivity extends Activity {
         returnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(coinNumber.getText().toString().isEmpty()) coinNumber.setText("0");
-                editor.putInt(getResources().getString(R.string.coins),Integer.parseInt(String.valueOf(coinNumber.getText())));
+                if (coinNumber.getText().toString().isEmpty()) coinNumber.setText("0");
+                editor.putInt(getResources().getString(R.string.coins), Integer.parseInt(String.valueOf(coinNumber.getText())));
                 editor.commit();
 
                 onBackPressed();

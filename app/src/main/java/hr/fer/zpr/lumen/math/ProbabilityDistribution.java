@@ -1,5 +1,4 @@
 package hr.fer.zpr.lumen.math;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,60 +56,60 @@ public class ProbabilityDistribution {
     }
 
     public void resetProbabilitiesToUniformDistribution() {
-        double choiceProbability = 1./distributionMap.size();
-        for(Object choice: distributionMap.keySet()) {
+        double choiceProbability = 1. / distributionMap.size();
+        for (Object choice : distributionMap.keySet()) {
             distributionMap.put(choice, choiceProbability);
         }
     }
 
     public void addChoice(Object choice) {
-        distributionMap.put(choice,0.);
+        distributionMap.put(choice, 0.);
         resetProbabilitiesToUniformDistribution();
     }
 
     public void increaseChoiceProbabilityByScaleFactor(Object choice, double scaleFactor) {
-        if(!distributionMap.containsKey(choice)) {
+        if (!distributionMap.containsKey(choice)) {
             throw new IllegalArgumentException();
         }
         double currentProb = distributionMap.get(choice);
         double newProb;
-        if(scaleFactor < 0) {
+        if (scaleFactor < 0) {
             throw new IllegalArgumentException();
         }
-        newProb = currentProb*scaleFactor;
-        if(newProb > 1) {
+        newProb = currentProb * scaleFactor;
+        if (newProb > 1) {
             newProb = 1;
         }
 
-        double otherProbsScaleFactor = (1-newProb)/(1-currentProb);
+        double otherProbsScaleFactor = (1 - newProb) / (1 - currentProb);
         scaleAllProbabilitiesExcluding(otherProbsScaleFactor, choice);
         distributionMap.put(choice, newProb);
     }
 
     private void scaleAllProbabilitiesExcluding(double scaleFactor, Object toBeExcluded) {
-        for(Map.Entry<Object,Double> entry: distributionMap.entrySet()) {
-            if(entry.getKey().equals(toBeExcluded)) {
+        for (Map.Entry<Object, Double> entry : distributionMap.entrySet()) {
+            if (entry.getKey().equals(toBeExcluded)) {
                 continue;
             }
-            distributionMap.put(entry.getKey(),entry.getValue()*scaleFactor );
+            distributionMap.put(entry.getKey(), entry.getValue() * scaleFactor);
         }
     }
 
     public void increaseChoiceProbability(Object choice, double probabilityDiff) {
         double currentProb = distributionMap.get(choice);
-        increaseChoiceProbabilityByScaleFactor(choice,1 + (currentProb/probabilityDiff));
+        increaseChoiceProbabilityByScaleFactor(choice, 1 + (currentProb / probabilityDiff));
     }
 
     public Collection<DistributionInterval> getDistributionAsIntervalCollection() {
         List<DistributionInterval> intervals = new ArrayList<>();
         double intervalBorder = 0;
-        LogUtil.d("DISTR",distributionMap.toString());
-        for(Map.Entry<Object,Double> entry: distributionMap.entrySet()) {
+        LogUtil.d("DISTR", distributionMap.toString());
+        for (Map.Entry<Object, Double> entry : distributionMap.entrySet()) {
             double intervalStart = intervalBorder;
             double intervalEnd = intervalStart + entry.getValue();
-            intervals.add(new DistributionInterval(entry.getKey(),intervalStart,intervalEnd));
+            intervals.add(new DistributionInterval(entry.getKey(), intervalStart, intervalEnd));
             intervalBorder = intervalEnd;
-            LogUtil.d("DISTR","INTERVAL" + intervalStart +" "+ intervalEnd + ", choice:"+entry.getKey());
+            LogUtil.d("DISTR", "INTERVAL" + intervalStart + " " + intervalEnd + ", choice:" + entry.getKey());
         }
         return intervals;
     }

@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Enkapsulira audiozapise slova od koje se riječ sastoji, kao i audiozapis izgovora riječi
+ *
  * @author Matija Čavlović
  * @version 0.1
  */
@@ -24,14 +25,15 @@ public class GameSound {
     private Thread thread;
     private GamePanel gamePanel;
     private int maxDur;
-    public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath,GamePanel gamePanel, Thread thread){
-       wordRecording = loadWordRecording(context, wordRecordingPath);
+
+    public GameSound(Context context, String wordRecordingPath, Collection<String> lettersRecordingPath, GamePanel gamePanel, Thread thread) {
+        wordRecording = loadWordRecording(context, wordRecordingPath);
         lettersRecording = loadLettersRecording(context, lettersRecordingPath);
         listeners = new ArrayList<>();
-        this.context=context;
-        this.gamePanel=gamePanel;
-        this.thread=thread;
-        maxDur=2000;
+        this.context = context;
+        this.gamePanel = gamePanel;
+        this.thread = thread;
+        maxDur = 2000;
     }
 
     public void registerListener(GameSoundListener listener) {
@@ -39,27 +41,28 @@ public class GameSound {
     }
 
     private void notifyListenersForLetterDone() {
-        for(GameSoundListener l: listeners) {
+        for (GameSoundListener l : listeners) {
             l.letterDone();
         }
     }
 
     private void notifyListenersForWholeSpellingDone() {
-        for(GameSoundListener l: listeners) {
+        for (GameSoundListener l : listeners) {
             l.wholeSpellingDone();
         }
     }
 
     /**
      * Učitava audiozapis izgovora riječi
+     *
      * @param context Kontekst
-     * @param path Putanja do audiozapisa.
+     * @param path    Putanja do audiozapisa.
      * @return
      */
-    private MediaPlayer loadWordRecording(Context context, String path){
+    private MediaPlayer loadWordRecording(Context context, String path) {
 
-        MediaPlayer mediaPlayer=new MediaPlayer();
-        try{
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
             AssetFileDescriptor descriptor = context.getAssets().openFd(path);
             long start = descriptor.getStartOffset();
             long end = descriptor.getLength();
@@ -67,8 +70,7 @@ public class GameSound {
             mediaPlayer.setDataSource(descriptor.getFileDescriptor(), start, end);
             mediaPlayer.prepare();
 
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -77,24 +79,25 @@ public class GameSound {
 
     /**
      * Učitava audiozapise slova od kojih se riječ sastoji
+     *
      * @param context Kontekst
-     * @param paths Kolekcija putanja audiozapisa svih slova.
+     * @param paths   Kolekcija putanja audiozapisa svih slova.
      * @return
      */
-    private List<MediaPlayer> loadLettersRecording (Context context, Collection<String> paths){
+    private List<MediaPlayer> loadLettersRecording(Context context, Collection<String> paths) {
         List<MediaPlayer> mpList = new ArrayList<>();
 
-        for (String path:paths) {
+        for (String path : paths) {
             try {
                 AssetFileDescriptor descriptor = context.getAssets().openFd(path);
                 long start = descriptor.getStartOffset();
                 long end = descriptor.getLength();
-                MediaPlayer mediaPlayer=new MediaPlayer();
+                MediaPlayer mediaPlayer = new MediaPlayer();
                 mediaPlayer.setDataSource(descriptor.getFileDescriptor(), start, end);
                 mediaPlayer.prepare();
                 mpList.add(mediaPlayer);
-                int duration=mediaPlayer.getDuration();
-                if (maxDur<duration) maxDur=duration;
+                int duration = mediaPlayer.getDuration();
+                if (maxDur < duration) maxDur = duration;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -105,24 +108,24 @@ public class GameSound {
 
     /**
      * Reproducira pojedinu riječ i slovkanje riječi
-     *
+     * <p>
      * E/MediaPlayerNative: internal/external state mismatch corrected
      * popraviti ove exceptione potencijalno bug
      *
      * @param letterPauseLength Duljina pauze između izgovora pojedinog slova u milisekundama
      */
-    public void playSpelling(int letterPauseLength){
+    public void playSpelling(int letterPauseLength) {
         try {
             Thread.sleep(letterPauseLength);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        int i=0;
+        int i = 0;
 
         for (MediaPlayer mp : this.lettersRecording) {
             if (gamePanel.terminated) return;
-            while(gamePanel.paused){
+            while (gamePanel.paused) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -137,8 +140,8 @@ public class GameSound {
             //while (mp.isPlaying()) ;
 
             i++;
-           // System.out.println();
-            if (i<=lettersRecording.size()) {
+            // System.out.println();
+            if (i <= lettersRecording.size()) {
                 try {
                     Thread.sleep(letterPauseLength);
                 } catch (InterruptedException e) {
@@ -149,8 +152,8 @@ public class GameSound {
             mp.release();
         }
 
-       wordRecording.start();
-       // while (wordRecording.isPlaying()) ;
+        wordRecording.start();
+        // while (wordRecording.isPlaying()) ;
 
         try {
             Thread.sleep(2 * letterPauseLength);
@@ -163,8 +166,8 @@ public class GameSound {
     }
 
 
-    public void setPlaying (boolean play){
-        this.playing=play;
+    public void setPlaying(boolean play) {
+        this.playing = play;
     }
 
 }

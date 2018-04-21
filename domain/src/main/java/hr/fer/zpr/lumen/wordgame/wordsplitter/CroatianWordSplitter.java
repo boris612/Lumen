@@ -1,4 +1,4 @@
-package hr.fer.zpr.lumen.wordgame.wordbuilder;
+package hr.fer.zpr.lumen.wordgame.wordsplitter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,8 +9,6 @@ import android.util.DisplayMetrics;
 
 import java.util.List;
 
-import hr.fer.zpr.lumen.R;
-
 /**
  * Created by Alen on 10.1.2018..
  */
@@ -26,7 +24,7 @@ public class WordGameTutorial extends GameTutorial {
 
     public WordGameTutorial(List<LetterImage> letters, CharacterField field, Context context, long timeToActivate) {
         super(timeToActivate);
-        this.letter = determineLetterToInsert(letters,field);
+        this.letter = determineLetterToInsert(letters, field);
         this.field = field;
         letterOriginalPos = letter.getCenter();
         framesToRestart = 0;
@@ -35,28 +33,28 @@ public class WordGameTutorial extends GameTutorial {
     }
 
     private void initHandPosition(DisplayMetrics dm) {
-        int width = (int)(dm.widthPixels * GameLayoutConstants.HAND_IMAGE_WIDTH_FACTOR);
-        int height = (int)(dm.widthPixels * GameLayoutConstants.HAND_IMAGE_HEIGHT_FACTOR);
-        handImage.setBounds(0,0,width,height);
+        int width = (int) (dm.widthPixels * GameLayoutConstants.HAND_IMAGE_WIDTH_FACTOR);
+        int height = (int) (dm.widthPixels * GameLayoutConstants.HAND_IMAGE_HEIGHT_FACTOR);
+        handImage.setBounds(0, 0, width, height);
         updateHandPosition();
     }
 
     private void updateHandPosition() {
         Rect imageBounds = handImage.getBounds();
 
-        int forfX = (int)(imageBounds.width()*GameLayoutConstants.HAND_IMAGE_FOREFINGER_X_COORDINATE_FACTOR);
-        int forfY = (int) (imageBounds.height()*GameLayoutConstants.HAND_IMAGE_FOREFINGER_Y_COORDINATE_FACTOR);
+        int forfX = (int) (imageBounds.width() * GameLayoutConstants.HAND_IMAGE_FOREFINGER_X_COORDINATE_FACTOR);
+        int forfY = (int) (imageBounds.height() * GameLayoutConstants.HAND_IMAGE_FOREFINGER_Y_COORDINATE_FACTOR);
 
         int x = letter.getCenter().x - forfX;
         int y = letter.getCenter().y - forfY;
 
-        handImage.setBounds(x,y,x+imageBounds.width(),y+imageBounds.height());
+        handImage.setBounds(x, y, x + imageBounds.width(), y + imageBounds.height());
     }
 
 
     private LetterImage determineLetterToInsert(List<LetterImage> letters, CharacterField field) {
-        for(LetterImage letter: letters) {
-            if(field.getCorrectCharacter().equals(letter.getLetter())) {
+        for (LetterImage letter : letters) {
+            if (field.getCorrectCharacter().equals(letter.getLetter())) {
                 return letter;
             }
         }
@@ -65,9 +63,9 @@ public class WordGameTutorial extends GameTutorial {
 
     @Override
     public void updateTutorialAnimation() {
-        if(framesToRestart > 0) {
+        if (framesToRestart > 0) {
             framesToRestart--;
-            if(framesToRestart == 0) {
+            if (framesToRestart == 0) {
                 letter.setCenter(letterOriginalPos);
             }
             return;
@@ -76,26 +74,26 @@ public class WordGameTutorial extends GameTutorial {
         Point currentPos = letter.getCenter();
         Point aimPos = field.getCenterPoint();
 
-        double angle = Math.atan2(aimPos.y-currentPos.y,aimPos.x-currentPos.x);
+        double angle = Math.atan2(aimPos.y - currentPos.y, aimPos.x - currentPos.x);
 
-        int newX = (int)(currentPos.x+Math.cos(angle)*ANIMATION_SPEED);
-        int newY = (int)(currentPos.y+Math.sin(angle)*ANIMATION_SPEED);
-        letter.setCenter(new Point(newX,newY));
+        int newX = (int) (currentPos.x + Math.cos(angle) * ANIMATION_SPEED);
+        int newY = (int) (currentPos.y + Math.sin(angle) * ANIMATION_SPEED);
+        letter.setCenter(new Point(newX, newY));
 
         updateHandPosition();
 
-        double remainingPathLength = Math.sqrt(Math.pow(aimPos.x-newX,2) + Math.pow(aimPos.y-newY,2));
-        if(field.collision(letter) && remainingPathLength < ANIMATION_SPEED) {
+        double remainingPathLength = Math.sqrt(Math.pow(aimPos.x - newX, 2) + Math.pow(aimPos.y - newY, 2));
+        if (field.collision(letter) && remainingPathLength < ANIMATION_SPEED) {
             //field.setCharacterInsideField(letter);
             letter.setCenter(field.getCenterPoint());
             framesToRestart = 50;
         }
-        lastSetPosition = new Point(letter.getCenter().x,letter.getCenter().y);
+        lastSetPosition = new Point(letter.getCenter().x, letter.getCenter().y);
     }
 
     @Override
     public void update() {
-        if(!letter.getCenter().equals(lastSetPosition)) {
+        if (!letter.getCenter().equals(lastSetPosition)) {
             letterOriginalPos = letter.getCenter();
         }
         super.update();

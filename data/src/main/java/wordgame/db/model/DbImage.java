@@ -5,13 +5,13 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "images")
-public class Image {
+public class DbImage {
     @PrimaryKey
     public int id;
 
     public String path;
 
-    public Image(int id, String path) {
+    public DbImage(int id, String path) {
         this.id = id;
         this.path = path;
     }

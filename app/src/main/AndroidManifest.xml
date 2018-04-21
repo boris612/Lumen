@@ -24,6 +24,11 @@
             android:name=".GameActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="landscape"></activity>
+
+        <activity
+            android:name=".ui.wordgame.WordGameActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".coingame.GameActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

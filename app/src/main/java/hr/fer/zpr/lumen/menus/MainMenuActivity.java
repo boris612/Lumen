@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import hr.fer.zpr.lumen.GameActivity;
 import hr.fer.zpr.lumen.GameSettingsActivity;
 import hr.fer.zpr.lumen.InfoActivity;
 import hr.fer.zpr.lumen.R;
@@ -18,6 +17,7 @@ import hr.fer.zpr.lumen.database.DBHelper;
 public class MainMenuActivity extends Activity {
     DBHelper helper;
     private Collection<String> categories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +31,7 @@ public class MainMenuActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent startGameIntent = new Intent(MainMenuActivity.this,
-                        GameActivity.class);
+                        hr.fer.zpr.lumen.ui.wordgame.WordGameActivity.class);
                 startActivity(startGameIntent);
             }
         });
@@ -53,7 +53,7 @@ public class MainMenuActivity extends Activity {
             public void onClick(View view) {
                 Intent startGameIntent = new Intent(MainMenuActivity.this,
                         GameSettingsActivity.class);
-                startGameIntent.putStringArrayListExtra("categories",(ArrayList<String>)categories);
+                startGameIntent.putStringArrayListExtra("categories", (ArrayList<String>) categories);
                 startActivity(startGameIntent);
             }
         });
@@ -69,7 +69,7 @@ public class MainMenuActivity extends Activity {
         });
     }
 
-    public Collection<String> getCurrentCategories(){
+    public Collection<String> getCurrentCategories() {
         return categories;
     }
 }

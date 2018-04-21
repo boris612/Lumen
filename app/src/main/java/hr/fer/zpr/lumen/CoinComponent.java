@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import hr.fer.zpr.lumen.guicomponents.Label;
 
@@ -36,21 +35,21 @@ public class CoinComponent {
 
         int display_width = dm.widthPixels;
         int display_height = dm.heightPixels;
-        int coinWidth = (int)(display_width*IMAGE_WIDTH_FACTOR);
-        int coinPosX = (int)(display_width*IMAGE_X_COORDINATE_FACTOR);
-        int coinPosY = (int)(display_height*IMAGE_Y_COORDINATE_FACTOR);
-        rectangle=new Rect(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
-        LogUtil.d("COIN",""+coinPosX+" "+coinPosY);
+        int coinWidth = (int) (display_width * IMAGE_WIDTH_FACTOR);
+        int coinPosX = (int) (display_width * IMAGE_X_COORDINATE_FACTOR);
+        int coinPosY = (int) (display_height * IMAGE_Y_COORDINATE_FACTOR);
+        rectangle = new Rect(coinPosX, coinPosY, coinPosX + coinWidth, coinPosY + coinWidth);
+        LogUtil.d("COIN", "" + coinPosX + " " + coinPosY);
 
-        coinImage.setBounds(coinPosX,coinPosY,coinPosX+coinWidth,coinPosY+coinWidth);
-        label = new Label( Integer.toString(coins),
-                new Point(coinPosX+coinWidth/2,coinPosY+(int)(coinWidth*1.75) ),
+        coinImage.setBounds(coinPosX, coinPosY, coinPosX + coinWidth, coinPosY + coinWidth);
+        label = new Label(Integer.toString(coins),
+                new Point(coinPosX + coinWidth / 2, coinPosY + (int) (coinWidth * 1.75)),
                 Color.BLACK, coinWidth);
 
     }
 
     public void addCoins(int coinsToAdd) {
-        coins+=coinsToAdd;
+        coins += coinsToAdd;
         label.setText(Integer.toString(coins));
     }
 
@@ -59,11 +58,11 @@ public class CoinComponent {
         label.draw(canvas);
     }
 
-    public Rect getRectangle(){
+    public Rect getRectangle() {
         return rectangle;
     }
 
-    public int getCoins(){
+    public int getCoins() {
         return coins;
     }
 }

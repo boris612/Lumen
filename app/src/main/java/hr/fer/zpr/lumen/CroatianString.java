@@ -18,12 +18,11 @@ public class CroatianString implements LangDependentString {
     private void convertStringToLetters(String string) {
         int len = string.length();
         for (int i = 0; i < len; i++) {
-            if(i!=(len-1) && isSpecialSequence(string.substring(i,i+2))){
-                letters.add(string.substring(i,i+2));
+            if (i != (len - 1) && isSpecialSequence(string.substring(i, i + 2))) {
+                letters.add(string.substring(i, i + 2));
                 i++;
-            }
-            else{
-                letters.add(string.substring(i,i+1));
+            } else {
+                letters.add(string.substring(i, i + 1));
             }
         }
     }
@@ -41,7 +40,7 @@ public class CroatianString implements LangDependentString {
     @Override
     public LangDependentString toLowerCase() {
         StringBuilder strb = new StringBuilder();
-        for(String letter: letters) {
+        for (String letter : letters) {
             strb.append(letter.toLowerCase());
         }
         return new CroatianString(strb.toString());
@@ -50,14 +49,14 @@ public class CroatianString implements LangDependentString {
     @Override
     public LangDependentString toUpperCase() {
         StringBuilder strb = new StringBuilder();
-        for(String letter: letters) {
+        for (String letter : letters) {
             strb.append(letter.toLowerCase());
         }
         return new CroatianString(strb.toString());
     }
 
     private boolean isSpecialSequence(String sequence) {
-        if(sequence.toLowerCase().contains("lj") ||sequence.toLowerCase().contains("dž") ||sequence.toLowerCase().contains("nj")){
+        if (sequence.toLowerCase().contains("lj") || sequence.toLowerCase().contains("dž") || sequence.toLowerCase().contains("nj")) {
             return true;
         }
         return false;

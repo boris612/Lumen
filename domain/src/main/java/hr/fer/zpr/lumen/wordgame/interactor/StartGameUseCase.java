@@ -1,17 +1,36 @@
-package hr.fer.zpr.lumen.wordgame.interactor.word;
+package hr.fer.zpr.lumen.wordgame.interactor;
+
+import java.util.Set;
 
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
-import io.reactivex.Completable;
+import hr.fer.zpr.lumen.wordgame.model.Category;
+import hr.fer.zpr.lumen.wordgame.model.Language;
+import hr.fer.zpr.lumen.wordgame.model.Word;
+import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
+import io.reactivex.Single;
 
-public class StartGameUseCase implements CompletableUseCase {
+public class StartGameUseCase implements SingleUseCaseWIthParams<StartGameUseCase.Request,Word> {
 
-    private WordGameManager manager;
+    private final WordGameManager manager;
+    private final WordGameRepository repository;
 
-    public StartGameUseCase(WordGameManager manager){
-        this.manager=manager;
+    public StartGameUseCase(final WordGameManager manager,final WordGameRepository repository) {
+        this.manager = manager;
+        this.repository = repository;
     }
+
     @Override
-    public Completable execute() {
-        return Completable.fromAction(()->manager.startGame());
+    public Single<Word> execute(final Request request) {
+        return repository.getWordsFromCategories(request.categories,request.language).flatMap(words->Single.fromCallable(()->manager.startGame(words)));
+    }
+
+    public static final class Request{
+        public final Set<Category> categories;
+        public final Language language;
+
+        public Request(Set<Category> categories, Language language) {
+            this.categories = categories;
+            this.language = language;
+        }
     }
 }

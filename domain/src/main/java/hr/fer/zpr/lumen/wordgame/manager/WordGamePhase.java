@@ -1,4 +1,7 @@
 package hr.fer.zpr.lumen.wordgame.manager;
 
-public interface WordGamePhase {
+public enum WordGamePhase {
+    PRESENTING,
+    PLAYING,
+    ENDING
 }

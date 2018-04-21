@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "categories")
-public class category {
+public class DbCategory {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -14,7 +14,7 @@ public class category {
     public String value;
 
 
-    public category(String value) {
+    public DbCategory(String value) {
         this.value = value;
     }
 }

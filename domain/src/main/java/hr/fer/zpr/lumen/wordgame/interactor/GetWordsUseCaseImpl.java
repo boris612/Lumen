@@ -1,4 +1,4 @@
-package hr.fer.zpr.lumen.wordgame.interactor.word;
+package hr.fer.zpr.lumen.wordgame.interactor;
 
 import java.util.List;
 import java.util.Set;

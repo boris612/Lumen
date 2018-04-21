@@ -6,12 +6,12 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
-public class Sound {
+public class DbSound {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
 
 
-    @ColumnInfo(name = "path")
+    @ColumnInfo(name="path")
     public String pathToSound;
 }

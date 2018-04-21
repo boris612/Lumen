@@ -6,7 +6,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "languages")
-public class Language {
+public class DbLanguage {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -14,7 +14,7 @@ public class Language {
     @ColumnInfo(name = "language")
     public String value;
 
-    public Language(String value) {
+    public DbLanguage(String value) {
         this.value = value;
     }
 }

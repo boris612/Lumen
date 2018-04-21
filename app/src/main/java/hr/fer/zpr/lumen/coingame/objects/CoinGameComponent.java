@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 
 /**
  * Komponenta koja reprezentira kovanicu. Sadrzi sliku, poziciju i vrijednost.
+ *
  * @author Zlatko Verk
  * @author Darian Šarić
  */

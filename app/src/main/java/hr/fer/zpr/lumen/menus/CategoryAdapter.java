@@ -19,7 +19,7 @@ import hr.fer.zpr.lumen.R;
  * Created by Kristijan on 17.1.2018..
  */
 
-public class CategoryAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener{
+public class CategoryAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener {
     Context context;
     String[] categories;
 
@@ -36,7 +36,7 @@ public class CategoryAdapter extends ArrayAdapter implements CompoundButton.OnCh
     }
 
     @Override
-    public View getView (int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         convertView = inflater.inflate(R.layout.category_option, parent, false);
         CheckBox box = convertView.findViewById(R.id.checkBox01);
@@ -46,8 +46,7 @@ public class CategoryAdapter extends ArrayAdapter implements CompoundButton.OnCh
         box.setTag(position);
         if (states.indexOfKey(position) < 0) {
             box.setChecked(set.contains(categories[position]));
-        }
-        else {
+        } else {
             box.setChecked(states.get(position));
         }
         states.put(position, box.isChecked());

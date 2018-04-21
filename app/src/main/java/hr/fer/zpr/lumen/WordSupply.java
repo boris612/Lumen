@@ -2,7 +2,6 @@ package hr.fer.zpr.lumen;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public class WordSupply {
         }
         rand = new Random();
         goToNext();
-   }
+    }
 
     public LangDependentString getWord() {
         return new CroatianString(helper.getWord(currentWordId));
@@ -63,20 +62,20 @@ public class WordSupply {
 
         List<String> paths = new ArrayList<>();
 
-        for (int i=0;i<letters.length();i++){
-            paths.add(helper.getLetterSoundPath(letters.charAt(i).toUpperCase(),language));
+        for (int i = 0; i < letters.length(); i++) {
+            paths.add(helper.getLetterSoundPath(letters.charAt(i).toUpperCase(), language));
         }
-        LogUtil.d("PATHS",paths.toString());
+        LogUtil.d("PATHS", paths.toString());
         return paths;
     }
 
     public void goToNext() {
         double selection = rand.nextDouble();
-        LogUtil.d("DISTR","selection: "+Double.toString(selection));
-        for(ProbabilityDistribution.DistributionInterval interval: wordProbDistr.getDistributionAsIntervalCollection()) {
-            if(interval.getIntervalStart() <= selection && interval.getIntervalEnd() >= selection) {
-                currentWordId = (int)interval.getIntervalChoice();
-                LogUtil.d("DISTR","selection id: "+currentWordId);
+        LogUtil.d("DISTR", "selection: " + Double.toString(selection));
+        for (ProbabilityDistribution.DistributionInterval interval : wordProbDistr.getDistributionAsIntervalCollection()) {
+            if (interval.getIntervalStart() <= selection && interval.getIntervalEnd() >= selection) {
+                currentWordId = (int) interval.getIntervalChoice();
+                LogUtil.d("DISTR", "selection id: " + currentWordId);
                 wordProbDistr.increaseChoiceProbabilityByScaleFactor(interval.getIntervalChoice(), PROBABILITY_SCALE_FACTOR);
                 return;
             }

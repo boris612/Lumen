@@ -1,7 +1,6 @@
 package hr.fer.zpr.lumen;
 
 import android.graphics.Canvas;
-import android.util.Log;
 
 /**
  * Created by Alen on 10.1.2018..
@@ -13,7 +12,7 @@ public abstract class GameTutorial {
     protected TutorialState tutorialState;
 
     private enum TutorialState {
-        WAITING,ACTIVE,SHUT_DOWN,GAME_NOT_STARTED
+        WAITING, ACTIVE, SHUT_DOWN, GAME_NOT_STARTED
     }
 
     public GameTutorial(long timeToActivate) {
@@ -22,19 +21,19 @@ public abstract class GameTutorial {
     }
 
     public void gameStarted() {
-        if(tutorialState!=TutorialState.SHUT_DOWN) {
+        if (tutorialState != TutorialState.SHUT_DOWN) {
             restart();
         }
     }
 
     public void update() {
-        if(tutorialState == TutorialState.SHUT_DOWN || tutorialState == TutorialState.GAME_NOT_STARTED) {
+        if (tutorialState == TutorialState.SHUT_DOWN || tutorialState == TutorialState.GAME_NOT_STARTED) {
             return;
         }
-        if(tutorialState == TutorialState.WAITING && System.currentTimeMillis()-timeOfGameStart >= timeToActivate) {
+        if (tutorialState == TutorialState.WAITING && System.currentTimeMillis() - timeOfGameStart >= timeToActivate) {
             tutorialState = TutorialState.ACTIVE;
         }
-        if(tutorialState == TutorialState.ACTIVE) {
+        if (tutorialState == TutorialState.ACTIVE) {
             updateTutorialAnimation();
         }
     }
@@ -42,7 +41,7 @@ public abstract class GameTutorial {
     protected abstract void updateTutorialAnimation();
 
     public void draw(Canvas canvas) {
-        if(tutorialState == TutorialState.ACTIVE) {
+        if (tutorialState == TutorialState.ACTIVE) {
             drawTutorial(canvas);
         }
     }
@@ -54,7 +53,7 @@ public abstract class GameTutorial {
     }
 
     public void restartIfNotShutDown() {
-        if(tutorialState != TutorialState.SHUT_DOWN) {
+        if (tutorialState != TutorialState.SHUT_DOWN) {
             restart();
         }
     }
@@ -65,9 +64,9 @@ public abstract class GameTutorial {
     }
 
 
-  //  protected void tutorialEnded() {
-  //     tutorialState = TutorialState.ENDED;
-   //}
+    //  protected void tutorialEnded() {
+    //     tutorialState = TutorialState.ENDED;
+    //}
 
 
 }

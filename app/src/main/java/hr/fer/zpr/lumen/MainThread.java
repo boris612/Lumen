@@ -24,9 +24,9 @@ public class MainThread extends Thread {
         long startTime;
         long timeMilis;
         long waitTime;
-        long targetTime = 1000/MAX_FPS;
+        long targetTime = 1000 / MAX_FPS;
 
-        while(running) {
+        while (running) {
             startTime = System.nanoTime();
             canvas = null;
 
@@ -39,7 +39,7 @@ public class MainThread extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if(canvas!=null) {
+                if (canvas != null) {
                     try {
                         surfaceHolder.unlockCanvasAndPost(canvas);
                     } catch (Exception e) {
@@ -49,7 +49,7 @@ public class MainThread extends Thread {
                 }
             }
 
-            timeMilis = (System.nanoTime() - startTime)/1000000;
+            timeMilis = (System.nanoTime() - startTime) / 1000000;
             waitTime = targetTime - timeMilis;
             try {
                 if (waitTime > 0) {

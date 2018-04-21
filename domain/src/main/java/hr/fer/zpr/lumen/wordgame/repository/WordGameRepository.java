@@ -1,4 +1,23 @@
 package hr.fer.zpr.lumen.wordgame.repository;
 
+import java.util.List;
+import java.util.Set;
+
+import hr.fer.zpr.lumen.wordgame.model.Category;
+import hr.fer.zpr.lumen.wordgame.model.Image;
+import hr.fer.zpr.lumen.wordgame.model.Language;
+import hr.fer.zpr.lumen.wordgame.model.Letter;
+import hr.fer.zpr.lumen.wordgame.model.Word;
+import io.reactivex.Single;
+
 public interface WordGameRepository {
+
+    public List<Word> getAllWords(Language language);
+
+
+    public Single<List<Word>> getWordsFromCategories(Set<Category> categories, Language language);
+
+    public Single<List<Letter>> getLettersFromWord(Word word);
+
+    public Single<List<Letter>> getRandomletters(Language language);
 }
