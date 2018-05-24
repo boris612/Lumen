@@ -1,0 +1,6 @@
+﻿transport
+food
+items
+animals
+nature
+fruit

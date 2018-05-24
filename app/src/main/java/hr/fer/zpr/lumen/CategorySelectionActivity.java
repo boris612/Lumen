@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import hr.fer.zpr.lumen.database.DBHelper;
 import hr.fer.zpr.lumen.menus.CategoryAdapter;
 
 public class CategorySelectionActivity extends Activity {
@@ -41,9 +40,9 @@ public class CategorySelectionActivity extends Activity {
         Set<String> categorySet = pref.getStringSet("category", null);
         if (categorySet == null) {
             categorySet = new TreeSet<>();
-            DBHelper helper = new DBHelper(getApplicationContext());
-            for (String cat : helper.getAllCategories())
-                categorySet.add(cat);
+           //TODO:dohvacanje kategorija iz nove baze DBHelper helper = new DBHelper(getApplicationContext());
+            //for (String cat : helper.getAllCategories())
+            //    categorySet.add(cat);
             editor.putStringSet("category", categorySet);
             editor.commit();
         }

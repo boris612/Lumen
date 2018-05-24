@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hr.fer.zpr.lumen.wordgame.model.Letter;
+import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
 
 public class EnglishWordSplitter implements WordSplitter {
 
@@ -15,6 +16,7 @@ public class EnglishWordSplitter implements WordSplitter {
         for(String str : splitLetters){
             letters.add(new Letter(str));
         }
+
         return letters;
     }
 }

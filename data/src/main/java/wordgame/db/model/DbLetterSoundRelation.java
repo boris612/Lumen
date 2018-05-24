@@ -7,25 +7,24 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName="letter_sound_relation",
-primaryKeys = {"letterId","soundId"},
+primaryKeys = {"letterId","languageId"},
 foreignKeys = {
         @ForeignKey(entity=DbLetter.class,parentColumns = "id",childColumns = "letterId"),
-        @ForeignKey(entity=DbSound.class,parentColumns = "id",childColumns = "soundId")
+        @ForeignKey(entity=DbLanguage.class,parentColumns = "id",childColumns = "languageId")
 })
 public class DbLetterSoundRelation {
 
     public int letterId;
 
-    @Embedded
-    public DbLanguage language;
+    public int languageId;
 
 
-    public int soundId;
+    public String soundPath;
 
-    public DbLetterSoundRelation(int letterId, DbLanguage language, int soundId) {
+    public DbLetterSoundRelation(int letterId, int languageId, String soundPath) {
         this.letterId = letterId;
-        this.language = language;
-        this.soundId = soundId;
+        this.languageId = languageId;
+        this.soundPath = soundPath;
     }
 
 }

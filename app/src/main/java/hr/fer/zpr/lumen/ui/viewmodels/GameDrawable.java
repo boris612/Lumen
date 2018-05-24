@@ -13,6 +13,8 @@ public abstract class GameDrawable {
     protected int height;
     protected int width;
 
+    public GameDrawable(){}
+
     public GameDrawable(Bitmap image, Rect bounds) {
         this.image = image;
         this.rectangle = bounds;
@@ -29,6 +31,7 @@ public abstract class GameDrawable {
     public abstract void handleTouch(MotionEvent event);
 
     public void draw(Canvas canvas) {
+        if(image==null) return;
         canvas.drawBitmap(image, null, rectangle, new Paint());
     }
 }

@@ -1,12 +1,15 @@
 package hr.fer.zpr.lumen;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
+
+import javax.inject.Inject;
 
 /**
  * Object which models the starting hint for this word game.
@@ -20,8 +23,6 @@ public class StartingHint {
     private LangDependentString word;
     /*bitmap of final hint */
     private Bitmap hint;
-    /* view from which this object is called */
-    private View view;
     /* rectangle which defines location and size of drawing */
     private Rect rect;
     private int numOfLetShown;
@@ -36,22 +37,26 @@ public class StartingHint {
     private int currWidth;
     private Canvas cnv;
 
+    @Inject
+    Resources resources;
+
+    @Inject
+    Context context;
+
+
+
     /**
      * Constructor for the hint
      * Creates a new StartingHint object which automatically creates
      * a bitmap of the word
      *
      * @param word   to be created
-     * @param view   from which method is called
-     * @param width  of screen
-     * @param height of screen
      */
-    public StartingHint(LangDependentString word, View view, int width, int height, Rect rect) {
+    public StartingHint(LangDependentString word, Rect rect) {
         this.word = word.toLowerCase();
-        this.view = view;
-        this.screenWidth = width;
+        this.screenWidth = resources.getDisplayMetrics().widthPixels;
         this.rect = rect;
-        this.screenHeight = height;
+        this.screenHeight = resources.getDisplayMetrics().heightPixels;
         maxHintHeight = screenHeight - rect.top;
         hintWidth = 0;
         numOfLetShown = 1;
@@ -100,15 +105,13 @@ public class StartingHint {
     private Bitmap[] getParts() {
         int size = word.length();
         Bitmap[] parts = new Bitmap[size];
-        Context context = view.getContext();
-        createBitmap(parts, context);
+        createBitmap(parts);
         return parts;
     }
 
-    private void createBitmap(Bitmap[] parts, Context context) {
+    private void createBitmap(Bitmap[] parts) {
         int wordLen = word.length();
         for (int i = 0; i < wordLen; i++) {
-            String letter = word.charAt(i);
             int id = context.getResources().getIdentifier(LetterMap.letters.get(word.charAt(i)), "drawable", context.getPackageName());
             parts[i] = BitmapFactory.decodeResource(context.getResources(), id);
         }

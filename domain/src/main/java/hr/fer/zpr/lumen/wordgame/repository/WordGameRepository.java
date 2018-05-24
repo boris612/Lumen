@@ -12,12 +12,12 @@ import io.reactivex.Single;
 
 public interface WordGameRepository {
 
-    public List<Word> getAllWords(Language language);
+    public Single<List<Word>> getAllWords(Language language);
 
 
     public Single<List<Word>> getWordsFromCategories(Set<Category> categories, Language language);
 
-    public Single<List<Letter>> getLettersFromWord(Word word);
+    public Single<List<Letter>> getRandomletters(Language language,int n);
 
-    public Single<List<Letter>> getRandomletters(Language language);
+    public Single<List<Letter>> getLettersWithImages(List<Letter> letters,Language language);
 }

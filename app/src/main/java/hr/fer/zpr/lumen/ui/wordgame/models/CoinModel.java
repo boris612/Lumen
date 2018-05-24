@@ -10,6 +10,8 @@ import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 
 public class CoinModel extends GameDrawable {
 
+    public static String coinImagePath="database/misc/coin.png";
+
     private int coins;
     private boolean hintActive = false;
 

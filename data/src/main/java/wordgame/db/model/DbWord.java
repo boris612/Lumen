@@ -16,10 +16,29 @@ public class DbWord {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public int word;
+    public String word;
 
     @ForeignKey(entity=DbLanguage.class,parentColumns = "id",childColumns = "languageId")
     public int languageId;
 
+    public DbWord(String word, int languageId){
+        this.word=word;
+        this.languageId=languageId;
+    }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if( (obj instanceof DbWord)==false){
+            return false;
+        }
+        DbWord second=(DbWord)obj;
+        if(!this.word.equals(second.word)){
+            return false;
+        }
+        if(! (this.languageId==second.languageId)){
+            return false;
+        }
+        return true;
+    }
 }

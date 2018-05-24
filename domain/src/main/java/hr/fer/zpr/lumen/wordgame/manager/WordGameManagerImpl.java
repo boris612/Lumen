@@ -30,12 +30,17 @@ public class WordGameManagerImpl implements WordGameManager {
     private Language currentLanguage;
     private WordGamePhase phase;
 
+    private boolean hintActive;
+
     private WordGameUtil wordGameUtil;
 
     private boolean createMoreLetters;
 
-    public WordGameManagerImpl() {
+    private WordGameRepository repository;
 
+    public WordGameManagerImpl(WordGameRepository repository) {
+            this.repository=repository;
+            wordGameUtil=new WordGameUtil();
     }
 
 
@@ -46,7 +51,7 @@ public class WordGameManagerImpl implements WordGameManager {
         unusedWords=words;
         currentWord=unusedWords.get(new Random().nextInt(unusedWords.size()));
         unusedWords.remove(currentWord);
-        wordGameUtil=new WordGameUtil(new CroatianWordSplitter(),new EnglishWordSplitter());
+
         return currentWord;
     }
 
@@ -56,13 +61,18 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
+    public void setHint(Boolean active) {
+        hintActive=active;
+    }
+
+    @Override
     public void nextRound() {
         if (currentWord != null) usedWords.add(currentWord);
         phase = WordGamePhase.PRESENTING;
         currentWord = unusedWords.get(new Random().nextInt(unusedWords.size()));
         unusedWords.remove(currentWord);
         letterField = new LetterField(currentWord.stringValue.length());
-        letters = new ArrayList<>(currentWord.letters);
+        letters = new ArrayList<>(WordGameUtil.getWordBuilderFromLanguage(currentLanguage).split(currentWord.stringValue));
         if (createMoreLetters) {
             letters.addAll(new LetterGenerator().getRandomLetters(10-letters.size(),currentLanguage));
         }

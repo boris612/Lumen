@@ -2,9 +2,9 @@ package hr.fer.zpr.lumen.wordgame.model;
 
 public class Image {
 
-    public final String imageID;
+    public final String path;
 
     public Image(String path){
-        imageID =path;
+        this.path =path;
     }
 }

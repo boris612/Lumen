@@ -1,8 +1,14 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
+import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -11,30 +17,56 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import hr.fer.zpr.lumen.LumenApplication;
+import hr.fer.zpr.lumen.dagger.ComponentFactory;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
+import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
+import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
+import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
+import hr.fer.zpr.lumen.wordgame.model.Word;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+import wordgame.db.database.WordGameDatabase;
+
 
 public class WordGameView extends SurfaceView implements SurfaceHolder.Callback {
 
+    public static final int MILLIS_PER_FRAME = 33;
     private Disposable gameLoopDisposable = Disposables.disposed();
-    private WordGamePresenter presenter;
-    private Context context;
-    List<GameDrawable> drawables = new ArrayList<>();
 
-    public WordGameView(Context context) {
+
+    private List<GameDrawable> drawables = new ArrayList<>();
+
+    private Context context;
+
+    private int screenHeight;
+
+    private int screenWidth;
+
+    private ImageModel image;
+
+    @Inject
+    WordGamePresenter presenter;
+
+
+    public WordGameView(LumenApplication context) {
         super(context);
         this.context = context;
+        context.getApplicationComponent().inject(this);
         getHolder().addCallback(this);
-        presenter = new WordGamePresenter(this);
+        screenHeight=context.getResources().getDisplayMetrics().heightPixels;
+        screenWidth=context.getResources().getDisplayMetrics().widthPixels;
     }
 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        gameLoopDisposable = Flowable.interval(33, TimeUnit.MILLISECONDS)
+        gameLoopDisposable = Flowable.interval(MILLIS_PER_FRAME, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignore -> updatePanel(getHolder()));
     }
@@ -50,7 +82,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     private void updatePanel(SurfaceHolder holder) {
-        presenter.update();
         Canvas canvas = holder.lockCanvas();
         this.draw(canvas);
         holder.unlockCanvasAndPost(canvas);
@@ -60,7 +91,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
-        for (GameDrawable drawable : drawables) drawable.draw(canvas);
+        List<GameDrawable> copy=new ArrayList<>(drawables);
+        for (GameDrawable drawable : copy) drawable.draw(canvas);
     }
 
     @Override
@@ -68,8 +100,22 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         return super.onTouchEvent(event);
     }
 
+    @Override
+    public boolean onDragEvent(DragEvent event) {
+        return super.onDragEvent(event);
+    }
 
     public void addDrawable(GameDrawable drawable) {
         drawables.add(drawable);
     }
+
+    public void clearDrawables(){
+        drawables.clear();
+    }
+
+    public void removeDrawable(GameDrawable drawable){
+        this.drawables.remove(drawable);
+    }
+
+
 }

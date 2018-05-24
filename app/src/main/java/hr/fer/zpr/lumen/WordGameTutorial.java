@@ -9,6 +9,8 @@ import android.util.DisplayMetrics;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Alen on 10.1.2018..
  */
@@ -22,7 +24,10 @@ public class WordGameTutorial extends GameTutorial {
     private static final int ANIMATION_SPEED = 4; //pixels per second
     private int framesToRestart;
 
-    public WordGameTutorial(List<LetterImage> letters, CharacterField field, Context context, long timeToActivate) {
+    @Inject
+    Context context;
+
+    public WordGameTutorial(List<LetterImage> letters, CharacterField field, long timeToActivate) {
         super(timeToActivate);
         this.letter = determineLetterToInsert(letters, field);
         this.field = field;
@@ -84,7 +89,6 @@ public class WordGameTutorial extends GameTutorial {
 
         double remainingPathLength = Math.sqrt(Math.pow(aimPos.x - newX, 2) + Math.pow(aimPos.y - newY, 2));
         if (field.collision(letter) && remainingPathLength < ANIMATION_SPEED) {
-            //field.setCharacterInsideField(letter);
             letter.setCenter(field.getCenterPoint());
             framesToRestart = 50;
         }

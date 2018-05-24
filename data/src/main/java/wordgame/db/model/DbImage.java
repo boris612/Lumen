@@ -6,13 +6,12 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "images")
 public class DbImage {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
     public String path;
 
-    public DbImage(int id, String path) {
-        this.id = id;
+    public DbImage(String path) {
         this.path = path;
     }
 }

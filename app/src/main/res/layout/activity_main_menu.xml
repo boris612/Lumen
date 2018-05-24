@@ -5,7 +5,8 @@
     android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".menus.MainMenuActivity">
+    tools:context=".menus.MainMenuActivity"
+    android:theme="@style/ThemeOverlay.AppCompat.Light">
 
 
     <ImageButton

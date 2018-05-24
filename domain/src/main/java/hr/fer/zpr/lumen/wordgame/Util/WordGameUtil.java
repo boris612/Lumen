@@ -6,21 +6,26 @@ import java.util.Map;
 
 import hr.fer.zpr.lumen.wordgame.model.Language;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
+import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
 import hr.fer.zpr.lumen.wordgame.wordsplitter.CroatianWordSplitter;
 import hr.fer.zpr.lumen.wordgame.wordsplitter.EnglishWordSplitter;
 import hr.fer.zpr.lumen.wordgame.wordsplitter.WordSplitter;
 
 public class WordGameUtil{
 
-    private final Map<Language,WordSplitter> wordSplitterMap=new HashMap<>(2);
+    private static final Map<Language,WordSplitter> wordSplitterMap=new HashMap<>(2);
 
-    public  WordGameUtil(final CroatianWordSplitter croatianWordSplitter,final EnglishWordSplitter englishWordSplitter) {
-        wordSplitterMap.put(Language.CROATIAN, croatianWordSplitter);
-        wordSplitterMap.put(Language.ENGLISH, englishWordSplitter);
+    public  WordGameUtil() {
+        wordSplitterMap.put(Language.CROATIAN, new CroatianWordSplitter());
+        wordSplitterMap.put(Language.ENGLISH, new EnglishWordSplitter());
 
     }
-        public List<Letter> split(String word,Language language){
+        public List<Letter> split(String word, Language language){
             return wordSplitterMap.get(language).split(word);
+        }
+
+        public static WordSplitter getWordBuilderFromLanguage(Language language){
+        return wordSplitterMap.get(language);
         }
 
 

@@ -28,6 +28,8 @@ public interface WordGameManager {
 
         void changePhase(WordGamePhase phase);
 
+        void setHint(Boolean active);
+
         void resetGame();
 
 }

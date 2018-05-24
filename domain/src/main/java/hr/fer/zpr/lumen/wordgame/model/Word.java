@@ -10,18 +10,21 @@ import hr.fer.zpr.lumen.wordgame.Util.WordGameUtil;
 
 public final class Word  {
 
-    public final List<Letter> letters;
     public final Language language;
     public final Set<Category> categories;
     public final String stringValue;
     public final Image wordImage;
+    public final Sound sound;
+    public  List<Letter> letters;
 
-    public Word(String word, Language language, Collection<Category> categories,Image image){
+
+    public Word(String word, Language language,Sound sound, Collection<Category> categories,Image image,List<Letter> letters){
     this.language=language;
     this.categories=new HashSet<>(categories);
     this.stringValue=word;
     this.wordImage=image;
-    this.letters= WordGameUtil.getWordBuilderFromLanguage(language).split(word);
+    this.letters=letters;
+    this.sound=sound;
 
     }
 
@@ -32,5 +35,9 @@ public final class Word  {
         if(!this.stringValue.equals(word.stringValue)) return false;
         if(this.language!=word.language) return false;
         return true;
+    }
+
+    public void setLetters(List<Letter> letters){
+        this.letters=letters;
     }
 }

@@ -2,39 +2,29 @@ package hr.fer.zpr.lumen.ui.wordgame;
 
 import android.view.View;
 
-import java.util.List;
+import javax.inject.Inject;
 
-import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
+import hr.fer.zpr.lumen.base.BasePresenter;
+import hr.fer.zpr.lumen.base.ScopedPresenter;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
-import hr.fer.zpr.lumen.wordgame.manager.WordGamePhase;
+import hr.fer.zpr.lumen.wordgame.model.Word;
+import wordgame.db.database.WordGameDatabase;
 
-public class WordGamePresenter implements WordGameContract {
+public interface WordGamePresenter {
+
+    void presentWord(Word word);
+
+    void activateHint();
+
+    void newWord();
+
+    void update();
+
+    void startGame();
+
+    void setView(WordGameView view);
 
 
-    private View view;
-    private WordGameManager manager;
 
 
-    public WordGamePresenter() {
-
-    }
-
-    @Override
-    public void setView(View view) {
-        this.view=view;
-    }
-
-    @Override
-    public void presentWord() {
-
-    }
-
-    @Override
-    public void changeGamePhase(WordGamePhase phase) {
-
-    }
-
-    public void update() {
-
-    }
 }
