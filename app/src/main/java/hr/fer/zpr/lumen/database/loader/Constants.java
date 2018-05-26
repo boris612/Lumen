@@ -14,7 +14,7 @@ public class Constants {
 
     public static final String SOUND_EXTENSION=".mp3";
 
-    public static final String WORDS_FOLDER="database/words/";
+    public static final String WORDS_FOLDER="database/words";
 
     public static final String SPELLING_FILE_NAME="spelling.properties";
 

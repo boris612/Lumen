@@ -17,6 +17,9 @@ public interface WordGameManager {
 
         Single<Boolean> isAnswerCorrect();
 
+        boolean isCreateMoreLettersActive();
+
+        void setCreateMoreLetters(boolean value);
 
         void insertLetterintoField(Letter letter, int position);
 

@@ -24,6 +24,8 @@ import hr.fer.zpr.lumen.LumenApplication;
 import hr.fer.zpr.lumen.dagger.ComponentFactory;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
+import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
+import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
 import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.model.Word;
@@ -39,6 +41,9 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public static final int MILLIS_PER_FRAME = 33;
     private Disposable gameLoopDisposable = Disposables.disposed();
 
+    private List<LetterFieldModel> fields;
+
+    private List<LetterModel> letters;
 
     private List<GameDrawable> drawables = new ArrayList<>();
 
@@ -115,6 +120,20 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void removeDrawable(GameDrawable drawable){
         this.drawables.remove(drawable);
+    }
+
+    public void addDrawables(List<GameDrawable> drawables){
+        this.drawables.addAll(drawables);
+    }
+
+    public void addFields(List<LetterFieldModel> fields){
+        this.drawables.addAll(fields);
+        this.fields=fields;
+    }
+
+    public void addLetters(List<LetterModel> letters){
+        this.drawables.addAll(letters);
+        this.letters=letters;
     }
 
 

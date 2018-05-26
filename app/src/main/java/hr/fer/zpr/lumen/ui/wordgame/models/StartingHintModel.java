@@ -156,5 +156,9 @@ public class StartingHintModel extends GameDrawable {
     public void handleTouch(MotionEvent event) {
 
     }
+
+    public String getCurrentLetterSoundPath(){
+        return word.letters.get(numOfLetShown-1).sound.path;
+    }
 }
 

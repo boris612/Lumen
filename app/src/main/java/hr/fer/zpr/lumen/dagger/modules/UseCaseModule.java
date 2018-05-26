@@ -11,7 +11,9 @@ import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.CheckIfAnswerCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.GetWordsUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.SetCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.SetHintActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.StartGameUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
@@ -74,6 +76,18 @@ public class UseCaseModule {
     @Singleton
     StartGameUseCase startGameUseCase(WordGameManager manager,WordGameRepository repository){
         return new StartGameUseCase(manager,repository);
+    }
+
+    @Provides
+    @Singleton
+    IsCreateMoreLettersActiveUseCase isCreateMoreLettersActiveUseCase(WordGameManager manager){
+        return new IsCreateMoreLettersActiveUseCase(manager);
+    }
+
+    @Provides
+    @Singleton
+    SetCreateMoreLettersUseCase setCreateMoreLettersUseCase(WordGameManager manager){
+        return new SetCreateMoreLettersUseCase(manager);
     }
 
 

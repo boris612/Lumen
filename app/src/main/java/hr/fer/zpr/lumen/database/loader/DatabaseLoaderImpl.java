@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,6 +29,8 @@ import wordgame.db.model.DbWordSoundRelation;
 public class DatabaseLoaderImpl implements DatabaseLoader {
 
     private Context context;
+
+    private List<String> image_extensions= Arrays.asList(".jpeg",".jpg",".png",".bmp",".gif",".webp");
 
     private WordGameDatabase database;
 
@@ -102,37 +105,53 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         List<DbLanguage> languages=database.languageDao().getAllLanguages();
         try {
             String[] folders=context.getAssets().list(Constants.WORDS_FOLDER);
-            BufferedReader indexReader=new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.LAST_WORD_INDEX_FILE),"UTF-8"));
-            int lastIndex=Integer.parseInt(indexReader.readLine());
-            for(int index=0;index<=lastIndex;index++){
-                String folder=Integer.toString(index);
+            for(String folder:folders){
                 Properties properties=new Properties();
-                BufferedReader propReader=new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.WORDS_FOLDER+folder+"/"+Constants.SPELLING_FILE_NAME),"UTF-8"));
+                BufferedReader propReader=new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.WORDS_FOLDER+"/"+folder+"/"+Constants.SPELLING_FILE_NAME),"UTF-8"));
                 properties.load(propReader);
                 for(DbLanguage language:languages){
-                    String value=properties.get(language.value).toString();
-                    DbWord word=new DbWord(value,language.id);
-                    DbWord oldWord=database.wordDao().getWordForValueAndLanguage(value,language.id);
+                    try {
+                        String value = properties.get(language.value).toString();
+                        DbWord word = new DbWord(value, language.id);
+                        DbWord oldWord = database.wordDao().getWordForValueAndLanguage(value, language.id);
 
-                    if(oldWord==null){
-                        long idOfInsertedWOrd=database.wordDao().insert(word);
-                        String path=Constants.WORDS_FOLDER+folder+"/"+language.value+Constants.SOUND_EXTENSION;
+                        if (oldWord == null) {
+                            long idOfInsertedWOrd = database.wordDao().insert(word);
+                            String path = Constants.WORDS_FOLDER + "/" + folder + "/" + language.value + Constants.SOUND_EXTENSION;
 
-                        DbWordSoundRelation relation=new DbWordSoundRelation((int)idOfInsertedWOrd,path,language.id);
-                        database.wordSoundRelationDao().insert(relation);
-                        DbImage image=new DbImage(Constants.WORDS_FOLDER+folder+"/"+folder+".jpg");
-                        long imageId=database.imageDao().insert(image);
-                        DbWordImageRelation imageRelation=new DbWordImageRelation((int)idOfInsertedWOrd,(int)imageId);
-                        database.wordImageRelationDao().insert(imageRelation);
+                            DbWordSoundRelation relation = new DbWordSoundRelation((int) idOfInsertedWOrd, path, language.id);
+                            database.wordSoundRelationDao().insert(relation);
+                            String[] files = context.getAssets().list(Constants.WORDS_FOLDER + "/" + folder);
+                            String imgpath = null;
+                            petlja:
+                            for (String file : files) {
+                                for (String extension : image_extensions) {
+                                    if (file.toLowerCase().endsWith(extension)) {
+                                        imgpath = file;
+                                        break petlja;
+                                    }
+                                }
+                            }
+                            DbImage image;
+                            if (imgpath != null) {
+                                image = new DbImage(Constants.WORDS_FOLDER + "/" + folder + "/" + imgpath);
+                            } else {
+                                image = new DbImage(Constants.WORDS_FOLDER + "/" + folder + "/" + folder + ".jpg");
+                            }
 
-                        BufferedReader categoriesReader=new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.WORDS_FOLDER+folder+"/"+Constants.CATEGORIES_FILE_NAME),"UTF-8"));
-                        while(categoriesReader.ready()){
-                            String category=categoriesReader.readLine();
-                            DbCategory dbCategory=database.categoryDao().findByValue(category.trim());
-                            database.wordCategoriesRelationDao().insert(new DbWordCategoriesRelation((int)idOfInsertedWOrd,dbCategory.id));
+                            long imageId = database.imageDao().insert(image);
+                            DbWordImageRelation imageRelation = new DbWordImageRelation((int) idOfInsertedWOrd, (int) imageId);
+                            database.wordImageRelationDao().insert(imageRelation);
+
+                            BufferedReader categoriesReader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.WORDS_FOLDER + "/" + folder + "/" + Constants.CATEGORIES_FILE_NAME), "UTF-8"));
+                            while (categoriesReader.ready()) {
+                                String category = categoriesReader.readLine();
+                                DbCategory dbCategory = database.categoryDao().findByValue(category.trim());
+                                database.wordCategoriesRelationDao().insert(new DbWordCategoriesRelation((int) idOfInsertedWOrd, dbCategory.id));
+                            }
+
                         }
-
-                    }
+                    }catch(Exception e){}
                 }
 
             }
@@ -169,28 +188,18 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         try {
             List<DbLanguage> languages = database.languageDao().getAllLanguages();
             for (DbLanguage language : languages) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.CORRECT_MESSAGES_FOLDER+"/"+Constants.NUMBER_OF_FILES_FILE),"UTF-8"));
-                String value=reader.readLine();
-                reader.close();
-                int number=Integer.parseInt(value);
-                for(int i=0;i<number;i++){
-                    DbCorrectMessage message=new DbCorrectMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.CORRECT_MESSAGES_FOLDER+"/"+Integer.toString(i)+".mp3",language.id);
+                for(String file:context.getAssets().list(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.CORRECT_MESSAGES_FOLDER)){
+                    DbCorrectMessage message=new DbCorrectMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.CORRECT_MESSAGES_FOLDER+"/"+file,language.id);
                     database.correctDao().insert(message);
                 }
 
-                reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.INCORRECT_MESSAGES_FOLDER+"/"+Constants.NUMBER_OF_FILES_FILE),"UTF-8"));
-                value=reader.readLine();
-                number=Integer.parseInt(value);
-                for(int i=0;i<number;i++){
-                    DbIncorrectMessage message=new DbIncorrectMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.INCORRECT_MESSAGES_FOLDER+"/"+Integer.toString(i)+".mp3",language.id);
+                for(String file:context.getAssets().list(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.INCORRECT_MESSAGES_FOLDER)){
+                    DbIncorrectMessage message=new DbIncorrectMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.INCORRECT_MESSAGES_FOLDER+"/"+file,language.id);
                     database.incorrectDao().insert(message);
                 }
 
-                reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.TRY_AGAIN_MESSAGES_FOLDER+"/"+Constants.NUMBER_OF_FILES_FILE),"UTF-8"));
-                value=reader.readLine();
-                number=Integer.parseInt(value);
-                for(int i=0;i<number;i++){
-                    DbTryAgainMessage message=new DbTryAgainMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.TRY_AGAIN_MESSAGES_FOLDER+"/"+Integer.toString(i)+".mp3",language.id);
+                for(String file:context.getAssets().list(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.TRY_AGAIN_MESSAGES_FOLDER)){
+                    DbTryAgainMessage message=new DbTryAgainMessage(Constants.MESSAGES_FOLDER+language.value+"/"+Constants.TRY_AGAIN_MESSAGES_FOLDER+"/"+file,language.id);
                     database.againMessageDao().insert(message);
                 }
             }

@@ -1,6 +1,7 @@
 package hr.fer.zpr.lumen.dagger.modules;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 
 import javax.inject.Singleton;
 
@@ -8,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import hr.fer.zpr.lumen.LumenApplication;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.sound.SoundPlayer;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
@@ -49,6 +51,12 @@ public class WordGameModule {
     @Singleton
     WordGameView providesWordGameView(LumenApplication application){
         return new WordGameView(application);
+    }
+
+    @Provides
+    @Singleton
+    SoundPlayer providesSoundPlayer(){
+        return new SoundPlayer();
     }
 
 

@@ -10,7 +10,31 @@ public class ViewConstants {
 
     public static double STARTING_HINT_HEIGHT_FACTOR=0.4;
 
-    public static double IMAGE_TOP_SPACE_FACTOR=0.05;
+    public static double IMAGE_TOP_SPACE_FACTOR=0.02;
 
     public static double COIN_DIMENSION_FACTOR=0.2;
+
+    public static double FIELD_SCREEN_HEIGHT_FACTOR=0.5;
+
+    public static double SIDE_TO_FIELD_SPACE_FACTOR=0.05;
+
+    public static int MAX_LETTER_NUMBER=12;
+
+    public static int TIME_BETWEEN_LETTERS=100;
+
+    public static double CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR = 0.1;
+
+    public static double CHAR_FIELDS_WIDTH_FACTOR = 0.8;
+
+    public static double CHAR_FIELD_WIDTH_MAX_FACTOR = 0.13;
+
+    public static double CHAR_FIELDS_Y_COORDINATE_FACTOR = IMAGE_HEIGHT_FACTOR+IMAGE_TOP_SPACE_FACTOR + 0.05;
+
+    public static double LETTER_IMAGE_SCALE_FACTOR = 0.6;
+
+    public static double FIELD_LETTER_SPACE_FACTOR=0.1;
+
+    public static int MORE_LETTERS_TO_CREATE=5;
+
+    public static double LETTER_SPACE_FACTOR=0.02;
 }

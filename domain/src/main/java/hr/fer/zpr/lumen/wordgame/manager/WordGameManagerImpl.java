@@ -112,4 +112,16 @@ public class WordGameManagerImpl implements WordGameManager {
         usedWords = new ArrayList<>();
         currentWord = null;
     }
+
+    @Override
+    public boolean isCreateMoreLettersActive() {
+        return createMoreLetters;
+    }
+
+    @Override
+    public void setCreateMoreLetters(boolean value) {
+        this.createMoreLetters=value;
+    }
+
+
 }
