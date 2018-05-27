@@ -19,4 +19,6 @@ public class Coins {
     public void subtractCoins(int coins){
         this.coins-=coins;
     }
+
+    public void setCoins(int n){ coins=n;}
 }

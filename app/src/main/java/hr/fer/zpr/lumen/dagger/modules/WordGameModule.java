@@ -13,6 +13,7 @@ import hr.fer.zpr.lumen.sound.SoundPlayer;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
+import hr.fer.zpr.lumen.wordgame.interactor.UseHintUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManagerImpl;
 import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
@@ -60,4 +61,9 @@ public class WordGameModule {
     }
 
 
+    @Provides
+    @Singleton
+    UseHintUseCase providesUseHintUseCase(WordGameManager manager){
+        return new UseHintUseCase(manager);
+    }
 }

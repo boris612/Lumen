@@ -28,7 +28,7 @@ public class CoinModel extends GameDrawable {
         this.coins -= coins;
     }
 
-
+    public void setCoins(int coins){this.coins=coins;}
 
     @Override
     public void draw(Canvas canvas) {

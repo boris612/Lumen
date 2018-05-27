@@ -16,12 +16,6 @@ public interface WordGamePresenter {
 
     void presentWord(Word word);
 
-    void activateHint();
-
-    void newWord();
-
-    void update();
-
     void startGame();
 
     void setView(WordGameView view);
@@ -31,6 +25,10 @@ public interface WordGamePresenter {
     void letterInserted(LetterModel letter, LetterFieldModel field);
 
     void letterRemoved(LetterFieldModel field);
+
+    void hintPressed();
+
+
 
 
 

@@ -31,7 +31,9 @@ public interface WordGameManager {
 
         void changePhase(WordGamePhase phase);
 
-        void setHint(Boolean active);
+        Single<Boolean> setHint(Boolean active);
+
+
 
         void resetGame();
 
@@ -44,6 +46,20 @@ public interface WordGameManager {
         Single<String> getIncorrectMessage();
 
         Single<String> getCorrectMessage();
+
+        Single<Integer> getIndexOfFirstIncorrectField();
+
+        Single<String> getCorrectLetterForIndex(int index);
+
+        Single<Boolean> isHintActive();
+
+        void addCoins(int n);
+
+        void setCoins(int n);
+
+        Single<Integer> getCoins();
+
+        Single<Word> nextWord();
 
 
 

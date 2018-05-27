@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import hr.fer.zpr.lumen.wordgame.Util.LetterGenerator;
 import hr.fer.zpr.lumen.wordgame.Util.WordGameUtil;
 import hr.fer.zpr.lumen.wordgame.model.Category;
+import hr.fer.zpr.lumen.wordgame.model.Coins;
 import hr.fer.zpr.lumen.wordgame.model.Language;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
 import hr.fer.zpr.lumen.wordgame.model.LetterField;
@@ -37,9 +37,12 @@ public class WordGameManagerImpl implements WordGameManager {
 
     private WordGameRepository repository;
 
+    private Coins coins;
+
     public WordGameManagerImpl(WordGameRepository repository) {
             this.repository=repository;
             wordGameUtil=new WordGameUtil();
+
     }
 
 
@@ -60,8 +63,11 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
-    public void setHint(Boolean active) {
+    public Single<Boolean> setHint(Boolean active) {
+        if(coins.getCoins()<1) return Single.just(false);
         hintActive=active;
+        coins.subtractCoins(1);
+        return Single.just(true);
     }
 
     @Override
@@ -73,7 +79,7 @@ public class WordGameManagerImpl implements WordGameManager {
         letterField = new LetterField(currentWord.stringValue.length());
         letters = new ArrayList<>(WordGameUtil.getWordBuilderFromLanguage(currentLanguage).split(currentWord.stringValue));
         if (createMoreLetters) {
-            letters.addAll(new LetterGenerator().getRandomLetters(10-letters.size(),currentLanguage));
+            letters.addAll(repository.getRandomletters(currentLanguage,12-letters.size()).blockingGet());
         }
     }
 
@@ -147,5 +153,45 @@ public class WordGameManagerImpl implements WordGameManager {
     @Override
     public Single<String> getCorrectMessage() {
         return repository.getCorrectMessage(currentLanguage);
+    }
+
+    @Override
+    public Single<String> getCorrectLetterForIndex(int index) {
+        return Single.just(currentWord.letters.get(index).value);
+    }
+
+    @Override
+    public Single<Integer> getIndexOfFirstIncorrectField() {
+        return Single.just(letterField.indexOfFirstIncorrect(currentWord));
+    }
+
+    @Override
+    public Single<Boolean> isHintActive() {
+        return Single.just(hintActive);
+    }
+
+    @Override
+    public void addCoins(int n) {
+        if(coins==null) coins=new Coins(n);
+        else coins.AddCoins(n);
+    }
+
+    @Override
+    public void setCoins(int n) {
+        if(coins==null) coins=new Coins(n);
+        else coins.setCoins(n);
+    }
+
+    @Override
+    public Single<Integer> getCoins() {
+        if(coins==null) return Single.just(0);
+        return Single.just(coins.getCoins());
+    }
+
+    @Override
+    public Single<Word> nextWord() {
+        currentWord=unusedWords.get(new Random().nextInt(unusedWords.size()));
+        usedWords.add(currentWord);
+        return Single.just(currentWord);
     }
 }

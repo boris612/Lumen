@@ -40,5 +40,14 @@ public class LetterField {
         return true;
     }
 
+    public Integer indexOfFirstIncorrect(Word word){
+        for(int i=0;i<letters.length;i++){
+            if(letters[i]==null || letters[i].value.equals(word.letters.get(i).value)==false){
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
 }

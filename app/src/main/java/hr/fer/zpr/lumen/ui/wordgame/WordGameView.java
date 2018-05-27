@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import hr.fer.zpr.lumen.LumenApplication;
 import hr.fer.zpr.lumen.dagger.ComponentFactory;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
+import hr.fer.zpr.lumen.ui.wordgame.models.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
@@ -54,6 +55,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private List<GameDrawable> drawables = new ArrayList<>();
 
     private SparseArray<LetterModel> mLetterPointer=new SparseArray<>();
+
+    private CoinModel coin;
 
     private Context context;
 
@@ -85,7 +88,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void surfaceCreated(SurfaceHolder holder) {
         gameLoopDisposable = Flowable.interval(MILLIS_PER_FRAME, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(e->updatePanel(holder));
+                .subscribe(e->updatePanel(holder),x->{});
     }
 
     public void onerror(){
@@ -135,8 +138,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 xTouch = (int) event.getX(0);
                 yTouch = (int) event.getY(0);
 
-
-                // check if we've touched inside some rect
+                if(coin.isTouched(xTouch,yTouch)) presenter.hintPressed();
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if (touchedLetter == null) return true;
                 touchedLetter.setCenter(xTouch,yTouch);
@@ -145,20 +147,18 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
                 mLetterPointer.put(event.getPointerId(0), touchedLetter);
 
-                invalidate(); //???
+                invalidate();
                 handled = true;
                 break;
 
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                // It secondary pointers, so obtain their ids and check rects
                 pointerId = event.getPointerId(actionIndex);
 
 
                 xTouch = (int) event.getX(actionIndex);
                 yTouch = (int) event.getY(actionIndex);
 
-                // check if we've touched inside some rect
 
                 touchedLetter = getTouchedLetter(xTouch, yTouch);
                 if (touchedLetter == null) return true;
@@ -174,7 +174,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
 
                 for (actionIndex = 0; actionIndex < pointerCount; actionIndex++) {
-                    // Some pointer has moved, search it by pointer id
                     pointerId = event.getPointerId(actionIndex);
 
                     xTouch = (int) event.getX(actionIndex);
@@ -222,6 +221,10 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         outerLoop:
         for(LetterFieldModel field: fields) {
             LetterModel letterInside = field.getLetterInside();
+            if(letterInside!=null && !field.getRect().contains(letterInside.getRect().centerX(),letterInside.getRect().centerY())){
+                field.detachLetter();
+                presenter.letterRemoved(field);
+            }
 
             for (LetterModel letter : letters) {
                 if(!actionUpJustOccured) {
@@ -237,10 +240,12 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                         }
 
                     }
-
-                    field.attachLetter(letter);
-                    presenter.letterInserted(letter,field);
+                    if(field.getLetterInside()!=letter){
+                        field.attachLetter(letter);
+                        presenter.letterInserted(letter,field);
                         letter.setCenter(newCenter.x,newCenter.y);
+                    }
+
                 }
             }
         }
@@ -296,6 +301,12 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void addLetters(List<LetterModel> letters){
         this.drawables.addAll(letters);
         this.letters=letters;
+    }
+
+
+    public void setCoin(CoinModel model){
+        this.coin=model;
+        this.drawables.add(coin);
     }
 
 

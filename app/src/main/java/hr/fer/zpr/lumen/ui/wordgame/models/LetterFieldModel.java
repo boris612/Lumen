@@ -49,4 +49,9 @@ public class LetterFieldModel extends GameDrawable {
         this.color=color;
     }
 
+    public void switchHintColor(){
+        if(color==Color.RED) color=Color.GREEN;
+        else color=Color.RED;
+    }
+
 }

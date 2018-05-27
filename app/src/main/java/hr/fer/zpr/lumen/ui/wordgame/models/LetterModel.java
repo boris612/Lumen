@@ -1,6 +1,12 @@
 package hr.fer.zpr.lumen.ui.wordgame.models;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
@@ -8,6 +14,9 @@ import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 
 public class LetterModel extends GameDrawable {
     private String value;
+    private boolean hintActive;
+
+    private int color= Color.BLACK;
 
     public LetterModel(String value, Bitmap image, Rect bounds) {
         super(image, bounds);
@@ -25,6 +34,23 @@ public class LetterModel extends GameDrawable {
         return value;
     }
 
+    public void switchHintColor(){
+        if(color==Color.BLACK) color=Color.GREEN;
+        else color=Color.BLACK;
+    }
 
+    public void setHintActive(boolean active){
+        this.hintActive=active;
+    }
 
+    @Override
+    public void draw(Canvas canvas) {
+        if(hintActive){
+            Paint paint=new Paint();
+            paint.setColorFilter(new PorterDuffColorFilter(color,PorterDuff.Mode.SRC_ATOP));
+            canvas.drawBitmap(image,null,rectangle,paint);
+            return;
+        }
+        super.draw(canvas);
+    }
 }
