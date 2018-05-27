@@ -152,10 +152,7 @@ public class StartingHintModel extends GameDrawable {
         return rectangle;
     }
 
-    @Override
-    public void handleTouch(MotionEvent event) {
 
-    }
 
     public String getCurrentLetterSoundPath(){
         return word.letters.get(numOfLetShown-1).sound.path;

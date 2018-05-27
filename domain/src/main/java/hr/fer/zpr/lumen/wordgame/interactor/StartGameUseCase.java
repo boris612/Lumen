@@ -21,7 +21,7 @@ public class StartGameUseCase implements SingleUseCaseWIthParams<StartGameUseCas
 
     @Override
     public Single<Word> execute(final Request request) {
-        return repository.getWordsFromCategories(request.categories,request.language).flatMap(words->Single.fromCallable(()->manager.startGame(words)));
+        return repository.getWordsFromCategories(request.categories,request.language).flatMap(words->manager.startGame(words));
     }
 
     public static final class Request{

@@ -11,19 +11,19 @@ import io.reactivex.Single;
 
 public interface WordGameManager {
 
-        Word startGame(List<Word> words);
+        Single<Word> startGame(List<Word> words);
 
         void nextRound();
 
         Single<Boolean> isAnswerCorrect();
 
-        boolean isCreateMoreLettersActive();
+        Single<Boolean> isCreateMoreLettersActive();
 
         void setCreateMoreLetters(boolean value);
 
-        void insertLetterintoField(Letter letter, int position);
+        Single<Boolean> insertLetterintoField(String letter, int position);
 
-        void removeLetterFromField(Letter letter);
+        void removeLetterFromField(int index);
 
         void changeCategories(Set<Category> categories);
 
@@ -34,5 +34,17 @@ public interface WordGameManager {
         void setHint(Boolean active);
 
         void resetGame();
+
+        Single<Boolean> isGamePhasePlaying();
+
+        Single<Boolean> isHintOnCorrectOn();
+
+        Single<Boolean> areAllFieldsFull();
+
+        Single<String> getIncorrectMessage();
+
+        Single<String> getCorrectMessage();
+
+
 
 }

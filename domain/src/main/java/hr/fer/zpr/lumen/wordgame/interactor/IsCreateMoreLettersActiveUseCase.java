@@ -13,6 +13,6 @@ public class IsCreateMoreLettersActiveUseCase implements SingleUseCase<Boolean> 
 
     @Override
     public Single<Boolean> execute() {
-        return Single.just(manager.isCreateMoreLettersActive());
+        return manager.isCreateMoreLettersActive();
     }
 }

@@ -28,11 +28,7 @@ public class CoinModel extends GameDrawable {
         this.coins -= coins;
     }
 
-    @Override
-    public void handleTouch(MotionEvent event) {
-        if (hintActive) return;
-        hintActive = true;
-    }
+
 
     @Override
     public void draw(Canvas canvas) {

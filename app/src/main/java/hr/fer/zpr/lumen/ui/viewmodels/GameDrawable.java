@@ -3,7 +3,9 @@ package hr.fer.zpr.lumen.ui.viewmodels;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.view.MotionEvent;
 
 public abstract class GameDrawable {
@@ -18,20 +20,43 @@ public abstract class GameDrawable {
     public GameDrawable(Bitmap image, Rect bounds) {
         this.image = image;
         this.rectangle = bounds;
-        height = rectangle.top - rectangle.bottom;
+        height = rectangle.bottom-rectangle.top;
         width = rectangle.right - rectangle.left;
     }
 
 
-    public boolean isTouched(MotionEvent event) {
-        if (rectangle.contains((int) event.getX(), (int) event.getY())) return true;
+    public boolean isTouched(int x,int y) {
+        if (rectangle.contains(x,y)) return true;
         return false;
     }
 
-    public abstract void handleTouch(MotionEvent event);
+
 
     public void draw(Canvas canvas) {
         if(image==null) return;
         canvas.drawBitmap(image, null, rectangle, new Paint());
+    }
+
+    public Point getCenter(){
+        return new Point(getRect().centerX(),getRect().centerY());
+    }
+
+    public void setCenter(int x,int y){
+        rectangle.top=y-height/2;
+        rectangle.left=x-width/2;
+        rectangle.right=rectangle.left+width;
+        rectangle.bottom=rectangle.top+height;
+    }
+
+    public Rect getRect(){
+        return this.rectangle;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
     }
 }

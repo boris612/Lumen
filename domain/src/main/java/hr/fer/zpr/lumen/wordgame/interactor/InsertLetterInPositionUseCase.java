@@ -3,8 +3,9 @@ package hr.fer.zpr.lumen.wordgame.interactor;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
 import io.reactivex.Completable;
+import io.reactivex.Single;
 
-public class InsertLetterInPositionUseCase implements CompletableUseCaseWithParams<InsertLetterInPositionUseCase.Params> {
+public class InsertLetterInPositionUseCase implements SingleUseCaseWIthParams<InsertLetterInPositionUseCase.Params,Boolean> {
 
     private WordGameManager manager;
 
@@ -12,9 +13,11 @@ public class InsertLetterInPositionUseCase implements CompletableUseCaseWithPara
         this.manager=manager;
     }
     @Override
-    public Completable execute(Params params) {
-        return Completable.fromAction(()->manager.insertLetterintoField(params.letter,params.position));
+    public Single<Boolean> execute(Params params) {
+        return manager.insertLetterintoField(params.letter.value,params.position);
     }
+
+
 
     public static class Params{
         public Letter letter;

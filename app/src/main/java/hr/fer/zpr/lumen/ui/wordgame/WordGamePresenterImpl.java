@@ -5,16 +5,14 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -22,11 +20,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import hr.fer.zpr.lumen.LumenApplication;
-import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.sound.SoundPlayer;
-import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
-import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
-import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
 import hr.fer.zpr.lumen.ui.wordgame.models.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
@@ -125,6 +119,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     private Word currentWord;
 
+    private List<LetterModel> letters;
+
+    private List<LetterFieldModel> fields;
+
     public WordGamePresenterImpl(LumenApplication application){
         application.getApplicationComponent().inject(this);
         this.context=application;
@@ -214,9 +212,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     }
 
     public void showLetters(){
-
-        view.addFields(createFields());
-        view.addLetters(createLetters());
+        fields=createFields();
+        view.addFields(fields);
+        letters=createLetters();
+        view.addLetters(letters);
 
     }
 
@@ -347,4 +346,41 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     }
 
+    @Override
+    public boolean shouldHandleTouch() {
+        if(manager.isGamePhasePlaying().blockingGet()) return true;
+        return false;
+    }
+
+    @Override
+    public void letterInserted(LetterModel letter, LetterFieldModel field) {
+       boolean correct= insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()),fields.indexOf(field))).blockingGet();
+       if(!correct && manager.areAllFieldsFull().blockingGet()){
+           try{
+               player.play(context.getAssets().openFd(manager.getIncorrectMessage().blockingGet()));
+           }catch(Exception e){
+               Log.d("error",e.getMessage());
+           }
+       }
+       if(correct && manager.isHintOnCorrectOn().blockingGet()){
+            field.setColor(Color.GREEN);
+            if(manager.areAllFieldsFull().blockingGet()){
+                String path;
+                if(manager.isAnswerCorrect().blockingGet()){
+                    path=manager.getCorrectMessage().blockingGet();
+                    try {
+                        player.play(context.getAssets().openFd(path));
+                    }catch(Exception e){
+                        Log.d("error",e.getMessage());
+                    }
+                }
+            }
+            Completable.timer(500,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread()).subscribe(()->field.setColor(Color.RED));
+       }
+    }
+
+    @Override
+    public void letterRemoved(LetterFieldModel field) {
+        manager.removeLetterFromField(fields.indexOf(field));
+    }
 }

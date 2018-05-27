@@ -20,8 +20,11 @@ import io.reactivex.Single;
 import wordgame.db.database.WordGameDatabase;
 import wordgame.db.mapping.DataDomainMapper;
 import wordgame.db.model.DbCategory;
+import wordgame.db.model.DbCorrectMessage;
 import wordgame.db.model.DbImage;
+import wordgame.db.model.DbIncorrectMessage;
 import wordgame.db.model.DbLetter;
+import wordgame.db.model.DbTryAgainMessage;
 import wordgame.db.model.DbWord;
 
 public class WordGameRepositoryImpl implements WordGameRepository {
@@ -102,4 +105,17 @@ public class WordGameRepositoryImpl implements WordGameRepository {
         return new ArrayList<>(new HashSet<>(result));
     }
 
+    @Override
+    public Single<String> incorrectMessage(Language language) {
+        List<DbIncorrectMessage> messages=database.incorrectDao().getMessages(database.languageDao().findByValue(language.name().toLowerCase()).id);
+        Random r=new Random();
+        return Single.just(messages.get(r.nextInt(messages.size())).path);
+    }
+
+    @Override
+    public Single<String> getCorrectMessage(Language language) {
+        List<DbCorrectMessage> messages=database.correctDao().getMessages(database.languageDao().findByValue(language.name().toLowerCase()).id);
+        Random r=new Random();
+        return Single.just(messages.get(r.nextInt(messages.size())).path);
+    }
 }

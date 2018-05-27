@@ -20,4 +20,8 @@ public interface WordGameRepository {
     public Single<List<Letter>> getRandomletters(Language language,int n);
 
     public Single<List<Letter>> getLettersWithImages(List<Letter> letters,Language language);
+
+    public Single<String> incorrectMessage(Language language);
+
+    public Single<String> getCorrectMessage(Language language);
 }

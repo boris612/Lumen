@@ -20,18 +20,24 @@ public class LetterField {
     }
 
     public void insertLetterIntoField(Letter letter, int position){
-        if(letters[position]==null){
             letters[position]=letter;
-        }
     }
 
-    public void removeLetterFromField(Letter letter){
+    public void removeLetterFromField(int n){
+        letters[n]=null;
+        return;
+    }
+
+    public boolean isLetterAtNCorrect(int n,Word word){
+        if(letters[n]!=null && letters[n].value.equals(word.letters.get(n).value)) return true;
+        return false;
+    }
+
+    public boolean isFull(){
         for(int i=0;i<letters.length;i++){
-            if(letters[i].equals(letter)){
-                letters[i]=null;
-                return;
-            }
+            if(letters[i]==null) return false;
         }
+        return true;
     }
 
 

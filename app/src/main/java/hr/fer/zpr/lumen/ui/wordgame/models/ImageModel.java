@@ -12,8 +12,5 @@ public class ImageModel extends GameDrawable {
         super(image, bounds);
     }
 
-    @Override
-    public void handleTouch(MotionEvent event) {
 
-    }
 }

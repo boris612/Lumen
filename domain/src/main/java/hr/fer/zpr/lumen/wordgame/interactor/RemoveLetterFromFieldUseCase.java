@@ -4,7 +4,7 @@ import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
 import io.reactivex.Completable;
 
-public class RemoveLetterFromFieldUseCase implements CompletableUseCaseWithParams<Letter> {
+public class RemoveLetterFromFieldUseCase implements CompletableUseCaseWithParams<Integer> {
 
     private WordGameManager manager;
 
@@ -13,7 +13,7 @@ public class RemoveLetterFromFieldUseCase implements CompletableUseCaseWithParam
     }
 
     @Override
-    public Completable execute(Letter letter) {
-       return Completable.fromAction(()->manager.removeLetterFromField(letter));
+    public Completable execute(Integer index) {
+       return Completable.fromAction(()->manager.removeLetterFromField(index));
     }
 }

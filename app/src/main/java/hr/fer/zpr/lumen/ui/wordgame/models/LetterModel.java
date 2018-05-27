@@ -14,9 +14,9 @@ public class LetterModel extends GameDrawable {
         this.value = value;
     }
 
-    public void move(MotionEvent event) {
-        rectangle.left = (int) (event.getX()) - width / 2;
-        rectangle.top = (int) (event.getY()) - height / 2;
+    public void move(int x,int y) {
+        rectangle.left =  x - width / 2;
+        rectangle.top =  y - height / 2;
         rectangle.right = rectangle.left + width;
         rectangle.bottom = rectangle.top + height;
     }
@@ -25,8 +25,6 @@ public class LetterModel extends GameDrawable {
         return value;
     }
 
-    @Override
-    public void handleTouch(MotionEvent event) {
 
-    }
+
 }

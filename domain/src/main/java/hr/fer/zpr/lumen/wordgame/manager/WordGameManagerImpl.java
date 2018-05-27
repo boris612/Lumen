@@ -13,8 +13,6 @@ import hr.fer.zpr.lumen.wordgame.model.Letter;
 import hr.fer.zpr.lumen.wordgame.model.LetterField;
 import hr.fer.zpr.lumen.wordgame.model.Word;
 import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
-import hr.fer.zpr.lumen.wordgame.wordsplitter.CroatianWordSplitter;
-import hr.fer.zpr.lumen.wordgame.wordsplitter.EnglishWordSplitter;
 import io.reactivex.Single;
 
 public class WordGameManagerImpl implements WordGameManager {
@@ -27,8 +25,9 @@ public class WordGameManagerImpl implements WordGameManager {
     private List<Letter> letters;
     private Word currentWord;
     private Set<Category> currentCategories;
-    private Language currentLanguage;
+    private Language currentLanguage=Language.CROATIAN;
     private WordGamePhase phase;
+    private boolean hintOnCorrectLetter=true;
 
     private boolean hintActive;
 
@@ -46,13 +45,13 @@ public class WordGameManagerImpl implements WordGameManager {
 
 
     @Override
-    public Word startGame(List<Word> words) {
+    public Single<Word> startGame(List<Word> words) {
         phase = WordGamePhase.PRESENTING;
         unusedWords=words;
         currentWord=unusedWords.get(new Random().nextInt(unusedWords.size()));
         unusedWords.remove(currentWord);
-
-        return currentWord;
+        letterField=new LetterField(currentWord.letters.size());
+        return Single.just(currentWord);
     }
 
     @Override
@@ -85,13 +84,14 @@ public class WordGameManagerImpl implements WordGameManager {
 
 
     @Override
-    public void insertLetterintoField(Letter letter, int position) {
-        letterField.insertLetterIntoField(letter, position);
+    public Single<Boolean> insertLetterintoField(String letter, int position) {
+        letterField.insertLetterIntoField(new Letter(letter), position);
+        return Single.just(letterField.isLetterAtNCorrect(position,currentWord));
     }
 
     @Override
-    public void removeLetterFromField(Letter letter) {
-        letterField.removeLetterFromField(letter);
+    public void removeLetterFromField(int index) {
+        letterField.removeLetterFromField(index);
     }
 
     @Override
@@ -114,8 +114,8 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
-    public boolean isCreateMoreLettersActive() {
-        return createMoreLetters;
+    public Single<Boolean> isCreateMoreLettersActive() {
+        return Single.just(createMoreLetters);
     }
 
     @Override
@@ -123,5 +123,29 @@ public class WordGameManagerImpl implements WordGameManager {
         this.createMoreLetters=value;
     }
 
+    @Override
+    public Single<Boolean> isGamePhasePlaying() {
+        if(phase==WordGamePhase.PLAYING) return Single.just(true);
+        return Single.just(false);
+    }
 
+    @Override
+    public Single<Boolean> isHintOnCorrectOn() {
+        return Single.just(hintOnCorrectLetter);
+    }
+
+    @Override
+    public Single<Boolean> areAllFieldsFull() {
+        return Single.just(letterField.isFull());
+    }
+
+    @Override
+    public Single<String> getIncorrectMessage() {
+        return repository.incorrectMessage(currentLanguage);
+    }
+
+    @Override
+    public Single<String> getCorrectMessage() {
+        return repository.getCorrectMessage(currentLanguage);
+    }
 }
