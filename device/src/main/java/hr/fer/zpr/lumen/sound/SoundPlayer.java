@@ -32,5 +32,9 @@ public class SoundPlayer {
         return player.isPlaying();
     }
 
+    public void stopPlaying(){
+        player.reset();
+    }
+
 
 }

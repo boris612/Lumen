@@ -1,18 +1,17 @@
 package hr.fer.zpr.lumen.dagger.modules;
 
-import android.content.Context;
-import android.media.MediaPlayer;
+import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import hr.fer.zpr.lumen.LumenApplication;
-import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.sound.SoundPlayer;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
+import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.UseHintUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManagerImpl;
@@ -26,9 +25,16 @@ public class WordGameModule {
 
     @Provides
     @Singleton
-    WordGameManager providesManager(WordGameRepository repository){
-        return new WordGameManagerImpl(repository);
+    WordGameManager providesManager(WordGameRepository repository, SharedPreferences preferences){
+        WordGameManager manager=new WordGameManagerImpl(repository);
+        manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS,0));
+        manager.setCreateMoreLetters(preferences.getBoolean(ViewConstants.PREFERENCES_LETTERS,false));
+        manager.setGreenOnCorrect(preferences.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT,false));
+        manager.changeCategories(preferences.getStringSet(ViewConstants.PREFERENCES_CATEGORIES,null));
+        manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_LANGUAGE,"croatian"));
+        return manager;
     }
+
 
     @Provides
     @Singleton

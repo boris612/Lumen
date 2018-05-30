@@ -44,7 +44,7 @@ import wordgame.db.model.DbWordSoundRelation;
         DbVersion.class,
         DbCorrectMessage.class,
         DbIncorrectMessage.class,
-        DbTryAgainMessage.class
+        DbTryAgainMessage.class,
         },
         version=3,
 exportSchema = false)
@@ -52,6 +52,7 @@ public abstract class WordGameDatabase extends RoomDatabase {
 
 
     private static WordGameDatabase database;
+
 
     public abstract LetterDao letterDao();
 

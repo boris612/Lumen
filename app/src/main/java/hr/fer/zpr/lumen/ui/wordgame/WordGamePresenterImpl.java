@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import hr.fer.zpr.lumen.LumenApplication;
+import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.sound.SoundPlayer;
-import hr.fer.zpr.lumen.ui.wordgame.models.CoinModel;
+import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
@@ -47,8 +47,8 @@ import hr.fer.zpr.lumen.wordgame.model.Letter;
 import hr.fer.zpr.lumen.wordgame.model.Word;
 import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
 import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -61,6 +61,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     private static String CATEGORIES_NAME="categories";
 
     private static String LANGUAGE="language";
+
+    private Disposable hintObservable;
+
+    private Disposable gamePhaseObservable;
+
 
 
     @Inject
@@ -135,13 +140,14 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         this.context=application;
         screenWidth=context.getResources().getDisplayMetrics().widthPixels;
         screenHeight=context.getResources().getDisplayMetrics().heightPixels;
-        manager.setCoins(100);
+        manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS,0));
 
     }
 
     @Override
     public void presentWord(Word word) {
         try {
+            if(letters!=null) letters.clear();
             Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(word.wordImage.path));
             Rect bounds=new Rect();
             bounds.left=screenWidth/2-(int)(screenWidth* ViewConstants.IMAGE_WIDTH_FACTOR/2);
@@ -164,60 +170,22 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     }
 
     private void presentHint(StartingHintModel model) {
-        io.reactivex.Observable.interval(ViewConstants.TIME_BETWEEN_LETTERS, TimeUnit.MILLISECONDS).takeWhile(e->model.hasLettersToShow()).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+        hintObservable=Observable.interval(ViewConstants.TIME_BETWEEN_LETTERS,TimeUnit.MILLISECONDS.MILLISECONDS).takeWhile(e->model.hasLettersToShow()).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                f->{playSound(model.getCurrentLetterSoundPath());
+                    model.showNextLetter();}
+                ,g->{},()->{
+                    playSound(currentWord.sound.path);
+                    gamePhaseObservable=Observable.interval(100,TimeUnit.MILLISECONDS)
+                            .takeWhile(j->player.isPlaying())
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(k->{},l->{},()->{view.removeDrawable(model);
+                        changeGamePhaseUseCase.execute(WordGamePhase.PLAYING).blockingGet();
+                        showLetters();});
 
-                    }
-
-                    @Override
-                    public void onNext(Long aLong) {
-                        playSound(model.getCurrentLetterSoundPath());
-                        model.showNextLetter();
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        playSound(currentWord.sound.path);
-                        io.reactivex.Observable
-                                .interval(100,TimeUnit.MILLISECONDS)
-                                .takeWhile(e->player.isPlaying())
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Observer<Long>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
-
-                                    }
-
-                                    @Override
-                                    public void onNext(Long aLong) {
-
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-
-                                    }
-
-                                    @Override
-                                    public void onComplete() {
-                                        view.removeDrawable(model);
-                                        changeGamePhaseUseCase.execute(WordGamePhase.PLAYING).blockingGet();
-                                        showLetters();
-                                    }
-                                });
-
-
-
-                    }
                 });
+
+
     }
 
     public void showLetters(){
@@ -232,7 +200,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
         List<Letter> randomLetters=new ArrayList<>();
         boolean createMore=isCreateMoreLettersActiveUseCase.execute().blockingGet();
-        createMore=true;
         if(createMore){
             int numToGenerate;
             if(currentWord.letters.size()+ViewConstants.MORE_LETTERS_TO_CREATE>ViewConstants.MAX_LETTER_NUMBER){
@@ -241,18 +208,18 @@ public class WordGamePresenterImpl implements WordGamePresenter {
             else{
                 numToGenerate=ViewConstants.MORE_LETTERS_TO_CREATE;
             }
-            randomLetters=repository.getRandomletters(currentWord.language,numToGenerate).blockingGet();
+            randomLetters=manager.getRandomLetters(numToGenerate).blockingGet();
         }
         int letterDimension=(int)(screenWidth/(currentWord.letters.size()*(1+ViewConstants.CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR))*ViewConstants.CHAR_FIELDS_WIDTH_FACTOR);
         if(letterDimension>screenWidth*ViewConstants.CHAR_FIELD_WIDTH_MAX_FACTOR) letterDimension=(int) (screenWidth*ViewConstants.CHAR_FIELD_WIDTH_MAX_FACTOR);
-        int startingSpace=screenWidth/50;
+        int startingSpace=screenWidth/100;
         int fieldDimension=letterDimension;
         letterDimension=(int)(letterDimension*ViewConstants.LETTER_IMAGE_SCALE_FACTOR);
-        int space=(int)(screenWidth*ViewConstants.LETTER_SPACE_FACTOR);
+        int space=(int)(screenWidth-(randomLetters.size()+currentWord.letters.size())*letterDimension-startingSpace)/(randomLetters.size()+currentWord.letters.size());
         List<Rect> rects=new ArrayList<>();
         for(int i=0,n=randomLetters.size()+currentWord.letters.size();i<n;i++){
             Rect rect=new Rect();
-            rect.left=startingSpace+i*(space+letterDimension);//+screenWidth/20;
+            rect.left=startingSpace+i*(space+letterDimension);
             rect.right=rect.left+letterDimension;
             rect.top=(int)(screenHeight*ViewConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR+fieldDimension+screenHeight*ViewConstants.FIELD_LETTER_SPACE_FACTOR);
             rect.bottom=rect.top+letterDimension;
@@ -301,7 +268,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         Single<Word> single=startGameUseCase.execute(new StartGameUseCase.Request(categories,new DataDomainMapper().languageFromString(language)));
         Word word=single.blockingGet();
         currentWord=word;
-
         presentWord(word);
     }
 
@@ -325,9 +291,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
             rect.left=0;
             rect.bottom=(int)(screenHeight*ViewConstants.COIN_DIMENSION_FACTOR);
             rect.right=rect.bottom;
-            coin=new CoinModel(BitmapFactory.decodeStream(context.getAssets().open(CoinModel.coinImagePath)),rect,100);
+            coin=new CoinModel(BitmapFactory.decodeStream(context.getAssets().open(CoinModel.coinImagePath)),rect,preferences.getInt(ViewConstants.PREFERENCES_COINS,0));
             view.setCoin(coin);
-        }catch(Exception e){Log.d("error",e.getMessage());}
+        }catch(Exception e){
+            Log.d("error",e.getMessage());
+        }
     }
 
     private void playSound(String path){
@@ -359,21 +327,59 @@ public class WordGamePresenterImpl implements WordGamePresenter {
            }
        }
        if(correct && manager.isHintOnCorrectOn().blockingGet()){
-            field.setColor(Color.GREEN);
-            if(manager.areAllFieldsFull().blockingGet()){
-                String path;
-                if(manager.isAnswerCorrect().blockingGet()){
-                    path=manager.getCorrectMessage().blockingGet();
-                    try {
-                        player.play(context.getAssets().openFd(path));
-                        Completable.timer(2000,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread()).subscribe(()->nextWord());
-                    }catch(Exception e){
-                        Log.d("error",e.getMessage());
+            if(!manager.areAllFieldsFull().blockingGet() &&  !manager.isAnswerCorrect().blockingGet()){
+
+                Completable.timer(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        field.setColor(Color.GREEN);
                     }
+                    @Override
+                    public void onComplete() {
+
+                        field.setColor(Color.RED);
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+            }
+
+       }
+        if(manager.areAllFieldsFull().blockingGet()){
+            String path;
+            if(manager.isAnswerCorrect().blockingGet()){
+                changeGamePhaseUseCase.execute(WordGamePhase.ENDING).blockingGet();
+                path=manager.getCorrectMessage().blockingGet();
+                coin.setCoins(manager.getCoins().blockingGet());
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putInt(ViewConstants.PREFERENCES_COINS,manager.getCoins().blockingGet());
+                editor.commit();
+                addTick();
+                for(LetterFieldModel f:fields) f.setColor(Color.GREEN);
+                try {
+                    player.play(context.getAssets().openFd(path));
+                    Completable.timer(3000,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread()).subscribe(()->nextWord());
+                }catch(Exception e){
+                    Log.d("error",e.getMessage());
                 }
             }
-            Completable.timer(500,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread()).subscribe(()->field.setColor(Color.RED));
-       }
+        }
+    }
+
+    private void addTick() {
+        try {
+            Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(ViewConstants.TICK_IMAGE_PATH));
+            Rect rect=new Rect();
+            rect.left=screenWidth/2-screenWidth/5;
+            rect.top=screenHeight/2-screenHeight/5;
+            rect.right=screenWidth/2+screenWidth/5;
+            rect.bottom=screenHeight/2+screenHeight/5;
+            ImageModel model=new ImageModel(image,rect);
+            view.addDrawable(model);
+        }catch(Exception e){
+            Log.d("error",e.getMessage());
+        }
     }
 
     @Override
@@ -388,41 +394,30 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         UseHintUseCase.Result result=useHintUseCase.execute().blockingGet();
         if(!result.canActivate) return;
         coin.setCoins(manager.getCoins().blockingGet());
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.putInt(ViewConstants.PREFERENCES_COINS,manager.getCoins().blockingGet());
+        editor.commit();
         LetterFieldModel field=fields.get(result.index);
         List<LetterModel> hintLetters=new ArrayList<>();
-        for(LetterModel letter:letters){
+        outerLoop:for(LetterModel letter:letters){
             if(letter.getValue().equals(result.correctLetter)) {
+                for(LetterFieldModel f:fields){
+                    if(f.getLetterInside()!=null && f.getLetterInside()==letter ) continue outerLoop;
+                }
                 hintLetters.add(letter);
                 letter.setHintActive(true);
             }
 
         }
-        Observable.interval(500,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread())
-                .takeWhile(e->!field.containsLetter() || !field.getLetterInside().getValue().equals(result.correctLetter))
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Long aLong) {
-                        field.switchHintColor();
-                        for(LetterModel letter:hintLetters) letter.switchHintColor();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        field.setColor(Color.RED);
-                        for(LetterModel letter:hintLetters) letter.setHintActive(false);
-                        manager.setHint(false);
-                    }
+        Observable.interval(500,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread()).takeWhile(e->!field.containsLetter() ||!field.getLetterInside().getValue().equals(result.correctLetter))
+                .subscribe(f->{field.switchHintColor();
+                for(LetterModel model:hintLetters) model.switchHintColor();},g->{},()->{
+                    if(manager.isGamePhasePlaying().blockingGet())
+                    field.setColor(Color.RED);
+                    for(LetterModel letter:hintLetters) letter.setHintActive(false);
+                    manager.setHint(false);
                 });
+
     }
 
     private void nextWord(){
@@ -431,5 +426,15 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         currentWord=manager.nextWord().blockingGet();
         changeGamePhaseUseCase.execute(WordGamePhase.PRESENTING).blockingGet();
         presentWord(currentWord);
+    }
+
+    @Override
+    public void exit() {
+        player.stopPlaying();
+        hintObservable.dispose();
+        gamePhaseObservable.dispose();
+        view.clearDrawables();
+        manager.setHint(false);
+
     }
 }

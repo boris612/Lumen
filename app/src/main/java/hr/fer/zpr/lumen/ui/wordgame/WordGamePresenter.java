@@ -4,8 +4,6 @@ import android.view.View;
 
 import javax.inject.Inject;
 
-import hr.fer.zpr.lumen.base.BasePresenter;
-import hr.fer.zpr.lumen.base.ScopedPresenter;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
@@ -27,6 +25,8 @@ public interface WordGamePresenter {
     void letterRemoved(LetterFieldModel field);
 
     void hintPressed();
+
+    void exit();
 
 
 

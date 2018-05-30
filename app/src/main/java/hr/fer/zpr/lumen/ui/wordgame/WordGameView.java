@@ -1,46 +1,30 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
-import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
 import android.util.SparseArray;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import hr.fer.zpr.lumen.LumenApplication;
-import hr.fer.zpr.lumen.dagger.ComponentFactory;
+import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
-import hr.fer.zpr.lumen.ui.wordgame.models.CoinModel;
+import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
-import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
-import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
-import hr.fer.zpr.lumen.wordgame.model.LetterField;
-import hr.fer.zpr.lumen.wordgame.model.Word;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
-import wordgame.db.database.WordGameDatabase;
 
 
 public class WordGameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -283,6 +267,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void clearDrawables(){
         drawables.clear();
+        drawables.add(coin);
     }
 
     public void removeDrawable(GameDrawable drawable){

@@ -4,7 +4,7 @@ import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.model.Language;
 import io.reactivex.Completable;
 
-public class ChangeLanguageUseCase implements CompletableUseCaseWithParams<Language> {
+public class ChangeLanguageUseCase implements CompletableUseCaseWithParams<String> {
 
     private WordGameManager manager;
 
@@ -13,7 +13,7 @@ public class ChangeLanguageUseCase implements CompletableUseCaseWithParams<Langu
     }
 
     @Override
-    public Completable execute(Language language) {
+    public Completable execute(String language) {
         return Completable.fromAction(()->manager.changeLanguage(language));
     }
 }

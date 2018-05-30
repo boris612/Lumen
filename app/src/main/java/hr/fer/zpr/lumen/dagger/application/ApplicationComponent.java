@@ -3,16 +3,16 @@ package hr.fer.zpr.lumen.dagger.application;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import hr.fer.zpr.lumen.LumenApplication;
-import hr.fer.zpr.lumen.base.BaseActivity;
+import hr.fer.zpr.lumen.ui.activities.CategorySelectionActivity;
+import hr.fer.zpr.lumen.ui.activities.GameSettingsActivity;
+import hr.fer.zpr.lumen.ui.activities.InfoActivity;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.dagger.modules.UseCaseModule;
 import hr.fer.zpr.lumen.dagger.modules.WordGameModule;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameActivity;
-import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
-import wordgame.db.database.WordGameDatabase;
+
 @Singleton
 @Component(modules={ApplicationModule.class, UseCaseModule.class,WordGameModule.class})
 public interface ApplicationComponent {
@@ -28,6 +28,13 @@ public interface ApplicationComponent {
     void inject(WordGameView view);
 
     void inject(WordGameActivity activity);
+
+    void inject(GameSettingsActivity activity);
+
+    void inject(CategorySelectionActivity activity);
+
+    void inject(InfoActivity activity);
+
 
 
 

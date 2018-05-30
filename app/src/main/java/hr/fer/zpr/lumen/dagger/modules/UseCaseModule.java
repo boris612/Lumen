@@ -6,7 +6,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeGamePhaseUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.CheckIfAnswerCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.GetWordsUseCase;
@@ -88,6 +90,18 @@ public class UseCaseModule {
     @Singleton
     SetCreateMoreLettersUseCase setCreateMoreLettersUseCase(WordGameManager manager){
         return new SetCreateMoreLettersUseCase(manager);
+    }
+
+    @Provides
+    @Singleton
+    ChangeCreateMoreLettersUseCase changeCreateMoreLettersUseCase(WordGameManager manager){
+        return new ChangeCreateMoreLettersUseCase(manager);
+    }
+
+    @Provides
+    @Singleton
+    ChangeGreenOnCorrectUseCase changeGreenOnCorrectUseCase(WordGameManager manager){
+        return new ChangeGreenOnCorrectUseCase(manager);
     }
 
 

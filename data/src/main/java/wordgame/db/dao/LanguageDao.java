@@ -19,4 +19,7 @@ public interface LanguageDao {
 
     @Query("select * from languages")
     public List<DbLanguage> getAllLanguages();
+
+    @Query("select language from languages")
+    public List<String> getAllLanguagesString();
 }

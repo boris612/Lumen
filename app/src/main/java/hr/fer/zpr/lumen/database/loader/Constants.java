@@ -37,4 +37,6 @@ public class Constants {
     public static final String TRY_AGAIN_MESSAGES_FOLDER="again";
 
     public static final String NUMBER_OF_FILES_FILE="number_of_files.txt";
+
+    public static final String LETTERS_FOLDER="database/letters/";
 }

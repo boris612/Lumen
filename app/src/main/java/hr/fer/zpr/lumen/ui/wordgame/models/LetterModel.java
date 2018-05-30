@@ -41,6 +41,9 @@ public class LetterModel extends GameDrawable {
 
     public void setHintActive(boolean active){
         this.hintActive=active;
+        if(active==false) {
+            color = Color.BLACK;
+        }
     }
 
     @Override

@@ -3,10 +3,11 @@ package hr.fer.zpr.lumen.dagger.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import javax.inject.Inject;
 
-import hr.fer.zpr.lumen.LumenApplication;
+import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.dagger.ComponentFactory;
 import hr.fer.zpr.lumen.dagger.application.ApplicationComponent;
 import hr.fer.zpr.lumen.database.loader.DatabaseLoader;
@@ -27,6 +28,7 @@ public abstract  class DaggerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         component= ComponentFactory.createApplicationComponent(getLumenApplication());
         getLumenApplication().getApplicationComponent().inject(this);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     public LumenApplication getLumenApplication(){

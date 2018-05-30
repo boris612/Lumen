@@ -1,6 +1,5 @@
 package hr.fer.zpr.lumen.dagger.application;
 
-import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,14 +8,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import hr.fer.zpr.lumen.LumenApplication;
 import hr.fer.zpr.lumen.database.loader.DatabaseLoader;
 import hr.fer.zpr.lumen.database.loader.DatabaseLoaderImpl;
-import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
-import hr.fer.zpr.lumen.wordgame.manager.WordGameManagerImpl;
-import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
+import hr.fer.zpr.lumen.localization.LocalizationProvider;
+import hr.fer.zpr.lumen.localization.LocalizationProviderImpl;
 import wordgame.db.database.WordGameDatabase;
-import wordgame.db.repository.WordGameRepositoryImpl;
 
 
 @Module
@@ -24,7 +20,7 @@ public class ApplicationModule {
 
     private final String database_name="lumen_database";
 
-    private final String pref_name="Lumen";
+    public static final String pref_name="Lumen";
 
     private final LumenApplication app;
 
@@ -36,6 +32,10 @@ public class ApplicationModule {
     @Provides
     @Singleton
     LumenApplication providesApplication(){return app;}
+
+    @Provides
+    @Singleton
+    Context providesContext(){return app;}
 
     @Provides
     @Singleton
@@ -53,6 +53,12 @@ public class ApplicationModule {
     @Singleton
     DatabaseLoader providesLoader(LumenApplication application,WordGameDatabase database){
         return new DatabaseLoaderImpl(application,database);
+    }
+
+    @Provides
+    @Singleton
+    LocalizationProvider providesLocalizationProvider(Context context){
+        return new LocalizationProviderImpl(context);
     }
 
 

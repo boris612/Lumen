@@ -13,7 +13,6 @@ public interface WordGameManager {
 
         Single<Word> startGame(List<Word> words);
 
-        void nextRound();
 
         Single<Boolean> isAnswerCorrect();
 
@@ -25,13 +24,15 @@ public interface WordGameManager {
 
         void removeLetterFromField(int index);
 
-        void changeCategories(Set<Category> categories);
+        void changeCategories(Set<String> categories);
 
-        void changeLanguage(Language language);
+        void changeLanguage(String language);
 
         void changePhase(WordGamePhase phase);
 
         Single<Boolean> setHint(Boolean active);
+
+        Single<List<Letter>> getRandomLetters(int n);
 
 
 
@@ -53,13 +54,16 @@ public interface WordGameManager {
 
         Single<Boolean> isHintActive();
 
-        void addCoins(int n);
 
         void setCoins(int n);
 
         Single<Integer> getCoins();
 
         Single<Word> nextWord();
+
+        void setGreenOnCorrect(boolean active);
+
+        void setLanguage(String language);
 
 
 
