@@ -8,15 +8,15 @@ public class Letter {
 
     public Sound sound;
 
-    public Letter(String value){
-        this.value=value;
+    public Letter(String value) {
+        this.value = value;
 
     }
 
-    public Letter(String value,Image image,Sound sound){
-        this.value=value;
-        this.image=image;
-        this.sound=sound;
+    public Letter(String value, Image image, Sound sound) {
+        this.value = value;
+        this.image = image;
+        this.sound = sound;
     }
 
 }

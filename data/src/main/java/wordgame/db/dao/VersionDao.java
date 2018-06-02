@@ -10,11 +10,11 @@ import wordgame.db.model.DbVersion;
 public interface VersionDao {
 
     @Query("delete from db_version")
-    public void clearTable();
+     void clearTable();
 
     @Insert
-    public void insert(DbVersion version);
+     void insert(DbVersion version);
 
     @Query("select  version from db_version limit 1")
-    public String getVersion();
+     String getVersion();
 }

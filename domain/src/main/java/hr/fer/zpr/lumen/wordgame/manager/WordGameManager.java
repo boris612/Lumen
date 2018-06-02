@@ -3,68 +3,63 @@ package hr.fer.zpr.lumen.wordgame.manager;
 import java.util.List;
 import java.util.Set;
 
-import hr.fer.zpr.lumen.wordgame.model.Category;
-import hr.fer.zpr.lumen.wordgame.model.Language;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
 import hr.fer.zpr.lumen.wordgame.model.Word;
 import io.reactivex.Single;
 
 public interface WordGameManager {
 
-        Single<Word> startGame(List<Word> words);
+    Single<Word> startGame(List<Word> words);
 
 
-        Single<Boolean> isAnswerCorrect();
+    Single<Boolean> isAnswerCorrect();
 
-        Single<Boolean> isCreateMoreLettersActive();
+    Single<Boolean> isCreateMoreLettersActive();
 
-        void setCreateMoreLetters(boolean value);
+    void setCreateMoreLetters(boolean value);
 
-        Single<Boolean> insertLetterintoField(String letter, int position);
+    Single<Boolean> insertLetterIntoField(String letter, int position);
 
-        void removeLetterFromField(int index);
+    void removeLetterFromField(int index);
 
-        void changeCategories(Set<String> categories);
+    void changeCategories(Set<String> categories);
 
-        void changeLanguage(String language);
+    void changeLanguage(String language);
 
-        void changePhase(WordGamePhase phase);
+    void changePhase(WordGamePhase phase);
 
-        Single<Boolean> setHint(Boolean active);
+    Single<Boolean> setHint(Boolean active);
 
-        Single<List<Letter>> getRandomLetters(int n);
-
-
-
-        void resetGame();
-
-        Single<Boolean> isGamePhasePlaying();
-
-        Single<Boolean> isHintOnCorrectOn();
-
-        Single<Boolean> areAllFieldsFull();
-
-        Single<String> getIncorrectMessage();
-
-        Single<String> getCorrectMessage();
-
-        Single<Integer> getIndexOfFirstIncorrectField();
-
-        Single<String> getCorrectLetterForIndex(int index);
-
-        Single<Boolean> isHintActive();
+    Single<List<Letter>> getRandomLetters(int n);
 
 
-        void setCoins(int n);
+    void resetGame();
 
-        Single<Integer> getCoins();
+    Single<Boolean> isGamePhasePlaying();
 
-        Single<Word> nextWord();
+    Single<Boolean> isHintOnCorrectOn();
 
-        void setGreenOnCorrect(boolean active);
+    Single<Boolean> areAllFieldsFull();
 
-        void setLanguage(String language);
+    Single<String> getIncorrectMessage();
 
+    Single<String> getCorrectMessage();
+
+    Single<Integer> getIndexOfFirstIncorrectField();
+
+    Single<String> getCorrectLetterForIndex(int index);
+
+    Single<Boolean> isHintActive();
+
+    Single<Integer> getCoins();
+
+    void setCoins(int n);
+
+    Single<Word> nextWord();
+
+    void setGreenOnCorrect(boolean active);
+
+    void setLanguage(String language);
 
 
 }

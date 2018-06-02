@@ -7,9 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
-import hr.fer.zpr.lumen.dagger.application.ApplicationComponent;
+import hr.fer.zpr.lumen.ui.DebugUtil;
 
 public class LocalizationProviderImpl implements LocalizationProvider {
 
@@ -19,7 +17,9 @@ public class LocalizationProviderImpl implements LocalizationProvider {
 
     private Properties translations;
 
-    public LocalizationProviderImpl(Context context){this.context=context;}
+    public LocalizationProviderImpl(Context context) {
+        this.context = context;
+    }
 
     @Override
     public String getValueForLanguage(String language, String key) {
@@ -28,22 +28,15 @@ public class LocalizationProviderImpl implements LocalizationProvider {
     }
 
 
-    @Override
-    public String getKeyForLanguage(String language, String value) {
-        load(language);
-        for (Map.Entry<Object, Object> entry : translations.entrySet()){
-            if(entry.getValue().equals(value)) return (String)entry.getKey();
-        }
-        return null;
-    }
 
-    private void load(String language){
-        if(currentLanguage!=language ||translations==null){
-            translations=new Properties();
+    private void load(String language) {
+        if (currentLanguage != language || translations == null) {
+            translations = new Properties();
             try {
-                translations.load(new InputStreamReader(context.getAssets().open(LocalizationConstants.TRANSLATIONS_FOLDER + language + ".properties"),"UTF-8"));
-            }catch(Exception e){
-                Log.d("error",e.getMessage());}
+                translations.load(new InputStreamReader(context.getAssets().open(LocalizationConstants.TRANSLATIONS_FOLDER + language + ".properties"), "UTF-8"));
+            } catch (Exception e) {
+                DebugUtil.LogDebug(e);
+            }
         }
     }
 }

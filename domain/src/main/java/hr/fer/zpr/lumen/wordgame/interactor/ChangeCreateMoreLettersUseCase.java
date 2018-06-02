@@ -7,12 +7,12 @@ public class ChangeCreateMoreLettersUseCase implements CompletableUseCaseWithPar
 
     private WordGameManager manager;
 
-    public ChangeCreateMoreLettersUseCase(WordGameManager manager){
-        this.manager=manager;
+    public ChangeCreateMoreLettersUseCase(WordGameManager manager) {
+        this.manager = manager;
     }
 
     @Override
     public Completable execute(Boolean aBoolean) {
-        return Completable.fromAction(()->manager.setCreateMoreLetters(aBoolean));
+        return Completable.fromAction(() -> manager.setCreateMoreLetters(aBoolean));
     }
 }

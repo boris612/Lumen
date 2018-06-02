@@ -12,14 +12,14 @@ import wordgame.db.model.DbLanguage;
 public interface LanguageDao {
 
     @Insert
-    public void insert(DbLanguage language);
+     void insert(DbLanguage language);
 
     @Query("select * from languages where languages.language==(:value)")
-    public DbLanguage findByValue(String value);
+     DbLanguage findByValue(String value);
 
     @Query("select * from languages")
-    public List<DbLanguage> getAllLanguages();
+     List<DbLanguage> getAllLanguages();
 
     @Query("select language from languages")
-    public List<String> getAllLanguagesString();
+     List<String> getAllLanguagesString();
 }

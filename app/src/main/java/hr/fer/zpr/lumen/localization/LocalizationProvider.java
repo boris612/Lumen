@@ -4,5 +4,4 @@ public interface LocalizationProvider {
 
     String getValueForLanguage(String language, String key);
 
-    String getKeyForLanguage(String language,String value);
 }

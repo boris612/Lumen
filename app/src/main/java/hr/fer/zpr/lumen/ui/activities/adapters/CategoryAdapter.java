@@ -15,23 +15,21 @@ import java.util.TreeSet;
 
 import hr.fer.zpr.lumen.R;
 
-/**
- * Created by Kristijan on 17.1.2018..
- */
+
 
 public class CategoryAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener {
     Context context;
     String[] categories;
-    String[]categoriesNames;
+    String[] categoriesNames;
 
     SparseBooleanArray states;
     Set<String> set;
 
-    public CategoryAdapter(Context cont, String[] res,String[] names, Set<String> set) {
+    public CategoryAdapter(Context cont, String[] res, String[] names, Set<String> set) {
         super(cont, R.layout.category_option, res);
         context = cont;
         categories = res;
-        categoriesNames=names;
+        categoriesNames = names;
         states = new SparseBooleanArray(res.length);
         this.set = set;
     }

@@ -4,7 +4,7 @@ public class Sound {
 
     public final String path;
 
-    public Sound(String sound){
-        this.path=sound;
+    public Sound(String sound) {
+        this.path = sound;
     }
 }

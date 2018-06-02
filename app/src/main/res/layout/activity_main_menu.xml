@@ -5,17 +5,17 @@
     android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.MainMenuActivity"
-    android:theme="@style/ThemeOverlay.AppCompat.Light">
+    android:theme="@style/ThemeOverlay.AppCompat.Light"
+    tools:context=".ui.activities.MainMenuActivity">
 
 
     <ImageButton
         android:id="@+id/pokreniIgru"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="32dp"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
@@ -26,17 +26,16 @@
         android:shadowDy="0"
         android:shadowRadius="5"
         android:src="@drawable/spelling"
-        app:layout_constraintBottom_toTopOf="@+id/Postavke"
-        app:layout_constraintEnd_toStartOf="@+id/pokreniDruguIgru"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/pokreniDruguIgru"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="220dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:adjustViewBounds="true"
@@ -48,45 +47,38 @@
         android:shadowDy="0"
         android:shadowRadius="5"
         android:src="@drawable/money"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/pokreniIgru"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageButton
         android:id="@+id/Postavke"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="560dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
         android:adjustViewBounds="false"
         android:background="@drawable/gear"
         android:textColor="#FF1F1F"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pokreniIgru" />
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+     />
 
     <ImageButton
         android:id="@+id/Info"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="560dp"
-        android:layout_marginTop="100dp"
+
         android:adjustViewBounds="false"
         android:background="@drawable/info"
         android:textColor="#FF1F1F"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pokreniIgru" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
 
 
 </android.support.constraint.ConstraintLayout>

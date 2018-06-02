@@ -2,35 +2,35 @@ package hr.fer.zpr.lumen.dagger.application;
 
 
 import android.app.Application;
-import android.os.Debug;
+import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 
 import javax.inject.Inject;
 
+import hr.fer.zpr.lumen.BuildConfig;
 import hr.fer.zpr.lumen.dagger.ComponentFactory;
-import hr.fer.zpr.lumen.dagger.application.ApplicationComponent;
 import hr.fer.zpr.lumen.database.loader.DatabaseLoader;
-import wordgame.db.database.WordGameDatabase;
 
 public class LumenApplication extends Application {
 
-    private  ApplicationComponent component;
-
     @Inject
     DatabaseLoader loader;
+    private ApplicationComponent component;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        component= ComponentFactory.createApplicationComponent(this);
+        component = ComponentFactory.createApplicationComponent(this);
         component.inject(this);
         loader.load();
+        if(BuildConfig.DEBUG){
         Stetho.initializeWithDefaults(this);
+        }
 
     }
 
-    public  ApplicationComponent getApplicationComponent() {
+    public ApplicationComponent getApplicationComponent() {
         return component;
     }
 }

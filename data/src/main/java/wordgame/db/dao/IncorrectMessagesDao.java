@@ -12,8 +12,8 @@ import wordgame.db.model.DbIncorrectMessage;
 public interface IncorrectMessagesDao {
 
     @Insert
-    public void insert(DbIncorrectMessage message);
+     void insert(DbIncorrectMessage message);
 
     @Query("select * from incorrect_messages where languageId==(:languageId)")
-    public List<DbIncorrectMessage> getMessages(int languageId);
+     List<DbIncorrectMessage> getMessages(int languageId);
 }

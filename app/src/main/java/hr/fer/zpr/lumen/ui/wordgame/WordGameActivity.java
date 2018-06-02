@@ -12,15 +12,15 @@ public class WordGameActivity extends DaggerActivity {
 
 
     @Inject
-     WordGameView view;
+    WordGameView view;
     @Inject
-     WordGamePresenter presenter;
+    WordGamePresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getLumenApplication().getApplicationComponent().inject(this);
-        view=new WordGameView(this.getLumenApplication());
+        view = new WordGameView(this.getLumenApplication());
         presenter.setView(view);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(view);

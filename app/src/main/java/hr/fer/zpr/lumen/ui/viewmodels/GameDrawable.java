@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.constraint.solver.widgets.Rectangle;
-import android.view.MotionEvent;
 
 public abstract class GameDrawable {
 
@@ -15,48 +13,52 @@ public abstract class GameDrawable {
     protected int height;
     protected int width;
 
-    public GameDrawable(){}
+    public GameDrawable() {
+    }
 
     public GameDrawable(Bitmap image, Rect bounds) {
         this.image = image;
         this.rectangle = bounds;
-        height = rectangle.bottom-rectangle.top;
+        height = rectangle.bottom - rectangle.top;
         width = rectangle.right - rectangle.left;
     }
 
 
-    public boolean isTouched(int x,int y) {
-        if (rectangle.contains(x,y)) return true;
+    public boolean isTouched(int x, int y) {
+        if (rectangle.contains(x, y)) return true;
         return false;
     }
 
 
-
     public void draw(Canvas canvas) {
-        if(image==null) return;
+        if (image == null) return;
         canvas.drawBitmap(image, null, rectangle, new Paint());
     }
 
-    public Point getCenter(){
-        return new Point(getRect().centerX(),getRect().centerY());
+    public Point getCenter() {
+        return new Point(getRect().centerX(), getRect().centerY());
     }
 
-    public void setCenter(int x,int y){
-        rectangle.top=y-height/2;
-        rectangle.left=x-width/2;
-        rectangle.right=rectangle.left+width;
-        rectangle.bottom=rectangle.top+height;
+    public void setCenter(int x, int y) {
+        rectangle.top = y - height / 2;
+        rectangle.left = x - width / 2;
+        rectangle.right = rectangle.left + width;
+        rectangle.bottom = rectangle.top + height;
     }
 
-    public Rect getRect(){
+    public Rect getRect() {
         return this.rectangle;
     }
 
-    public int getWidth(){
+    public void setRect(Rect rect) {
+        this.rectangle = rect;
+    }
+
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 }

@@ -4,7 +4,7 @@ public class Image {
 
     public final String path;
 
-    public Image(String path){
-        this.path =path;
+    public Image(String path) {
+        this.path = path;
     }
 }

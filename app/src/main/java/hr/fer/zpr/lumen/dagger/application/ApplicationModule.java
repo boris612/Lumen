@@ -18,46 +18,49 @@ import wordgame.db.database.WordGameDatabase;
 @Module
 public class ApplicationModule {
 
-    private final String database_name="lumen_database";
-
-    public static final String pref_name="Lumen";
-
+    public static final String pref_name = "Lumen";
+    private final String database_name = "lumen_database";
     private final LumenApplication app;
 
 
-    public ApplicationModule(final LumenApplication app){
-        this.app=app;
+    public ApplicationModule(final LumenApplication app) {
+        this.app = app;
     }
 
     @Provides
     @Singleton
-    LumenApplication providesApplication(){return app;}
-
-    @Provides
-    @Singleton
-    Context providesContext(){return app;}
-
-    @Provides
-    @Singleton
-    SharedPreferences providesPreferences(){return app.getSharedPreferences(pref_name,Context.MODE_PRIVATE);}
-
-
-
-    @Provides
-    @Singleton
-    WordGameDatabase providesDatabase(LumenApplication application){
-        return Room.databaseBuilder(application,WordGameDatabase.class,database_name).allowMainThreadQueries().fallbackToDestructiveMigration().build();
+    LumenApplication providesApplication() {
+        return app;
     }
 
     @Provides
     @Singleton
-    DatabaseLoader providesLoader(LumenApplication application,WordGameDatabase database){
-        return new DatabaseLoaderImpl(application,database);
+    Context providesContext() {
+        return app;
     }
 
     @Provides
     @Singleton
-    LocalizationProvider providesLocalizationProvider(Context context){
+    SharedPreferences providesPreferences() {
+        return app.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+    }
+
+
+    @Provides
+    @Singleton
+    WordGameDatabase providesDatabase(LumenApplication application) {
+        return Room.databaseBuilder(application, WordGameDatabase.class, database_name).allowMainThreadQueries().fallbackToDestructiveMigration().build();
+    }
+
+    @Provides
+    @Singleton
+    DatabaseLoader providesLoader(LumenApplication application, WordGameDatabase database) {
+        return new DatabaseLoaderImpl(application, database);
+    }
+
+    @Provides
+    @Singleton
+    LocalizationProvider providesLocalizationProvider(Context context) {
         return new LocalizationProviderImpl(context);
     }
 

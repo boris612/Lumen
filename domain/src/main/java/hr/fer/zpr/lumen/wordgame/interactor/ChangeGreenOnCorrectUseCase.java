@@ -7,12 +7,12 @@ public class ChangeGreenOnCorrectUseCase implements CompletableUseCaseWithParams
 
     private WordGameManager manager;
 
-    public ChangeGreenOnCorrectUseCase(WordGameManager manager){
-        this.manager=manager;
+    public ChangeGreenOnCorrectUseCase(WordGameManager manager) {
+        this.manager = manager;
     }
 
     @Override
     public Completable execute(Boolean aBoolean) {
-        return Completable.fromAction(()->manager.setGreenOnCorrect(aBoolean));
+        return Completable.fromAction(() -> manager.setGreenOnCorrect(aBoolean));
     }
 }

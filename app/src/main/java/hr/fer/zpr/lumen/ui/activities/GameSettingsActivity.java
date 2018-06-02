@@ -15,6 +15,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import hr.fer.zpr.lumen.R;
+import hr.fer.zpr.lumen.coingame.interactor.ChangeCoinGameCoinAmountUseCase;
+import hr.fer.zpr.lumen.coingame.interactor.ChangeCoinGameLanguageUseCase;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.localization.LocalizationConstants;
 import hr.fer.zpr.lumen.localization.LocalizationProvider;
@@ -22,6 +24,7 @@ import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeWordGameCoinAmountUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import wordgame.db.database.WordGameDatabase;
 
@@ -33,8 +36,6 @@ public class GameSettingsActivity extends DaggerActivity {
 
     Button categoryBtn;
 
-    @Inject
-    WordGameManager manager;
 
     @Inject
     ChangeGreenOnCorrectUseCase changeGreenOnCorrectUseCase;
@@ -46,6 +47,15 @@ public class GameSettingsActivity extends DaggerActivity {
     ChangeLanguageUseCase changeLanguageUseCase;
 
     @Inject
+    ChangeCoinGameLanguageUseCase changeCoinGameLanguageUseCase;
+
+    @Inject
+    ChangeCoinGameCoinAmountUseCase changeCoinGameCoinAmountUseCase;
+
+    @Inject
+    ChangeWordGameCoinAmountUseCase changeWordGameCoinAmountUseCase;
+
+    @Inject
     SharedPreferences pref;
 
     @Inject
@@ -54,7 +64,7 @@ public class GameSettingsActivity extends DaggerActivity {
     @Inject
     LocalizationProvider localizationProvider;
 
-    private  Button greenWhenCorrectButton;
+    private Button greenWhenCorrectButton;
     private Button addMoreLetters;
     private EditText coinNumber;
     private Button languageButton;
@@ -72,17 +82,17 @@ public class GameSettingsActivity extends DaggerActivity {
 
         final SharedPreferences.Editor editor = pref.edit();
 
-        settings =findViewById(R.id.textView);
-        coins=findViewById(R.id.textView3);
+        settings = findViewById(R.id.textView);
+        coins = findViewById(R.id.textView3);
         greenWhenCorrectButton = findViewById(R.id.GreenWhenCorrectButton);
         addMoreLetters = findViewById(R.id.GenerateMoreLettersButton);
         coinNumber = findViewById(R.id.coinNumber);
-        languageButton=findViewById(R.id.languageButton);
+        languageButton = findViewById(R.id.languageButton);
         categoryBtn = findViewById(R.id.categoryButton);
         returnBtn = findViewById(R.id.returnButton);
-        guiLanguageButton=findViewById(R.id.guilanguageButton);
+        guiLanguageButton = findViewById(R.id.guilanguageButton);
         coinNumber.setText(String.valueOf(pref.getInt(getResources().getString(R.string.coins), 0)));
-        setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE));
+        setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
         if (pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false))
             greenWhenCorrectButton.setBackgroundColor(Color.GREEN);
         else greenWhenCorrectButton.setBackgroundColor(Color.RED);
@@ -90,33 +100,32 @@ public class GameSettingsActivity extends DaggerActivity {
             addMoreLetters.setBackgroundColor(Color.GREEN);
         else addMoreLetters.setBackgroundColor(Color.RED);
 
-        String language=pref.getString(ViewConstants.PREFERENCES_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE);
-        String value=localizationProvider.getValueForLanguage(language, LocalizationConstants.WORDS_LANGUAGE_PROPERTY);
-        languageButton.setText(value+":"+localizationProvider.getValueForLanguage(language,language));
+        String language = pref.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE);
+        String value = localizationProvider.getValueForLanguage(language, LocalizationConstants.WORDS_LANGUAGE_PROPERTY);
+        languageButton.setText(value + ":" + localizationProvider.getValueForLanguage(language, language));
 
-        guiLanguageButton.setOnClickListener(e->{
-            List<String> languages=database.languageDao().getAllLanguagesString();
-            String currLanguage=pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE);
-            String newLanguage=languages.get((languages.indexOf(currLanguage)+1)%languages.size());
-            editor.putString(ViewConstants.PREFERENCES_GUI_LANGUAGE,newLanguage);
+        guiLanguageButton.setOnClickListener(e -> {
+            List<String> languages = database.languageDao().getAllLanguagesString();
+            String currLanguage = pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE);
+            String newLanguage = languages.get((languages.indexOf(currLanguage) + 1) % languages.size());
+            editor.putString(ViewConstants.PREFERENCES_GUI_LANGUAGE, newLanguage);
             editor.commit();
             setLanguageValues(newLanguage);
+            changeCoinGameLanguageUseCase.execute(newLanguage).blockingGet();
 
         });
-        languageButton.setOnClickListener(e->{
-            List<String> languages=database.languageDao().getAllLanguagesString();
-            String currLanguage=pref.getString(ViewConstants.PREFERENCES_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE);
-            String newLanguage=languages.get((languages.indexOf(currLanguage)+1)%languages.size());
-            String guiLanguage=pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE,ViewConstants.DEFAULT_GUI_LANGUAGE);
-            languageButton.setText(localizationProvider.getValueForLanguage(guiLanguage,LocalizationConstants.WORDS_LANGUAGE_PROPERTY)+":"+localizationProvider.getValueForLanguage(guiLanguage,newLanguage));
-            editor.putString(ViewConstants.PREFERENCES_LANGUAGE,newLanguage);
+        languageButton.setOnClickListener(e -> {
+            List<String> languages = database.languageDao().getAllLanguagesString();
+            String currLanguage = pref.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE);
+            String newLanguage = languages.get((languages.indexOf(currLanguage) + 1) % languages.size());
+            String guiLanguage = pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_GUI_LANGUAGE);
+            languageButton.setText(localizationProvider.getValueForLanguage(guiLanguage, LocalizationConstants.WORDS_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(guiLanguage, newLanguage));
+            editor.putString(ViewConstants.PREFERENCES_LANGUAGE, newLanguage);
             editor.commit();
             changeLanguageUseCase.execute(newLanguage);
 
         });
-        greenWhenCorrectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        greenWhenCorrectButton.setOnClickListener(e-> {
                 boolean correct = pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false);
                 if (!correct) greenWhenCorrectButton.setBackgroundColor(Color.GREEN);
                 else greenWhenCorrectButton.setBackgroundColor(Color.RED);
@@ -124,53 +133,44 @@ public class GameSettingsActivity extends DaggerActivity {
                 editor.commit();
                 changeGreenOnCorrectUseCase.execute(!correct).blockingGet();
 
-            }
-        });
-        addMoreLetters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
 
+        });
+        addMoreLetters.setOnClickListener(e-> {
+                boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
                 if (!more) addMoreLetters.setBackgroundColor(Color.GREEN);
                 else addMoreLetters.setBackgroundColor(Color.RED);
                 editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, !more);
                 editor.commit();
                 changeCreateMoreLettersUseCase.execute(!more).blockingGet();
-            }
         });
 
-        categoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        categoryBtn.setOnClickListener(e-> {
                 Intent categoryIntent = new Intent(GameSettingsActivity.this,
                         CategorySelectionActivity.class);
                 startActivity(categoryIntent);
-
-            }
         });
 
-        returnBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        returnBtn.setOnClickListener(e-> {
                 if (coinNumber.getText().toString().isEmpty()) coinNumber.setText("0");
                 editor.putInt(ViewConstants.PREFERENCES_COINS, Integer.parseInt(String.valueOf(coinNumber.getText())));
                 editor.commit();
+                changeCoinGameCoinAmountUseCase.execute(Integer.parseInt(String.valueOf(coinNumber.getText()))).blockingGet();
+                changeWordGameCoinAmountUseCase.execute(Integer.parseInt(String.valueOf(coinNumber.getText()))).blockingGet();
 
                 onBackPressed();
-            }
         });
 
     }
 
     private void setLanguageValues(String newLanguage) {
-        guiLanguageButton.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.GUI_LANGUAGE_PROPERTY)+":"+localizationProvider.getValueForLanguage(newLanguage,newLanguage));
-        categoryBtn.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.CATEGORIES_PROPERTY));
-        settings.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.SETTINGS_PROPERTY));
-        greenWhenCorrectButton.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.GREEN_ON_CORRECT_PROPERTY));
-        addMoreLetters.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.CREATE_MORE_LETTERS_PROPERTY));
-        coins.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.NUMBER_OF_COINS_PROPERTY));
-        String words_language=pref.getString(ViewConstants.PREFERENCES_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE);
-        languageButton.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.WORDS_LANGUAGE_PROPERTY)+":"+localizationProvider.getValueForLanguage(newLanguage,words_language));
+        guiLanguageButton.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.GUI_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(newLanguage, newLanguage));
+        categoryBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CATEGORIES_PROPERTY));
+        settings.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.SETTINGS_PROPERTY));
+        greenWhenCorrectButton.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.GREEN_ON_CORRECT_PROPERTY));
+        addMoreLetters.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_MORE_LETTERS_PROPERTY));
+        coins.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.NUMBER_OF_COINS_PROPERTY));
+        String words_language = pref.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE);
+        languageButton.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.WORDS_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(newLanguage, words_language));
 
     }
 

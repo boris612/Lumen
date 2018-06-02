@@ -2,7 +2,6 @@ package hr.fer.zpr.lumen.ui.wordgame.models;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.view.MotionEvent;
 
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 

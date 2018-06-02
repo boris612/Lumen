@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import hr.fer.zpr.lumen.wordgame.Util.WordGameUtil;
 import hr.fer.zpr.lumen.wordgame.model.Category;
 import hr.fer.zpr.lumen.wordgame.model.Coins;
 import hr.fer.zpr.lumen.wordgame.model.Language;
@@ -21,21 +20,20 @@ public class WordGameManagerImpl implements WordGameManager {
 
     public static final int MAX_NUMBER_OF_LETTERS = 12;
 
-    public static final int COINS_TO_ADD=2;
+    public static final int COINS_TO_ADD = 2;
 
-    private List<Word> usedWords=new ArrayList<>();
-    private List<Word> unusedWords=new ArrayList<>();
+    private List<Word> usedWords = new ArrayList<>();
+    private List<Word> unusedWords = new ArrayList<>();
     private LetterField letterField;
     private List<Letter> letters;
     private Word currentWord;
     private Set<Category> currentCategories;
-    private Language currentLanguage=Language.CROATIAN;
+    private Language currentLanguage = Language.CROATIAN;
     private WordGamePhase phase;
-    private boolean hintOnCorrectLetter=true;
+    private boolean hintOnCorrectLetter = true;
 
     private boolean hintActive;
 
-    private WordGameUtil wordGameUtil;
 
     private boolean createMoreLetters;
 
@@ -44,20 +42,18 @@ public class WordGameManagerImpl implements WordGameManager {
     private Coins coins;
 
     public WordGameManagerImpl(WordGameRepository repository) {
-            this.repository=repository;
-            wordGameUtil=new WordGameUtil();
+        this.repository = repository;
 
     }
-
 
 
     @Override
     public Single<Word> startGame(List<Word> words) {
         phase = WordGamePhase.PRESENTING;
-        unusedWords=words;
-        currentWord=unusedWords.get(new Random().nextInt(unusedWords.size()));
+        unusedWords = words;
+        currentWord = unusedWords.get(new Random().nextInt(unusedWords.size()));
         unusedWords.remove(currentWord);
-        letterField=new LetterField(currentWord.letters.size());
+        letterField = new LetterField(currentWord.letters.size());
         return Single.just(currentWord);
     }
 
@@ -68,29 +64,28 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public Single<Boolean> setHint(Boolean active) {
-        if(coins.getCoins()<1) return Single.just(false);
-        hintActive=active;
-        if(active)
-        coins.subtractCoins(1);
+        if (coins.getCoins() < 1) return Single.just(false);
+        hintActive = active;
+        if (active)
+            coins.subtractCoins(1);
         return Single.just(true);
     }
 
 
-
     @Override
     public Single<Boolean> isAnswerCorrect() {
-        boolean correct=letterField.isWordCorrect(currentWord);
-        if(correct){
-            coins.AddCoins(COINS_TO_ADD);
+        boolean correct = letterField.isWordCorrect(currentWord);
+        if (correct) {
+            coins.addCoins(COINS_TO_ADD);
         }
         return Single.just(correct);
     }
 
 
     @Override
-    public Single<Boolean> insertLetterintoField(String letter, int position) {
+    public Single<Boolean> insertLetterIntoField(String letter, int position) {
         letterField.insertLetterIntoField(new Letter(letter), position);
-        return Single.just(letterField.isLetterAtNCorrect(position,currentWord));
+        return Single.just(letterField.isLetterAtNCorrect(position, currentWord));
     }
 
     @Override
@@ -100,18 +95,18 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public void changeCategories(Set<String> categories) {
-        if(categories==null){
-           Set<Category> ncategories=new HashSet<>();
-            ncategories.addAll(Arrays.asList(Category.values()));
-            this.currentCategories=ncategories;
+        if (categories == null) {
+            Set<Category> nCategories = new HashSet<>();
+            nCategories.addAll(Arrays.asList(Category.values()));
+            this.currentCategories = nCategories;
             resetGame();
             return;
         }
-        Set<Category> nc=new HashSet<>();
-        for(String s:categories){
+        Set<Category> nc = new HashSet<>();
+        for (String s : categories) {
             nc.add(Category.valueOf(s.toUpperCase()));
         }
-        this.currentCategories=nc;
+        this.currentCategories = nc;
         resetGame();
     }
 
@@ -125,7 +120,7 @@ public class WordGameManagerImpl implements WordGameManager {
     public void resetGame() {
 
         usedWords = new ArrayList<>();
-        unusedWords=repository.getWordsFromCategories(currentCategories,currentLanguage).blockingGet();
+        unusedWords = repository.getWordsFromCategories(currentCategories, currentLanguage).blockingGet();
         currentWord = null;
     }
 
@@ -136,12 +131,12 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public void setCreateMoreLetters(boolean value) {
-        this.createMoreLetters=value;
+        this.createMoreLetters = value;
     }
 
     @Override
     public Single<Boolean> isGamePhasePlaying() {
-        if(phase==WordGamePhase.PLAYING) return Single.just(true);
+        if (phase == WordGamePhase.PLAYING) return Single.just(true);
         return Single.just(false);
     }
 
@@ -180,48 +175,48 @@ public class WordGameManagerImpl implements WordGameManager {
         return Single.just(hintActive);
     }
 
-
-    @Override
-    public void setCoins(int n) {
-        if(coins==null) coins=new Coins(n);
-        else coins.setCoins(n);
-    }
-
     @Override
     public Single<Integer> getCoins() {
-        if(coins==null) return Single.just(0);
+        if (coins == null) return Single.just(0);
         return Single.just(coins.getCoins());
     }
 
     @Override
+    public void setCoins(int n) {
+        if (coins == null) coins = new Coins(n);
+        else coins.setCoins(n);
+    }
+
+    @Override
     public Single<Word> nextWord() {
-        if(unusedWords==null) unusedWords=repository.getWordsFromCategories(currentCategories,currentLanguage).blockingGet();
-        currentWord=unusedWords.get(new Random().nextInt(unusedWords.size()));
+        if (unusedWords == null)
+            unusedWords = repository.getWordsFromCategories(currentCategories, currentLanguage).blockingGet();
+        currentWord = unusedWords.get(new Random().nextInt(unusedWords.size()));
         unusedWords.remove(currentWord);
         usedWords.add(currentWord);
-        if(unusedWords.size()==0){
-            unusedWords=usedWords;
-            usedWords=new ArrayList<>();
+        if (unusedWords.size() == 0) {
+            unusedWords = usedWords;
+            usedWords = new ArrayList<>();
         }
-        letterField=new LetterField(currentWord.letters.size());
+        letterField = new LetterField(currentWord.letters.size());
         return Single.just(currentWord);
     }
 
     @Override
     public Single<List<Letter>> getRandomLetters(int n) {
-        return repository.getRandomletters(currentLanguage,n);
+        return repository.getRandomLettersForLanguage(currentLanguage, n);
 
     }
 
     @Override
     public void setGreenOnCorrect(boolean active) {
-        this.hintOnCorrectLetter=active;
+        this.hintOnCorrectLetter = active;
     }
 
     @Override
     public void setLanguage(String language) {
-        this.currentLanguage=Language.valueOf(language.toUpperCase());
-        unusedWords=null;
+        this.currentLanguage = Language.valueOf(language.toUpperCase());
+        unusedWords = null;
         usedWords.clear();
     }
 }

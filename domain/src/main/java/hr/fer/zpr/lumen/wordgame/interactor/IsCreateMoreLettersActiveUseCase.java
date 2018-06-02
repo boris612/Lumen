@@ -7,8 +7,8 @@ public class IsCreateMoreLettersActiveUseCase implements SingleUseCase<Boolean> 
 
     private WordGameManager manager;
 
-    public IsCreateMoreLettersActiveUseCase(WordGameManager manager){
-        this.manager=manager;
+    public IsCreateMoreLettersActiveUseCase(WordGameManager manager) {
+        this.manager = manager;
     }
 
     @Override

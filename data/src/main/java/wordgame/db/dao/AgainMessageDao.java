@@ -12,8 +12,8 @@ import wordgame.db.model.DbTryAgainMessage;
 public interface AgainMessageDao {
 
     @Insert
-    public void insert(DbTryAgainMessage message);
+    void insert(DbTryAgainMessage message);
 
     @Query("select * from try_again_messages where languageId==(:languageId)")
-    public List<DbTryAgainMessage> getMessages(int languageId);
+     List<DbTryAgainMessage> getMessages(int languageId);
 }

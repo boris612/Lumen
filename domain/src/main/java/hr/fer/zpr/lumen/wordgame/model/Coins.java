@@ -4,21 +4,23 @@ public class Coins {
 
     private int coins;
 
-    public Coins(int coins){
-        this.coins=coins;
+    public Coins(int coins) {
+        this.coins = coins;
     }
 
-    public int getCoins(){
+    public int getCoins() {
         return coins;
     }
 
-    public void AddCoins(int coins){
-        this.coins+=coins;
+    public void setCoins(int n) {
+        coins = n;
     }
 
-    public void subtractCoins(int coins){
-        this.coins-=coins;
+    public void addCoins(int coins) {
+        this.coins += coins;
     }
 
-    public void setCoins(int n){ coins=n;}
+    public void subtractCoins(int coins) {
+        this.coins -= coins;
+    }
 }

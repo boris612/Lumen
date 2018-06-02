@@ -7,4 +7,9 @@ public class Coin {
     public Image image;
 
 
+    public Coin(int value, Image image) {
+        this.value = value;
+        this.image = image;
+    }
+
 }

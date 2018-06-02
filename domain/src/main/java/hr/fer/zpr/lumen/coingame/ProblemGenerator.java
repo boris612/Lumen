@@ -4,7 +4,10 @@ import java.util.List;
 
 public interface ProblemGenerator {
 
-    List<Integer> generateCoinsFor(int value);
+    List<Integer> generateOptimalCoinsFor(int value);
 
-    List<Integer> generateRandomCoins(int number);
+    List<Integer> generateRandomCoins();
+
+    int generateRandomNumber(int min, int max);
+
 }

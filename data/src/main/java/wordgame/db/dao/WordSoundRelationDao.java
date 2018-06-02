@@ -10,9 +10,10 @@ import wordgame.db.model.DbWordSoundRelation;
 public interface WordSoundRelationDao {
 
     @Insert
-    public void insert(DbWordSoundRelation dbWordSoundRelation);
+     void insert(DbWordSoundRelation dbWordSoundRelation);
 
-    @Query("select  word_sound_relation.wordId,word_sound_relation.path,word_sound_relation.languageId" +
-            " from word_sound_relation where word_sound_relation.wordId==(:wordId) and word_sound_relation.languageId==(:languageId)")
-    public DbWordSoundRelation getByWordAndLanguage(int wordId,int languageId);
+    @Query("select * from word_sound_relation where wordLanguageId==(:wordLanguageId)")
+     DbWordSoundRelation getByWordAndLanguage(int wordLanguageId);
+
+
 }

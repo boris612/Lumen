@@ -11,7 +11,7 @@ public class DbVersion {
 
     public String version;
 
-    public DbVersion(String version){
-        this.version=version;
+    public DbVersion(String version) {
+        this.version = version;
     }
 }

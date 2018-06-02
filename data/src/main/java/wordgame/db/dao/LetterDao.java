@@ -6,18 +6,20 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Single;
 import wordgame.db.model.DbLetter;
 
 @Dao
 public interface LetterDao {
 
     @Insert
-    public void insertLetter(DbLetter letter);
+     void insertLetter(DbLetter letter);
 
     @Query("select * from letters where letters.value==(:letter)")
-    public DbLetter getByValue(String letter);
+     DbLetter getByValue(String letter);
+
+    @Query("select letters.* from letters left join letter_language_relation on letters.id=letter_language_relation.letterId where letter_language_relation.languageId==(:languageId)")
+    List<DbLetter> getAllLettersForLanguage(int languageId);
 
     @Query("select * from letters")
-    public List<DbLetter> getAllLetters();
+     List<DbLetter> getAllLetters();
 }

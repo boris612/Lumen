@@ -51,15 +51,15 @@ public class CategorySelectionActivity extends DaggerActivity {
         final SharedPreferences.Editor editor = pref.edit();
 
         final ImageButton returnBtn = findViewById(R.id.returnButton);
-        String language=pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE,ViewConstants.DEFAULT_GUI_LANGUAGE);
+        String language = pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_GUI_LANGUAGE);
         allBtn = findViewById(R.id.allBtn);
-         noneBtn = findViewById(R.id.noneBtn);
+        noneBtn = findViewById(R.id.noneBtn);
         saveBtn = findViewById(R.id.saveBtn);
-        TextView view=findViewById(R.id.categoryTitle);
-        view.setText(provider.getValueForLanguage(language,LocalizationConstants.CATEGORIES_PROPERTY));
-        allBtn.setText(provider.getValueForLanguage(language,LocalizationConstants.SELECT_ALL_PROPETY));
-        noneBtn.setText(provider.getValueForLanguage(language,LocalizationConstants.CLEAR_PROPERTY));
-        saveBtn.setText(provider.getValueForLanguage(language,LocalizationConstants.SAVE_PROPERTY));
+        TextView view = findViewById(R.id.categoryTitle);
+        view.setText(provider.getValueForLanguage(language, LocalizationConstants.CATEGORIES_PROPERTY));
+        allBtn.setText(provider.getValueForLanguage(language, LocalizationConstants.SELECT_ALL_PROPETY));
+        noneBtn.setText(provider.getValueForLanguage(language, LocalizationConstants.CLEAR_PROPERTY));
+        saveBtn.setText(provider.getValueForLanguage(language, LocalizationConstants.SAVE_PROPERTY));
 
 
         Set<String> categorySet = pref.getStringSet(ViewConstants.PREFERENCES_CATEGORIES, null);
@@ -69,11 +69,12 @@ public class CategorySelectionActivity extends DaggerActivity {
             editor.putStringSet(ViewConstants.PREFERENCES_CATEGORIES, categorySet);
             editor.commit();
         }
-        String[] categories=database.categoryDao().getAllCategories().blockingGet().toArray(new String[0]);
-        String[] names=new String[categories.length];
-        for(int i=0;i<categories.length;i++) names[i]=provider.getValueForLanguage(language,categories[i]);
+        String[] categories = database.categoryDao().getAllCategories().blockingGet().toArray(new String[0]);
+        String[] names = new String[categories.length];
+        for (int i = 0; i < categories.length; i++)
+            names[i] = provider.getValueForLanguage(language, categories[i]);
 
-        final CategoryAdapter adapter = new CategoryAdapter(this,categories,names, categorySet);
+        final CategoryAdapter adapter = new CategoryAdapter(this, categories, names, categorySet);
         listView.setAdapter(adapter);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +83,7 @@ public class CategorySelectionActivity extends DaggerActivity {
                 Set<String> set = adapter.getChecked();
 
                 if (set.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), provider.getValueForLanguage(pref.getString(ViewConstants.PREFERENCES_LANGUAGE,ViewConstants.DEFAULT_LANGUAGE), LocalizationConstants.CATEGORY_PICK_MESSAGE), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), provider.getValueForLanguage(pref.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE), LocalizationConstants.CATEGORY_PICK_MESSAGE), Toast.LENGTH_SHORT).show();
                     return;
                 }
 

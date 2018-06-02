@@ -3,17 +3,15 @@ package hr.fer.zpr.lumen.ui.wordgame.models;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
-import android.view.MotionEvent;
 
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 
 public class LetterFieldModel extends GameDrawable {
 
-    private LetterModel letter=null;
+    private LetterModel letter = null;
 
-    private int color=Color.RED;
+    private int color = Color.RED;
 
     public LetterFieldModel(Rect bounds) {
         super(null, bounds);
@@ -31,10 +29,9 @@ public class LetterFieldModel extends GameDrawable {
         return letter == null ? false : true;
     }
 
-    public LetterModel getLetterInside(){
+    public LetterModel getLetterInside() {
         return letter;
     }
-
 
 
     @Override
@@ -45,13 +42,13 @@ public class LetterFieldModel extends GameDrawable {
         canvas.drawRect(rectangle, paint);
     }
 
-    public void setColor(int color){
-        this.color=color;
+    public void setColor(int color) {
+        this.color = color;
     }
 
-    public void switchHintColor(){
-        if(color==Color.RED) color=Color.GREEN;
-        else color=Color.RED;
+    public void switchHintColor() {
+        if (color == Color.RED) color = Color.GREEN;
+        else color = Color.RED;
     }
 
 }
