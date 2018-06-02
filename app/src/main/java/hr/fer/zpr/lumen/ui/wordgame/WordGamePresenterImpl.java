@@ -6,10 +6,6 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Debug;
-import android.util.Log;
-
-import com.facebook.stetho.common.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +18,7 @@ import javax.inject.Inject;
 
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.sound.SoundPlayer;
+import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
 import hr.fer.zpr.lumen.ui.DebugUtil;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.mapping.WordGameMapper;
@@ -29,7 +26,6 @@ import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.StartingHintModel;
 import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
-import hr.fer.zpr.lumen.ui.wordgame.util.ViewUtil;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;

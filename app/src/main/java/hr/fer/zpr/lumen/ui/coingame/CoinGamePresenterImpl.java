@@ -3,7 +3,6 @@ package hr.fer.zpr.lumen.ui.coingame;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
-import android.util.Log;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +16,7 @@ import hr.fer.zpr.lumen.coingame.model.Coin;
 import hr.fer.zpr.lumen.coingame.model.CoinGamePhase;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.sound.SoundPlayer;
+import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
 import hr.fer.zpr.lumen.ui.DebugUtil;
 import hr.fer.zpr.lumen.ui.coingame.mapping.CoinGameMapper;
 import hr.fer.zpr.lumen.ui.coingame.models.CoinFieldModel;

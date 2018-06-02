@@ -68,7 +68,7 @@ public class CoinGameMapper {
                 }
                 result.add(new CoinModel(image, r, c.value));
             } catch (Exception e) {
-                Log.d("error", e.getMessage());
+                DebugUtil.LogDebug(e);
             }
         }
         return result;
