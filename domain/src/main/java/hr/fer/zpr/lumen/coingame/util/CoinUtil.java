@@ -19,7 +19,9 @@ public class CoinUtil {
                 return false;
             }
         }
+        if(firstCopy.isEmpty() && secondCopy.isEmpty())
         return true;
+        else return false;
     }
 
     public static List<Integer> coinsToIntList(List<Coin> coins) {

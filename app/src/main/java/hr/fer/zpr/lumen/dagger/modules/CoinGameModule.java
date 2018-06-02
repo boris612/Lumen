@@ -16,6 +16,7 @@ import hr.fer.zpr.lumen.coingame.manager.CoinGameManager;
 import hr.fer.zpr.lumen.coingame.manager.CoinGameManagerImpl;
 import hr.fer.zpr.lumen.coingame.repository.CoinGameRepository;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.coingame.CoinGamePresenter;
 import hr.fer.zpr.lumen.ui.coingame.CoinGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.coingame.mapping.CoinGameMapper;
@@ -39,8 +40,8 @@ public class CoinGameModule {
 
     @Provides
     @Singleton
-    CoinGameManager providesManager(CoinGameRepository repository, SharedPreferences preferences) {
-        CoinGameManager manager = new CoinGameManagerImpl(repository);
+    CoinGameManager providesManager(CoinGameRepository repository, SharedPreferences preferences,SoundPlayer player) {
+        CoinGameManager manager = new CoinGameManagerImpl(repository,player);
         int coins = preferences.getInt(ViewConstants.PREFERENCES_COINS, 0);
         manager.setCoins(coins);
         manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_GUI_LANGUAGE));

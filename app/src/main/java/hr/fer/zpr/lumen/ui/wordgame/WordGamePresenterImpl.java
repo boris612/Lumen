@@ -17,8 +17,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
-import hr.fer.zpr.lumen.sound.SoundPlayer;
-import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.DebugUtil;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.mapping.WordGameMapper;
@@ -87,9 +86,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     private Context context;
 
-    private int screenWidth;
-
-    private int screenHeight;
 
     private Word currentWord;
 
@@ -102,8 +98,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     public WordGamePresenterImpl(LumenApplication application) {
         application.getApplicationComponent().inject(this);
         this.context = application;
-        screenWidth = context.getResources().getDisplayMetrics().widthPixels;
-        screenHeight = context.getResources().getDisplayMetrics().heightPixels;
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
 
     }
@@ -195,29 +189,12 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     public void setView(WordGameView view) {
         this.view = view;
-        try {
-            Rect rect = new Rect();
-            rect.top = 0;
-            rect.left = 0;
-            rect.bottom = (int) (screenHeight * ViewConstants.COIN_DIMENSION_FACTOR);
-            rect.right = rect.bottom;
-            coin = new CoinModel(BitmapFactory.decodeStream(context.getAssets().open(CoinModel.coinImagePath)), rect, preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
-            view.setCoin(coin);
-        } catch (Exception e) {
-            DebugUtil.LogDebug(e);
-        }
+        coin=mapper.getCoinModel(preferences.getInt(ViewConstants.PREFERENCES_COINS,0));
+        view.setCoin(coin);
     }
 
     private void playSound(String path) {
-        try {
-            AssetFileDescriptor afd = context.getAssets().openFd(path);
-            player.play(afd);
-
-        } catch (Exception e) {
-            DebugUtil.LogDebug(e);
-        }
-
-
+            player.play(path);
     }
 
     @Override
@@ -229,26 +206,15 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Override
     public void letterInserted(LetterModel letter, LetterFieldModel field) {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
-        if (!correct && manager.areAllFieldsFull().blockingGet()) {
-            try {
-                player.play(context.getAssets().openFd(manager.getIncorrectMessage().blockingGet()));
-            } catch (Exception e) {
-                DebugUtil.LogDebug(e);
-            }
-        }
+
         if (correct && manager.isHintOnCorrectOn().blockingGet()) {
-            if (!manager.areAllFieldsFull().blockingGet() && !manager.isAnswerCorrect().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
 
-            }
-
         }
         if (manager.areAllFieldsFull().blockingGet()) {
-            String path;
             if (manager.isAnswerCorrect().blockingGet()) {
                 manager.changePhase(WordGamePhase.ENDING);
-                path = manager.getCorrectMessage().blockingGet();
                 coin.setCoins(manager.getCoins().blockingGet());
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoins().blockingGet());
@@ -257,7 +223,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
                 for (LetterFieldModel f : fields) f.setColor(Color.GREEN);
                 try {
-                    player.play(context.getAssets().openFd(path));
                     disposables.add(Completable.timer(3000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> nextWord()));
                 } catch (Exception e) {
                     DebugUtil.LogDebug(e);
@@ -327,4 +292,5 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         manager.setHint(false);
         for (Disposable d : disposables) d.dispose();
     }
+
 }

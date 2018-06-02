@@ -15,8 +15,7 @@ import hr.fer.zpr.lumen.coingame.manager.CoinGameManager;
 import hr.fer.zpr.lumen.coingame.model.Coin;
 import hr.fer.zpr.lumen.coingame.model.CoinGamePhase;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
-import hr.fer.zpr.lumen.sound.SoundPlayer;
-import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.DebugUtil;
 import hr.fer.zpr.lumen.ui.coingame.mapping.CoinGameMapper;
 import hr.fer.zpr.lumen.ui.coingame.models.CoinFieldModel;
@@ -111,13 +110,6 @@ public class CoinGamePresenterImpl implements CoinGamePresenter {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoinsAmount().blockingGet());
         editor.commit();
-        String message = manager.getCorrectMessage().blockingGet();
-        try {
-            AssetFileDescriptor afd = context.getAssets().openFd(message);
-            player.play(afd);
-        } catch (Exception e) {
-            DebugUtil.LogDebug(e);
-        }
 
         nextRoundDisposable = Completable.timer(CoinGameConstants.TIME_UNTIL_NEXT_ROUND, TimeUnit.MILLISECONDS).subscribe(() -> nextRound());
 
@@ -138,15 +130,7 @@ public class CoinGamePresenterImpl implements CoinGamePresenter {
         if (correct && optimal) {
             onCorrectAnswer();
         }
-        if (correct && !optimal) {
-            try {
-                AssetFileDescriptor afd = context.getAssets().openFd(manager.getTryAgainMessage().blockingGet());
-                player.play(afd);
-            } catch (Exception e) {
-                DebugUtil.LogDebug(e);
-            }
 
-        }
     }
 
     @Override

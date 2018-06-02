@@ -8,8 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
-import hr.fer.zpr.lumen.sound.SoundPlayer;
-import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenter;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
@@ -29,8 +28,8 @@ public class WordGameModule {
 
     @Provides
     @Singleton
-    WordGameManager providesManager(WordGameRepository repository, SharedPreferences preferences) {
-        WordGameManager manager = new WordGameManagerImpl(repository);
+    WordGameManager providesManager(WordGameRepository repository, SharedPreferences preferences,SoundPlayer player) {
+        WordGameManager manager = new WordGameManagerImpl(repository,player);
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         manager.setCreateMoreLetters(preferences.getBoolean(ViewConstants.PREFERENCES_LETTERS, false));
         manager.setGreenOnCorrect(preferences.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false));

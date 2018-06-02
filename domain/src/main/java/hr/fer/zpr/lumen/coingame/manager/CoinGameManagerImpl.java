@@ -11,6 +11,7 @@ import hr.fer.zpr.lumen.coingame.model.CoinField;
 import hr.fer.zpr.lumen.coingame.model.CoinGamePhase;
 import hr.fer.zpr.lumen.coingame.repository.CoinGameRepository;
 import hr.fer.zpr.lumen.coingame.util.CoinUtil;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.wordgame.model.Coins;
 import hr.fer.zpr.lumen.wordgame.model.Language;
 import io.reactivex.Single;
@@ -31,11 +32,13 @@ public class CoinGameManagerImpl implements CoinGameManager {
 
     private Language currentLanguage;
 
+    private SoundPlayer player;
 
     private List<Coin> optimalCoins;
 
-    public CoinGameManagerImpl(CoinGameRepository repository) {
+    public CoinGameManagerImpl(CoinGameRepository repository,SoundPlayer player) {
         this.repository = repository;
+        this.player=player;
         generator = new ProblemGeneratorImpl();
         field = new CoinField();
         coins = new Coins(0);
@@ -69,15 +72,21 @@ public class CoinGameManagerImpl implements CoinGameManager {
 
     @Override
     public Single<Boolean> isAnswerCorrect() {
-        if (field.sumOfCoins() != currentGoal) return Single.just(false);
-        return Single.just(true);
+        return(Single.just(field.sumOfCoins()==currentGoal));
     }
 
 
     @Override
     public Single<Boolean> isAnswerOptimal() {
         boolean optimal=CoinUtil.compareIntegerLists(CoinUtil.coinsToIntList(optimalCoins), field.coinToIntList());
-        if(optimal) coins.addCoins(2);
+        if(optimal) {
+            coins.addCoins(2);
+            player.play(repository.getCorrectMessage(currentLanguage).blockingGet());
+        }
+        else if(isAnswerCorrect().blockingGet()){
+            player.play(repository.tryAgainMessage(currentLanguage).blockingGet());
+        }
+
         return Single.just(optimal);
     }
 

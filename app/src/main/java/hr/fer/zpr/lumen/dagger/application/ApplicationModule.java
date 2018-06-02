@@ -12,7 +12,7 @@ import hr.fer.zpr.lumen.database.loader.DatabaseLoader;
 import hr.fer.zpr.lumen.database.loader.DatabaseLoaderImpl;
 import hr.fer.zpr.lumen.localization.LocalizationProvider;
 import hr.fer.zpr.lumen.localization.LocalizationProviderImpl;
-import hr.fer.zpr.lumen.sound.SoundPlayer;
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.sound.SoundPlayerImpl;
 import wordgame.db.database.WordGameDatabase;
 
@@ -68,8 +68,8 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    SoundPlayer providesSoundPlayer() {
-        return new SoundPlayerImpl();
+    SoundPlayer providesSoundPlayer(Context context) {
+        return new SoundPlayerImpl(context.getAssets());
     }
 
 

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import hr.fer.zpr.lumen.ui.DebugUtil;
+import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
@@ -126,6 +128,19 @@ public class WordGameMapper {
             fields.add(new LetterFieldModel(rect));
         }
         return fields;
+    }
+    public CoinModel getCoinModel(int coin) {
+        try {
+            Rect rect = new Rect();
+            rect.top = 0;
+            rect.left = 0;
+            rect.bottom = (int) (screenHeight * ViewConstants.COIN_DIMENSION_FACTOR);
+            rect.right = rect.bottom;
+            return new CoinModel(BitmapFactory.decodeStream(context.getAssets().open(CoinModel.coinImagePath)), rect, coin);
+        } catch (Exception e) {
+            DebugUtil.LogDebug(e);
+        }
+        return null;
     }
 }
 

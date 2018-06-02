@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.wordgame.model.Category;
 import hr.fer.zpr.lumen.wordgame.model.Coins;
 import hr.fer.zpr.lumen.wordgame.model.Language;
@@ -18,34 +19,27 @@ import io.reactivex.Single;
 
 public class WordGameManagerImpl implements WordGameManager {
 
-    public static final int MAX_NUMBER_OF_LETTERS = 12;
 
     public static final int COINS_TO_ADD = 2;
 
     private List<Word> usedWords = new ArrayList<>();
     private List<Word> unusedWords = new ArrayList<>();
     private LetterField letterField;
-    private List<Letter> letters;
     private Word currentWord;
+    private SoundPlayer player;
     private Set<Category> currentCategories;
     private Language currentLanguage = Language.CROATIAN;
     private WordGamePhase phase;
     private boolean hintOnCorrectLetter = true;
-
     private boolean hintActive;
-
-
     private boolean createMoreLetters;
-
     private WordGameRepository repository;
-
     private Coins coins;
 
-    public WordGameManagerImpl(WordGameRepository repository) {
+    public WordGameManagerImpl(WordGameRepository repository,SoundPlayer player) {
         this.repository = repository;
-
+        this.player=player;
     }
-
 
     @Override
     public Single<Word> startGame(List<Word> words) {
@@ -75,8 +69,12 @@ public class WordGameManagerImpl implements WordGameManager {
     @Override
     public Single<Boolean> isAnswerCorrect() {
         boolean correct = letterField.isWordCorrect(currentWord);
-        if (correct) {
+        if(correct){
+            player.play(repository.getCorrectMessage(currentLanguage).blockingGet());
             coins.addCoins(COINS_TO_ADD);
+        }
+        if (!correct && letterField.isFull()) {
+            player.play(repository.incorrectMessage(currentLanguage).blockingGet());
         }
         return Single.just(correct);
     }
@@ -136,8 +134,7 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public Single<Boolean> isGamePhasePlaying() {
-        if (phase == WordGamePhase.PLAYING) return Single.just(true);
-        return Single.just(false);
+        return Single.just(phase==WordGamePhase.PLAYING);
     }
 
     @Override
