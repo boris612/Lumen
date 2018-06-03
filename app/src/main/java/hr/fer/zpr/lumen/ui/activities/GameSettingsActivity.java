@@ -154,13 +154,15 @@ public class GameSettingsActivity extends DaggerActivity {
                 if (coinNumber.getText().toString().isEmpty()) coinNumber.setText("0");
                 editor.putInt(ViewConstants.PREFERENCES_COINS, Integer.parseInt(String.valueOf(coinNumber.getText())));
                 editor.commit();
-                changeCoinGameCoinAmountUseCase.execute(Integer.parseInt(String.valueOf(coinNumber.getText()))).blockingGet();
-                changeWordGameCoinAmountUseCase.execute(Integer.parseInt(String.valueOf(coinNumber.getText()))).blockingGet();
-
+                int coins=Integer.parseInt(String.valueOf(coinNumber.getText()));
+                if(coins<0) coins=0;
+                changeCoinGameCoinAmountUseCase.execute(coins).blockingGet();
+                changeWordGameCoinAmountUseCase.execute(coins).blockingGet();
                 onBackPressed();
         });
 
     }
+
 
     private void setLanguageValues(String newLanguage) {
         guiLanguageButton.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.GUI_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(newLanguage, newLanguage));

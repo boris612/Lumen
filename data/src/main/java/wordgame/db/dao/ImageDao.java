@@ -16,4 +16,7 @@ public interface ImageDao {
     @Query("select images.id" +
             ",images.path from words left join images on words.imageId==images.id where words.id==(:wordId) ")
      DbImage getImageForWord(int wordId);
+
+    @Query("select * from images where id==(:imageId)")
+    DbImage getImageById(int imageId);
 }

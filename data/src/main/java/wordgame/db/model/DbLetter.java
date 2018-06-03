@@ -1,9 +1,11 @@
 package wordgame.db.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "letters")
+@Entity(tableName = "letters",foreignKeys =
+@ForeignKey(entity = DbImage.class,parentColumns = "id",childColumns = "imageId"))
 public class DbLetter {
 
     @PrimaryKey(autoGenerate = true)
@@ -11,10 +13,10 @@ public class DbLetter {
 
     public String value;
 
-    public String imagePath;
+    public int imageId;
 
-    public DbLetter(String value, String imagePath) {
+    public DbLetter(String value, int imageId) {
         this.value = value;
-        this.imagePath = imagePath;
+        this.imageId=imageId;
     }
 }

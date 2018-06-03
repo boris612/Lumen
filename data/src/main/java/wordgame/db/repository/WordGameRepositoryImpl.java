@@ -65,7 +65,7 @@ public class WordGameRepositoryImpl implements WordGameRepository {
             int index = random.nextInt(letters.size());
             DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(letters.get(index).id,database.languageDao().findByValue(language.name().toLowerCase()).id);
             Sound sound = new Sound(database.letterSoundRelationDao().findByLetterAndLanguage(dblr.id).soundPath);
-            result.add(new Letter(letters.get(index).value, new Image(letters.get(index).imagePath), sound));
+            result.add(new Letter(letters.get(index).value, new Image(database.imageDao().getImageById(letters.get(index).imageId).path), sound));
             letters.remove(index);
         }
         return Single.just(result);
@@ -78,7 +78,7 @@ public class WordGameRepositoryImpl implements WordGameRepository {
         for (Letter letter : letters) {
             DbLetter dbl = database.letterDao().getByValue(letter.value);
             DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(database.letterDao().getByValue(letter.value).id,languageId);
-            Letter let = new Letter(dbl.value, new Image(dbl.imagePath), new Sound(database.letterSoundRelationDao().findByLetterAndLanguage((dblr.id)).soundPath));
+            Letter let = new Letter(dbl.value, new Image(database.imageDao().getImageById(dbl.imageId).path), new Sound(database.letterSoundRelationDao().findByLetterAndLanguage((dblr.id)).soundPath));
             result.add(let);
         }
         return Single.just(result);

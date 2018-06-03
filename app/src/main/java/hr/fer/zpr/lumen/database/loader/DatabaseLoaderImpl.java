@@ -3,6 +3,7 @@ package hr.fer.zpr.lumen.database.loader;
 import android.content.Context;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +77,9 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                 String line = reader.readLine().trim();
                 if (database.letterDao().getByValue(line) == null) {
                     String path = Constants.LETTER_IMAGES_FOLDER_PATH + line + ".png";
-                    database.letterDao().insertLetter(new DbLetter(line, path));
+                    DbImage image=new DbImage(path);
+                    int imageId=(int)database.imageDao().insert(image);
+                    database.letterDao().insertLetter(new DbLetter(line, imageId));
                 }
             }
             reader.close();
@@ -96,14 +99,29 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
     }
 
 
-    private void loadLetterSounds() {
+    private void loadLetterSounds() throws IOException {
 
         List<DbLanguage> languages = database.languageDao().getAllLanguages();
         for (DbLanguage language : languages) {
             List<DbLetter> letters = database.letterDao().getAllLettersForLanguage(language.id);
             for (DbLetter letter : letters) {
+                String[] files=context.getAssets().list(Constants.LETTER_SOUNDS_FOLDER_PATH + language.value);
+                String path=null;
+                for(String s:files){
+                    if(s.split("\\.")[0].equals(letter.value)){
+                        path=s;
+                        break;
+                    }
+                }
                 DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(letter.id,language.id);
-                    DbLetterSoundRelation relation = new DbLetterSoundRelation(dblr.id, Constants.LETTER_SOUNDS_FOLDER_PATH + language.value + "/" + letter.value + Constants.SOUND_EXTENSION);
+                DbLetterSoundRelation relation;
+                if(path==null){
+
+                    relation = new DbLetterSoundRelation(dblr.id, Constants.LETTER_SOUNDS_FOLDER_PATH + language.value + "/" + letter.value + Constants.SOUND_EXTENSION);
+                }
+                else{
+                    relation=new DbLetterSoundRelation(dblr.id,Constants.LETTER_SOUNDS_FOLDER_PATH+language.value+"/"+path);
+                }
                     database.letterSoundRelationDao().insert(relation);
                 }
             }

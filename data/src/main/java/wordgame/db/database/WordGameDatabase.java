@@ -49,13 +49,11 @@ import wordgame.db.model.DbWordSoundRelation;
         DbWordLanguageRelation.class,
         DbLetterLanguageRelation.class
 },
-        version = 2,
+        version = 1,
         exportSchema = false)
 public abstract class WordGameDatabase extends RoomDatabase {
 
-
-
-
+    
     public abstract WordLanguageRelationDao wordLanguageRelationDao();
 
     public abstract LetterDao letterDao();
