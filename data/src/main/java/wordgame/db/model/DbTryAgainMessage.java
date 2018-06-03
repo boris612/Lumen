@@ -10,7 +10,7 @@ import android.arch.persistence.room.PrimaryKey;
 indices=@Index(name = "languageId",value={"id","languageId"}))
 public class DbTryAgainMessage {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate=true)
     public int id;
 
     public String path;

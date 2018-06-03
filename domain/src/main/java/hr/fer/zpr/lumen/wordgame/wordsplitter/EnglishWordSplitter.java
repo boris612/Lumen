@@ -10,10 +10,10 @@ public class EnglishWordSplitter implements WordSplitter {
     @Override
     public List<Letter> split(String word) {
         List<Letter> letters = new ArrayList<>();
-        String[] splitLetters = word.split("");
+        char[] splitLetters = word.trim().toCharArray();
 
-        for (String str : splitLetters) {
-            letters.add(new Letter(str));
+        for (Character c : splitLetters) {
+            letters.add(new Letter(c.toString()));
         }
 
         return letters;

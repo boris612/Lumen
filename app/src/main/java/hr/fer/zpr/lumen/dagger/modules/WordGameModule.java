@@ -34,7 +34,8 @@ public class WordGameModule {
         manager.setCreateMoreLetters(preferences.getBoolean(ViewConstants.PREFERENCES_LETTERS, false));
         manager.setGreenOnCorrect(preferences.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false));
         manager.changeCategories(preferences.getStringSet(ViewConstants.PREFERENCES_CATEGORIES, null));
-        manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_LANGUAGE, "croatian"));
+        manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
+        manager.setMessagesLanguage(preferences.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE,ViewConstants.DEFAULT_GUI_LANGUAGE));
         return manager;
     }
 

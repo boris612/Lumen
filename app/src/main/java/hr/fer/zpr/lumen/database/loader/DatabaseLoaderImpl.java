@@ -18,13 +18,11 @@ import wordgame.db.model.DbIncorrectMessage;
 import wordgame.db.model.DbLanguage;
 import wordgame.db.model.DbLetter;
 import wordgame.db.model.DbLetterLanguageRelation;
-import wordgame.db.model.DbLetterSoundRelation;
 import wordgame.db.model.DbTryAgainMessage;
 import wordgame.db.model.DbVersion;
 import wordgame.db.model.DbWord;
 import wordgame.db.model.DbWordCategoriesRelation;
 import wordgame.db.model.DbWordLanguageRelation;
-import wordgame.db.model.DbWordSoundRelation;
 
 public class DatabaseLoaderImpl implements DatabaseLoader {
 
@@ -70,7 +68,7 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         }
     }
 
-    private void loadLetters() {
+    private void loadLetters() throws IOException {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.LETTERS_TEXT_FILE), "UTF-8"));
             while (reader.ready()) {
@@ -89,7 +87,14 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                 while(reader.ready()){
                     String letter=reader.readLine();
                     int letterId=database.letterDao().getByValue(letter).id;
-                    DbLetterLanguageRelation dblr=new DbLetterLanguageRelation(letterId,language.id);
+                    String soundPath=null;
+                    for(String s:context.getAssets().list(Constants.LETTER_SOUNDS_FOLDER_PATH+language.value)){
+                        if(s.split("\\.")[0].equals(letter)){
+                            soundPath=Constants.LETTER_SOUNDS_FOLDER_PATH+language.value+"/"+s;
+                            break;
+                        }
+                    }
+                    DbLetterLanguageRelation dblr=new DbLetterLanguageRelation(letterId,language.id,soundPath);
                     database.letterLanguageDao().insert(dblr);
                 }
             }
@@ -99,33 +104,6 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
     }
 
 
-    private void loadLetterSounds() throws IOException {
-
-        List<DbLanguage> languages = database.languageDao().getAllLanguages();
-        for (DbLanguage language : languages) {
-            List<DbLetter> letters = database.letterDao().getAllLettersForLanguage(language.id);
-            for (DbLetter letter : letters) {
-                String[] files=context.getAssets().list(Constants.LETTER_SOUNDS_FOLDER_PATH + language.value);
-                String path=null;
-                for(String s:files){
-                    if(s.split("\\.")[0].equals(letter.value)){
-                        path=s;
-                        break;
-                    }
-                }
-                DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(letter.id,language.id);
-                DbLetterSoundRelation relation;
-                if(path==null){
-
-                    relation = new DbLetterSoundRelation(dblr.id, Constants.LETTER_SOUNDS_FOLDER_PATH + language.value + "/" + letter.value + Constants.SOUND_EXTENSION);
-                }
-                else{
-                    relation=new DbLetterSoundRelation(dblr.id,Constants.LETTER_SOUNDS_FOLDER_PATH+language.value+"/"+path);
-                }
-                    database.letterSoundRelationDao().insert(relation);
-                }
-            }
-        }
 
 
     private void loadWords() {
@@ -168,7 +146,6 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                 properties.load(propReader);
                 for (DbLanguage language : languages) {
                     String spelling = properties.getProperty(language.value);
-                    DbWordLanguageRelation dbWordLanguageRelation = new DbWordLanguageRelation(wordId, language.id, spelling);
                     String path = null;
                     for(String p:files){
                         if(p.contains(language.value)){
@@ -176,14 +153,9 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                             break;
                         }
                     }
-                    if(path!=null) {
-                        int dbWordLanguageRelationId = (int) database.wordLanguageRelationDao().insert(dbWordLanguageRelation);
-                        DbWordSoundRelation wordSoundRelation = new DbWordSoundRelation(dbWordLanguageRelationId, path);
-                        database.wordSoundRelationDao().insert(wordSoundRelation);
-                    }
+                    DbWordLanguageRelation dbWordLanguageRelation = new DbWordLanguageRelation(wordId, language.id, spelling,path);
+                    database.wordLanguageRelationDao().insert(dbWordLanguageRelation);
                 }
-
-
             }
         } catch (Exception e) {
             DebugUtil.LogDebug(e);
@@ -203,7 +175,6 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                 loadLanguages();
                 loadCategories();
                 loadLetters();
-                loadLetterSounds();
                 loadWords();
                 loadMessages();
             }

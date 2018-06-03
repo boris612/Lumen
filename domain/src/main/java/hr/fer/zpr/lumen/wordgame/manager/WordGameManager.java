@@ -32,6 +32,8 @@ public interface WordGameManager {
 
     Single<List<Letter>> getRandomLetters(int n);
 
+    void setMessagesLanguage(String language);
+
 
     void resetGame();
 

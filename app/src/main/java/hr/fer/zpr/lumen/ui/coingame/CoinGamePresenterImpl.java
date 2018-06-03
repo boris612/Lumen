@@ -79,9 +79,7 @@ public class CoinGamePresenterImpl implements CoinGamePresenter {
         } catch (Exception e) {
             DebugUtil.LogDebug(e);
         }
-
-
-        manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
+        manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_GUI_LANGUAGE));
     }
 
     @Override

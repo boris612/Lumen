@@ -24,6 +24,7 @@ import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeMessagesLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeWordGameCoinAmountUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import wordgame.db.database.WordGameDatabase;
@@ -54,6 +55,9 @@ public class GameSettingsActivity extends DaggerActivity {
 
     @Inject
     ChangeWordGameCoinAmountUseCase changeWordGameCoinAmountUseCase;
+
+    @Inject
+    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase;
 
     @Inject
     SharedPreferences pref;
@@ -111,7 +115,8 @@ public class GameSettingsActivity extends DaggerActivity {
             editor.putString(ViewConstants.PREFERENCES_GUI_LANGUAGE, newLanguage);
             editor.commit();
             setLanguageValues(newLanguage);
-            changeCoinGameLanguageUseCase.execute(newLanguage).blockingGet();
+            changeCoinGameLanguageUseCase.execute(newLanguage).subscribe();
+            changeMessagesLanguageUseCase.execute(newLanguage).subscribe();
 
         });
         languageButton.setOnClickListener(e -> {
@@ -122,7 +127,7 @@ public class GameSettingsActivity extends DaggerActivity {
             languageButton.setText(localizationProvider.getValueForLanguage(guiLanguage, LocalizationConstants.WORDS_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(guiLanguage, newLanguage));
             editor.putString(ViewConstants.PREFERENCES_LANGUAGE, newLanguage);
             editor.commit();
-            changeLanguageUseCase.execute(newLanguage);
+            changeLanguageUseCase.execute(newLanguage).subscribe();
 
         });
         greenWhenCorrectButton.setOnClickListener(e-> {
@@ -131,7 +136,7 @@ public class GameSettingsActivity extends DaggerActivity {
                 else greenWhenCorrectButton.setBackgroundColor(Color.RED);
                 editor.putBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, !correct);
                 editor.commit();
-                changeGreenOnCorrectUseCase.execute(!correct).blockingGet();
+                changeGreenOnCorrectUseCase.execute(!correct).subscribe();
 
 
         });
@@ -141,7 +146,7 @@ public class GameSettingsActivity extends DaggerActivity {
                 else addMoreLetters.setBackgroundColor(Color.RED);
                 editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, !more);
                 editor.commit();
-                changeCreateMoreLettersUseCase.execute(!more).blockingGet();
+                changeCreateMoreLettersUseCase.execute(!more).subscribe();
         });
 
         categoryBtn.setOnClickListener(e-> {
@@ -156,8 +161,8 @@ public class GameSettingsActivity extends DaggerActivity {
                 editor.commit();
                 int coins=Integer.parseInt(String.valueOf(coinNumber.getText()));
                 if(coins<0) coins=0;
-                changeCoinGameCoinAmountUseCase.execute(coins).blockingGet();
-                changeWordGameCoinAmountUseCase.execute(coins).blockingGet();
+                changeCoinGameCoinAmountUseCase.execute(coins).subscribe();
+                changeWordGameCoinAmountUseCase.execute(coins).subscribe();
                 onBackPressed();
         });
 

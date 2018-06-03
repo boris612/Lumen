@@ -28,7 +28,9 @@ public class WordGameUtil {
             new WordGameUtil();
             initialized=true;
         }
-        return wordSplitterMap.get(language);
+        WordSplitter splitter=wordSplitterMap.get(language);
+        if(splitter==null) splitter=wordSplitterMap.get(Language.ENGLISH);
+        return splitter;
     }
 
     public List<Letter> split(String word, Language language) {

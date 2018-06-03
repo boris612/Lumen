@@ -9,6 +9,7 @@ import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeMessagesLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
@@ -25,6 +26,12 @@ public class WordGameUseCaseModule {
     @Singleton
     ChangeCategoriesUseCase changeCategoriesUseCase(WordGameManager manager) {
         return new ChangeCategoriesUseCase(manager);
+    }
+
+    @Provides
+    @Singleton
+    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase(WordGameManager manager){
+        return new ChangeMessagesLanguageUseCase(manager);
     }
 
 

@@ -32,6 +32,7 @@ public class WordGameManagerImpl implements WordGameManager {
     private WordGamePhase phase;
     private boolean hintOnCorrectLetter = true;
     private boolean hintActive;
+    private Language messagesLanguage;
     private boolean createMoreLetters;
     private WordGameRepository repository;
     private Coins coins;
@@ -70,11 +71,11 @@ public class WordGameManagerImpl implements WordGameManager {
     public Single<Boolean> isAnswerCorrect() {
         boolean correct = letterField.isWordCorrect(currentWord);
         if(correct){
-            player.play(repository.getCorrectMessage(currentLanguage).blockingGet());
+            player.play(repository.getCorrectMessage(messagesLanguage).blockingGet());
             coins.addCoins(COINS_TO_ADD);
         }
         if (!correct && letterField.isFull()) {
-            player.play(repository.incorrectMessage(currentLanguage).blockingGet());
+            player.play(repository.incorrectMessage(messagesLanguage).blockingGet());
         }
         return Single.just(correct);
     }
@@ -106,6 +107,11 @@ public class WordGameManagerImpl implements WordGameManager {
         }
         this.currentCategories = nc;
         resetGame();
+    }
+
+    @Override
+    public void setMessagesLanguage(String language) {
+        messagesLanguage=Language.valueOf(language.toUpperCase());
     }
 
     @Override
@@ -149,12 +155,12 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public Single<String> getIncorrectMessage() {
-        return repository.incorrectMessage(currentLanguage);
+        return repository.incorrectMessage(messagesLanguage);
     }
 
     @Override
     public Single<String> getCorrectMessage() {
-        return repository.getCorrectMessage(currentLanguage);
+        return repository.getCorrectMessage(messagesLanguage);
     }
 
     @Override
