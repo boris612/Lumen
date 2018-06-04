@@ -117,7 +117,9 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     }
 
     private void presentHint(StartingHintModel model) {
-        disposables.add(Observable.interval(ViewConstants.TIME_BETWEEN_LETTERS, TimeUnit.MILLISECONDS).takeWhile(e -> model.hasLettersToShow()).subscribeOn(AndroidSchedulers.mainThread())
+        disposables.add(Observable.interval(ViewConstants.TIME_BETWEEN_LETTERS, TimeUnit.MILLISECONDS)
+                .takeWhile(e -> model.hasLettersToShow())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         f -> {
                             playSound(model.getCurrentLetterSoundPath());
