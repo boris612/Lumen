@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import coingame.model.DbCoin;
 import hr.fer.zpr.lumen.ui.DebugUtil;
 import wordgame.db.database.WordGameDatabase;
 import wordgame.db.model.DbCategory;
@@ -177,6 +178,7 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
                 loadLetters();
                 loadWords();
                 loadMessages();
+                loadCoins();
             }
         } catch (Exception e) {
             DebugUtil.LogDebug(e);
@@ -206,6 +208,23 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         } catch (Exception e) {
             DebugUtil.LogDebug(e);
         }
+    }
+
+    public void loadCoins(){
+        List<Integer> coins=Arrays.asList(1,2,5,10);
+        try{
+            String[] files=context.getAssets().list(Constants.COIN_FOLDER);
+            for(Integer i:coins){
+                String path=null;
+                for(String f:files){
+                    if(f.split("_")[1].split("\\.")[0].equals(Integer.toString(i))){
+                        path=Constants.COIN_FOLDER+"/"+f;
+                        break;
+                    }
+                }
+                database.coinDao().insert(new DbCoin(i,path));
+            }
+        }catch(Exception e){DebugUtil.LogDebug(e);}
     }
 
 

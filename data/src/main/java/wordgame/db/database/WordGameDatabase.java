@@ -5,6 +5,8 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import coingame.dao.CoinDao;
+import coingame.model.DbCoin;
 import wordgame.db.dao.AgainMessageDao;
 import wordgame.db.dao.CategoryDao;
 import wordgame.db.dao.CorrectMessageDao;
@@ -41,12 +43,14 @@ import wordgame.db.model.DbWordLanguageRelation;
         DbIncorrectMessage.class,
         DbTryAgainMessage.class,
         DbWordLanguageRelation.class,
-        DbLetterLanguageRelation.class
+        DbLetterLanguageRelation.class,
+        DbCoin.class
 },
-        version = 2,
+        version = 1,
         exportSchema = false)
 public abstract class WordGameDatabase extends RoomDatabase {
 
+    public abstract CoinDao coinDao();
     
     public abstract WordLanguageRelationDao wordLanguageRelationDao();
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import coingame.model.DbCoin;
 import hr.fer.zpr.lumen.coingame.model.Coin;
 import hr.fer.zpr.lumen.coingame.model.Image;
 import hr.fer.zpr.lumen.coingame.repository.CoinGameRepository;
@@ -22,14 +23,14 @@ public class CoinGameRepositoryImpl implements CoinGameRepository {
 
     public CoinGameRepositoryImpl(WordGameDatabase database) {
         this.database = database;
-        initMap();
     }
 
     @Override
     public Single<List<Coin>> getCoinsForValues(List<Integer> values) {
-        List<Coin> result = new ArrayList<>();
-        for (Integer i : values) {
-            result.add(new Coin(i, new Image(coinImagesPaths.get(i))));
+        List<Coin> result=new ArrayList<>();
+        for(Integer i:values){
+            DbCoin coin=database.coinDao().getForValue(i);
+            result.add(new Coin(coin.value,new Image(coin.imagePath)));
         }
         return Single.just(result);
     }
@@ -47,10 +48,4 @@ public class CoinGameRepositoryImpl implements CoinGameRepository {
         return Single.just(messages.get(new Random().nextInt(messages.size())).path);
     }
 
-    private void initMap() {
-        coinImagesPaths.put(1, "coingame/kuna_1.png");
-        coinImagesPaths.put(2, "coingame/kuna_2.png");
-        coinImagesPaths.put(5, "coingame/kuna_5.png");
-        coinImagesPaths.put(10, "coingame/kuna_10.png");
-    }
 }
