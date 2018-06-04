@@ -172,13 +172,13 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
             if (version == null || !version.equals(fileVersion)) {
                 DbVersion newVersion = new DbVersion(fileVersion);
                 database.clearAllTables();
-                database.versionDao().insert(newVersion);
                 loadLanguages();
                 loadCategories();
                 loadLetters();
                 loadWords();
                 loadMessages();
                 loadCoins();
+                database.versionDao().insert(newVersion);
             }
         } catch (Exception e) {
             DebugUtil.LogDebug(e);
