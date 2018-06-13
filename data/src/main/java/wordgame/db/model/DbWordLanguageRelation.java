@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "word_language_relation",
         primaryKeys = {"wordId","languageId"},
@@ -17,8 +18,9 @@ public class DbWordLanguageRelation {
 
     public int languageId;
 
+    @NonNull
     public String word;
-
+    @NonNull
     public String soundPath;
 
     public DbWordLanguageRelation(int wordId, int languageId, String word,String soundPath) {

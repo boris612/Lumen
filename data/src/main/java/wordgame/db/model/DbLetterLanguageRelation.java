@@ -2,6 +2,7 @@ package wordgame.db.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "letter_language_relation",
         primaryKeys = {"letterId","languageId"},
@@ -15,7 +16,7 @@ public class DbLetterLanguageRelation {
     public int letterId;
 
     public int languageId;
-
+    @NonNull
     public String soundPath;
 
     public DbLetterLanguageRelation(int letterId,int languageId,String soundPath){
