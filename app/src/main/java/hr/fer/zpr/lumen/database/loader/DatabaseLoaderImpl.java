@@ -44,7 +44,9 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.CATEGORIES_FILE_PATH), "UTF-8"));
             while (reader.ready()) {
-                String line = reader.readLine().trim();
+                String line = reader.readLine();
+                if(line==null) break;
+                line=line.trim();
                 if (database.categoryDao().findByValue(line) == null) {
                     database.categoryDao().insert(new DbCategory(line));
                 }
@@ -60,7 +62,9 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.LANGUAGES_FILE_PATH), "UTF-8"));
             while (reader.ready()) {
-                String line = reader.readLine().trim();
+                String line = reader.readLine();
+                if(line==null) break;
+                line=line.trim();
                 if (database.languageDao().findByValue(line) == null) {
                     database.languageDao().insert(new DbLanguage(line));
                 }
