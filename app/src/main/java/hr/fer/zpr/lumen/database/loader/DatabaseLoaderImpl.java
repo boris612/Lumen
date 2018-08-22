@@ -74,7 +74,9 @@ public class DatabaseLoaderImpl implements DatabaseLoader {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(Constants.LETTERS_TEXT_FILE), "UTF-8"));
             while (reader.ready()) {
-                String line = reader.readLine().trim();
+                String line = reader.readLine();
+                if(line==null) break;
+                line=line.trim();
                 if (database.letterDao().getByValue(line) == null) {
                     String path = Constants.LETTER_IMAGES_FOLDER_PATH + line + ".png";
                     DbImage image=new DbImage(path);
