@@ -4,22 +4,22 @@ apply plugin: 'com.android.application'
 // keystore.properties file, in the rootProject folder.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 
-// Initialize a new Properties() object called keystoreProperties.
-def keystoreProperties = new Properties()
-
-// Load your keystore.properties file into the keystoreProperties object.
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//// Initialize a new Properties() object called keystoreProperties.
+//def keystoreProperties = new Properties()
+//
+//// Load your keystore.properties file into the keystoreProperties object.
+//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    signingConfigs {
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            compileOptions.encoding = 'UTF-8'
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+//            compileOptions.encoding = 'UTF-8'
+//        }
+//    }
     compileSdkVersion 27
     project.archivesBaseName = "Lumen";
     defaultConfig {
@@ -34,7 +34,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            //signingConfig signingConfigs.config
 
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
