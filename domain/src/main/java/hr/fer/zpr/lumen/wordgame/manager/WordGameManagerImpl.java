@@ -34,6 +34,7 @@ public class WordGameManagerImpl implements WordGameManager {
     private boolean hintActive;
     private Language messagesLanguage;
     private boolean createMoreLetters;
+    private boolean createAllLetters;
     private WordGameRepository repository;
     private Coins coins;
 
@@ -134,9 +135,21 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
+    public Single<Boolean> isCreateAllLettersActive() {
+        return Single.just(createAllLetters);
+    }
+
+
+    @Override
     public void setCreateMoreLetters(boolean value) {
         this.createMoreLetters = value;
     }
+
+    @Override
+    public void setCreateAllLetters(boolean value) {
+        this.createAllLetters = value;
+    }
+
 
     @Override
     public Single<Boolean> isGamePhasePlaying() {
@@ -208,6 +221,12 @@ public class WordGameManagerImpl implements WordGameManager {
     @Override
     public Single<List<Letter>> getRandomLetters(int n) {
         return repository.getRandomLettersForLanguage(currentLanguage, n);
+
+    }
+
+    @Override
+    public Single<List<Letter>> getAllLetters() {
+        return repository.getAllLettersForLanguage(currentLanguage);
 
     }
 

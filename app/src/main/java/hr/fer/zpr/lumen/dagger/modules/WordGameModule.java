@@ -32,6 +32,7 @@ public class WordGameModule {
         WordGameManager manager = new WordGameManagerImpl(repository,player);
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         manager.setCreateMoreLetters(preferences.getBoolean(ViewConstants.PREFERENCES_LETTERS, false));
+        manager.setCreateAllLetters(preferences.getBoolean(ViewConstants.PREFERENCES_LETTERS, false));
         manager.setGreenOnCorrect(preferences.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false));
         manager.changeCategories(preferences.getStringSet(ViewConstants.PREFERENCES_CATEGORIES, null));
         manager.setLanguage(preferences.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));

@@ -16,7 +16,11 @@ public interface WordGameManager {
 
     Single<Boolean> isCreateMoreLettersActive();
 
+    Single<Boolean> isCreateAllLettersActive();
+
     void setCreateMoreLetters(boolean value);
+
+    void setCreateAllLetters(boolean value);
 
     Single<Boolean> insertLetterIntoField(String letter, int position);
 
@@ -31,6 +35,8 @@ public interface WordGameManager {
     Single<Boolean> setHint(Boolean active);
 
     Single<List<Letter>> getRandomLetters(int n);
+
+    Single<List<Letter>> getAllLetters();
 
     void setMessagesLanguage(String language);
 
