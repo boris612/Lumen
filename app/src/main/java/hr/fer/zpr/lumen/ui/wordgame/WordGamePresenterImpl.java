@@ -227,6 +227,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }*/
         if(correct) fieldLetter.put(field.toString(),letter.getValue());
 
+        if(correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
+
         if (manager.areAllFieldsFull().blockingGet()) {
             if (manager.isAnswerCorrect().blockingGet()) {
                 manager.changePhase(WordGamePhase.ENDING);

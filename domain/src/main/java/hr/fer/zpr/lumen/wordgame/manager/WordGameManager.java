@@ -47,6 +47,8 @@ public interface WordGameManager {
 
     Single<Boolean> isHintOnCorrectOn();
 
+    Single<Boolean> isHintInstantlyOn();
+
     Single<Boolean> areAllFieldsFull();
 
     Single<String> getIncorrectMessage();
@@ -66,6 +68,8 @@ public interface WordGameManager {
     Single<Word> nextWord();
 
     void setGreenOnCorrect(boolean active);
+
+    void setGreenInstantly(boolean active);
 
     void setLanguage(String language);
 
