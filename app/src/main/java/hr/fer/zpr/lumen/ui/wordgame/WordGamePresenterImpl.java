@@ -221,12 +221,16 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Override
     public void letterInserted(LetterModel letter, LetterFieldModel field) {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
+
+        //FLASH GREEN ON CORRECT
         /*if (correct && manager.isHintOnCorrectOn().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
         }*/
+        
         if(correct) fieldLetter.put(field.toString(),letter.getValue());
 
+        //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
         if(correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
 
         if (manager.areAllFieldsFull().blockingGet()) {
@@ -245,7 +249,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                     DebugUtil.LogDebug(e);
                 }
             }
-            else if(manager.isHintOnCorrectOn().blockingGet()){
+            //MARK GREEN CORRECT LETTERS
+            else if(manager.isHintWhenFullOn().blockingGet()){
                 for (LetterFieldModel f : fields)
                     if(f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
                         f.setColor(Color.GREEN);
