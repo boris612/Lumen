@@ -16,6 +16,9 @@
     <string name="oAplikaciji2">Na projektu su sudjelovali: Matija Čavlović, Karlo Čeh, Robin Fučko, Alen Magdić, Matija Puzjak, Marko Sopčić, Darian Šarić, Zlatko Verk i Kristijan Vukelić.\nGlas posudila:Lorena Sopčić</string>
     <string name="oAplikaciji3">Mentor: Boris Milašinović</string>
     <string name="oAplikaciji4">FER 2018.</string>
+    <string name="word_game_settings">Word game settings</string>
+    <string name="coin_game_settings">Coin game settings</string>
+    <string name="calculating_game_settings">Calculating game settings</string>
 
 
 </resources>

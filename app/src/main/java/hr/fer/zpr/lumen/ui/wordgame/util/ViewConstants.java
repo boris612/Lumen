@@ -6,6 +6,8 @@ public class ViewConstants {
 
     public static String PREFERENCES_LETTERS = "letters";
 
+    public static String PREFERENCES_ALL_LETTERS = "all_letters";
+
     public static String PREFERENCES_GREEN_ON_CORRECT = "hint_active";
 
     public static String PREFERENCES_LANGUAGE = "language";

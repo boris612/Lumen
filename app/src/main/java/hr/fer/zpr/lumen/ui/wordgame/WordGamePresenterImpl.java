@@ -28,8 +28,10 @@ import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.IsCreateAllLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.SetCreateAllLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.SetCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.StartGameUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.UseHintUseCase;
@@ -65,6 +67,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     IsCreateMoreLettersActiveUseCase isCreateMoreLettersActiveUseCase;
     @Inject
     SetCreateMoreLettersUseCase setCreateMoreLettersUseCase;
+    @Inject
+    IsCreateAllLettersActiveUseCase isCreateAllLettersActiveUseCase;
+    @Inject
+    SetCreateAllLettersUseCase setCreateAllLettersUseCase;
     @Inject
     ChangeLanguageUseCase changeLanguageUseCase;
     @Inject
@@ -157,6 +163,9 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         if (manager.isCreateMoreLettersActive().blockingGet()) {
             randomLetters = manager.getRandomLetters(numToGenerate).blockingGet();
 
+        }
+        else if (manager.isCreateAllLettersActive().blockingGet()) {
+            randomLetters = manager.getAllLetters().blockingGet();
         }
         letters = mapper.mapLetters(currentWord, randomLetters);
         view.addLetters(letters);
