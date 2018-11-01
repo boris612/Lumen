@@ -31,6 +31,8 @@ public class WordGameManagerImpl implements WordGameManager {
     private Language currentLanguage = Language.CROATIAN;
     private WordGamePhase phase;
     private boolean hintOnCorrectLetter = true;
+    private boolean hintInstantlyLetter = true;
+    private boolean hintWhenFullLetter = true;
     private boolean hintActive;
     private Language messagesLanguage;
     private boolean createMoreLetters;
@@ -162,6 +164,17 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
+    public Single<Boolean> isHintInstantlyOn() {
+        return Single.just(hintInstantlyLetter);
+    }
+
+    @Override
+    public Single<Boolean> isHintWhenFullOn() {
+        return Single.just(hintWhenFullLetter);
+    }
+
+
+    @Override
     public Single<Boolean> areAllFieldsFull() {
         return Single.just(letterField.isFull());
     }
@@ -233,6 +246,16 @@ public class WordGameManagerImpl implements WordGameManager {
     @Override
     public void setGreenOnCorrect(boolean active) {
         this.hintOnCorrectLetter = active;
+    }
+
+    @Override
+    public void setGreenInstantly(boolean active) {
+        this.hintInstantlyLetter = active;
+    }
+
+    @Override
+    public void setGreenWhenFull(boolean active) {
+        this.hintWhenFullLetter = active;
     }
 
     @Override
