@@ -74,11 +74,12 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         addMoreLettersBtn.setOnClickListener(e -> {
             boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
-            if (more){
+            if (more) {
                 addMoreLettersBtn.setBackgroundColor(Color.GREEN);
                 showAllLettersBtn.setBackgroundColor(Color.RED);
+            } else {
+                addMoreLettersBtn.setBackgroundColor(Color.RED);
             }
-            else addMoreLettersBtn.setBackgroundColor(Color.RED);
             editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, !more);
             editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, more);
             editor.commit();
@@ -101,8 +102,12 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         validateWordBtn.setOnClickListener(e -> {
             boolean validateWord = pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, false);
-            if (!validateWord) validateWordBtn.setBackgroundColor(Color.GREEN);
-            else validateWordBtn.setBackgroundColor(Color.RED);
+            if (!validateWord) {
+                validateWordBtn.setBackgroundColor(Color.GREEN);
+                validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+            } else {
+                validateWordBtn.setBackgroundColor(Color.RED);
+            }
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, !validateWord);
             editor.commit();
             changeGreenWhenFullUseCase.execute(!validateWord).subscribe();
@@ -110,8 +115,12 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         validateLetterByLetterBtn.setOnClickListener(e -> {
             boolean validateLetters = pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, false);
-            if (!validateLetters) validateLetterByLetterBtn.setBackgroundColor(Color.GREEN);
-            else validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+            if (!validateLetters) {
+                validateLetterByLetterBtn.setBackgroundColor(Color.GREEN);
+                validateWordBtn.setBackgroundColor(Color.RED);
+            } else {
+                validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+            }
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, !validateLetters);
             editor.commit();
             changeGreenInstantlyUseCase.execute(!validateLetters).subscribe();

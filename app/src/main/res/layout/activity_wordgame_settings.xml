@@ -20,101 +20,97 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/word_game_settings"
+            android:text="Postavke"
             android:textSize="36sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
+
+
     <Button
             android:id="@+id/GreenWhenCorrectButton"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"
             android:text="Zazeleni Točno Slovo"
-            android:textAppearance="@style/TextAppearance.AppCompat"
             android:textSize="20sp"
-            android:visibility="visible"
+            android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"/>
 
     <Button
             android:id="@+id/GenerateMoreLettersButton"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="Stvori Više Slova"
             android:textSize="20sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/GreenWhenCorrectButton"
-            app:layout_constraintBottom_toTopOf="@+id/GenerateAllLettersButton"/>
+            app:layout_constraintRight_toRightOf="@id/GenerateAllLettersButton"
+            app:layout_constraintTop_toBottomOf="@+id/GreenWhenCorrectButton"/>
 
     <Button
             android:id="@+id/GenerateAllLettersButton"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="Prikaži sva slova"
             android:textSize="20sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/GenerateMoreLettersButton"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/GenerateMoreLettersButton"
-            app:layout_constraintBottom_toTopOf="@+id/ValidateAllLetters"/>
+            app:layout_constraintTop_toBottomOf="@+id/GreenWhenCorrectButton"/>
 
     <Button
             android:id="@+id/ValidateAllLetters"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="Validiraj cijelu riječ"
             android:textSize="20sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/GenerateAllLettersButton"
-            app:layout_constraintBottom_toTopOf="@id/ValidateLetterByLetter"
+            app:layout_constraintRight_toRightOf="@id/ValidateLetterByLetter"
+            app:layout_constraintTop_toBottomOf="@id/GenerateMoreLettersButton"
     />
     <Button
             android:id="@+id/ValidateLetterByLetter"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:text="Validiraj slovo po slovo"
             android:textSize="20sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/ValidateAllLetters"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/ValidateAllLetters"
+            app:layout_constraintTop_toBottomOf="@id/GenerateAllLettersButton"
     />
 
     <Button
             android:id="@+id/categoryButton"
-            android:layout_width="0dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:text="Kategorije"
             android:textSize="20dp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0"/>
+            app:layout_constraintStart_toStartOf="parent"/>
 
 
 </android.support.constraint.ConstraintLayout>
