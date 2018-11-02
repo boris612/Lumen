@@ -250,12 +250,12 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                 }
             }
             //MARK GREEN CORRECT LETTERS
-            /*else if(manager.isHintWhenFullOn().blockingGet()){
+            else if(manager.isHintWhenFullOn().blockingGet()){
                 for (LetterFieldModel f : fields)
                     if(f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
                         f.setColor(Color.GREEN);
 
-            }*/
+            }
         }
     }
 
