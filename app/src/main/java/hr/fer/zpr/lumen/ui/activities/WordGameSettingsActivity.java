@@ -1,6 +1,5 @@
 package hr.fer.zpr.lumen.ui.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,13 +7,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
 import hr.fer.zpr.lumen.R;
-import hr.fer.zpr.lumen.coingame.interactor.ChangeCoinGameCoinAmountUseCase;
-import hr.fer.zpr.lumen.coingame.interactor.ChangeCoinGameLanguageUseCase;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.localization.LocalizationProvider;
 import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.*;
-import wordgame.db.database.WordGameDatabase;
 
 import javax.inject.Inject;
 
@@ -32,31 +28,19 @@ public class WordGameSettingsActivity extends DaggerActivity {
     ChangeGreenOnCorrectUseCase changeGreenOnCorrectUseCase;
 
     @Inject
+    ChangeGreenInstantlyUseCase changeGreenInstantlyUseCase;
+
+    @Inject
+    ChangeGreenWhenFullUseCase changeGreenWhenFullUseCase;
+
+    @Inject
     ChangeCreateMoreLettersUseCase changeCreateMoreLettersUseCase;
 
     @Inject
     ChangeCreateAllLettersUseCase changeCreateAllLettersUseCase;
 
     @Inject
-    ChangeLanguageUseCase changeLanguageUseCase;
-
-    @Inject
-    ChangeCoinGameLanguageUseCase changeCoinGameLanguageUseCase;
-
-    @Inject
-    ChangeCoinGameCoinAmountUseCase changeCoinGameCoinAmountUseCase;
-
-    @Inject
-    ChangeWordGameCoinAmountUseCase changeWordGameCoinAmountUseCase;
-
-    @Inject
-    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase;
-
-    @Inject
     SharedPreferences pref;
-
-    @Inject
-    WordGameDatabase database;
 
     @Inject
     LocalizationProvider localizationProvider;
@@ -90,7 +74,11 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         addMoreLettersBtn.setOnClickListener(e -> {
             boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
-            setButtonsColor(more, addMoreLettersBtn, showAllLettersBtn);
+            if (more){
+                addMoreLettersBtn.setBackgroundColor(Color.GREEN);
+                showAllLettersBtn.setBackgroundColor(Color.RED);
+            }
+            else addMoreLettersBtn.setBackgroundColor(Color.RED);
             editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, !more);
             editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, more);
             editor.commit();
@@ -99,7 +87,12 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         showAllLettersBtn.setOnClickListener(e -> {
             boolean allLetters = pref.getBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, false);
-            setButtonsColor(allLetters, showAllLettersBtn, addMoreLettersBtn);
+            if (allLetters) {
+                showAllLettersBtn.setBackgroundColor(Color.GREEN);
+                addMoreLettersBtn.setBackgroundColor(Color.RED);
+            } else {
+                showAllLettersBtn.setBackgroundColor(Color.RED);
+            }
             editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, !allLetters);
             editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, allLetters);
             editor.commit();
@@ -112,7 +105,7 @@ public class WordGameSettingsActivity extends DaggerActivity {
             else validateWordBtn.setBackgroundColor(Color.RED);
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, !validateWord);
             editor.commit();
-            changeGreenOnCorrectUseCase.execute(!validateWord).subscribe();
+            changeGreenWhenFullUseCase.execute(!validateWord).subscribe();
         });
 
         validateLetterByLetterBtn.setOnClickListener(e -> {
@@ -121,7 +114,7 @@ public class WordGameSettingsActivity extends DaggerActivity {
             else validateLetterByLetterBtn.setBackgroundColor(Color.RED);
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, !validateLetters);
             editor.commit();
-            changeGreenOnCorrectUseCase.execute(!validateLetters).subscribe();
+            changeGreenInstantlyUseCase.execute(!validateLetters).subscribe();
         });
 
         categoriesBtn.setOnClickListener(e -> {
@@ -153,13 +146,4 @@ public class WordGameSettingsActivity extends DaggerActivity {
         else validateWordBtn.setBackgroundColor(Color.RED);
     }
 
-    private void setButtonsColor(boolean more, Button addMoreLettersBtn, Button showAllLettersBtn) {
-        if (!more) {
-            addMoreLettersBtn.setBackgroundColor(Color.GREEN);
-            showAllLettersBtn.setBackgroundColor(Color.RED);
-        } else {
-            addMoreLettersBtn.setBackgroundColor(Color.RED);
-            showAllLettersBtn.setBackgroundColor(Color.GREEN);
-        }
-    }
 }

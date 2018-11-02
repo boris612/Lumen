@@ -24,8 +24,6 @@ public class WordGameActivity extends DaggerActivity {
         presenter.setView(view);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(view);
-
-
     }
 
     @Override
