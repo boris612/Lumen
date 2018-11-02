@@ -18,7 +18,13 @@ public class LocalizationConstants {
 
     public static final String GREEN_ON_CORRECT_PROPERTY = "green_on_correct";
 
+    public static final String VALIDATE_LETTERS_PROPERTY = "validate_word";
+
+    public static final String VALIDATE_WORD_PROPERTY = "validate_letter_by_letter";
+
     public static final String CREATE_MORE_LETTERS_PROPERTY = "create_more_letters";
+
+    public static final String CREATE_ALL_LETTERS_PROPERTY = "create_all_letters";
 
     public static final String NUMBER_OF_COINS_PROPERTY = "number_of_coins";
 
@@ -29,4 +35,10 @@ public class LocalizationConstants {
     public static final String INFO_TITLE_PROPERTY = "about_title";
 
     public static final String INFO_TEXT_PROPERTY = "about_text";
+
+    public static final String WORD_GAME_SETTINGS_PROPERTY = "word_game_settings";
+
+    public static final String COIN_GAME_SETTINGS_PROPERTY = "coin_game_settings";
+
+    public static final String CALCULATING_GAME_SETTINGS_PROPERTY = "calculating_game_settings";
 }

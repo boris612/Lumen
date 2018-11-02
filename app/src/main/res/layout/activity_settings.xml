@@ -4,7 +4,7 @@
                                              xmlns:tools="http://schemas.android.com/tools"
                                              android:id="@+id/constraintLayout"
                                              android:layout_width="match_parent"
-                                             android:layout_height="wrap_content"
+                                             android:layout_height="match_parent"
                                              tools:context=".ui.activities.GameSettingsActivity">
 
 
@@ -26,6 +26,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:text="Postavke"
             android:textSize="36sp"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -39,6 +40,7 @@
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"
             android:text="Jezik:Hrvatski"
+            android:layout_marginBottom="20dp"
             android:textSize="10sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -52,6 +54,7 @@
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
             android:text="Riječi: Hrvatski"
             android:textSize="10sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
@@ -64,7 +67,7 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginEnd="320dp"
             android:layout_marginTop="4dp"
             android:text="Broj novčića"
@@ -88,7 +91,7 @@
     <Button
             android:id="@+id/wordGameSettings"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"
@@ -102,7 +105,7 @@
     <Button
             android:id="@+id/coinGameSettings"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"
@@ -115,7 +118,7 @@
     <Button
             android:id="@+id/calculatingGameSettings"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="130dp"
             android:layout_marginTop="4dp"

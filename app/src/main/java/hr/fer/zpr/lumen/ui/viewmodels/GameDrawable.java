@@ -32,6 +32,7 @@ public abstract class GameDrawable {
 
     public void draw(Canvas canvas) {
         if (image == null) return;
+        
         canvas.drawBitmap(image, null, rectangle, new Paint());
     }
 
