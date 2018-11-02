@@ -19,4 +19,8 @@ public class Letter {
         this.sound = sound;
     }
 
+    public String toString(){
+        return this.value;
+    }
+
 }

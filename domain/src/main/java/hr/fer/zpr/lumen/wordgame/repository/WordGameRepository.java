@@ -11,18 +11,18 @@ import io.reactivex.Single;
 
 public interface WordGameRepository {
 
-    public Single<List<Word>> getAllWords(Language language);
+    Single<List<Word>> getAllWords(Language language);
 
 
-    public Single<List<Word>> getWordsFromCategories(Set<Category> categories, Language language);
+    Single<List<Word>> getWordsFromCategories(Set<Category> categories, Language language);
 
-    public Single<List<Letter>> getRandomLettersForLanguage(Language language, int n);
+    Single<List<Letter>> getRandomLettersForLanguage(Language language, int n);
 
-    public Single<List<Letter>> getAllLettersForLanguage(Language language);
+    Single<List<Letter>> getAllLettersForLanguage(Language language);
 
-    public Single<List<Letter>> getLettersWithImages(List<Letter> letters, Language language);
+    Single<List<Letter>> getLettersWithImages(List<Letter> letters, Language language);
 
-    public Single<String> incorrectMessage(Language language);
+    Single<String> incorrectMessage(Language language);
 
-    public Single<String> getCorrectMessage(Language language);
+    Single<String> getCorrectMessage(Language language);
 }

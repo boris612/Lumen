@@ -166,12 +166,15 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         List<Letter> randomLetters = null;
         if (manager.isCreateMoreLettersActive().blockingGet()) {
             randomLetters = manager.getRandomLetters(numToGenerate).blockingGet();
-
+            letters = mapper.mapLetters(currentWord, randomLetters);
         }
         else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
+            letters = mapper.mapAllLetters(randomLetters);
+        }else{
+            letters = mapper.mapLetters(currentWord, randomLetters);
         }
-        letters = mapper.mapLetters(currentWord, randomLetters);
+
         view.addLetters(letters);
 
     }
