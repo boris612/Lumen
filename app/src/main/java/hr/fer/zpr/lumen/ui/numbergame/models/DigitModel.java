@@ -21,4 +21,5 @@ public class DigitModel extends GameDrawable {
         canvas.drawBitmap(image, null, rectangle, new Paint());
         super.draw(canvas);
     }
+
 }
