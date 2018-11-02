@@ -166,12 +166,15 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         List<Letter> randomLetters = null;
         if (manager.isCreateMoreLettersActive().blockingGet()) {
             randomLetters = manager.getRandomLetters(numToGenerate).blockingGet();
-
+            letters = mapper.mapLetters(currentWord, randomLetters);
         }
         else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
+            letters = mapper.mapAllLetters(randomLetters);
+        }else{
+            letters = mapper.mapLetters(currentWord, randomLetters);
         }
-        letters = mapper.mapLetters(currentWord, randomLetters);
+
         view.addLetters(letters);
 
     }
@@ -223,11 +226,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
 
         //FLASH GREEN ON CORRECT
-        /*if (correct && manager.isHintOnCorrectOn().blockingGet()) {
+        if (correct && manager.isHintOnCorrectOn().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
-        }*/
-        
+        }
+
         if(correct) fieldLetter.put(field.toString(),letter.getValue());
 
         //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
