@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build-cache:
+    working_directory: ~/code
+    docker:
+        - image: circleci/android:api-27-alpha
+    resource_class: medium+
+    steps:
+        - checkout
+        - run:
+             name: Download Dependencies
+             command: ./gradlew androidDependencies
+        - save_cache:
+             paths:
+                - ~/.gradle
+             key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+        - persist_to_workspace:
+             root: .
+             paths:
+               - .git
+               - config
+
+workflows:
+   version: 2
+   nightly:
+     triggers:
+       - schedule:
+           cron: "0 0 * * *"
+           filters:
+             branches:
+               only:
+                 - dev
+     jobs:
+       - build-cache
