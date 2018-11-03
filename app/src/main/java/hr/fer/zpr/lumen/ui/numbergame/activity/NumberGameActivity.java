@@ -1,6 +1,5 @@
 package hr.fer.zpr.lumen.ui.numbergame.activity;
 
-
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.os.Bundle;
@@ -11,9 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.numbergame.generator.EquationGenerator;
+import hr.fer.zpr.lumen.numbergame.manager.NumbergameManager;
+import hr.fer.zpr.lumen.numbergame.manager.Operation;
 
 public class NumberGameActivity extends DaggerActivity {
 
+    private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 3;
     private LinearLayout linearLayout;
     private TextView result;
     private TextView firstNumber;
@@ -61,7 +64,10 @@ public class NumberGameActivity extends DaggerActivity {
             if(result.getId() == textView.getId()){
                 result.setText("");
             } else {
-                result.setText(textView.getText());
+                String answer = result.getText().toString();
+                answer += textView.getText().toString();
+                if(answer.toCharArray().length > MAX_DIGITS_NUMBER_IN_ANSWER) return;
+                result.setText(answer);
             }
         }
 

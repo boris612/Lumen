@@ -19,8 +19,7 @@
             android:layout_marginStart="180dp"
             android:gravity="center"
             android:textSize="45dp"
-            android:textStyle="bold"
-            android:text="5" />
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/symbol"
             android:layout_width="45dp"
@@ -29,8 +28,7 @@
             android:layout_centerInParent="true"
             android:layout_toRightOf="@id/firstNumber"
             android:textSize="45dp"
-            android:textStyle="bold"
-            android:text="+"/>
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/secondNumber"
             android:layout_width="45dp"
@@ -39,8 +37,7 @@
             android:layout_centerInParent="true"
             android:layout_toRightOf="@id/symbol"
             android:textSize="45dp"
-            android:textStyle="bold"
-            android:text="5"/>
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/equal"
             android:layout_width="45dp"
