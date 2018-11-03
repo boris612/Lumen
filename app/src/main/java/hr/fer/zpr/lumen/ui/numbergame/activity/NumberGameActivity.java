@@ -67,68 +67,68 @@ public class NumberGameActivity extends DaggerActivity {
 
     }
 
-    class DragListener implements View.OnDragListener {
-
-        @Override
-        public boolean onDrag(View layoutView, DragEvent dragEvent) {
-            int action = dragEvent.getAction();
-
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-
-                case DragEvent.ACTION_DRAG_LOCATION:
-
-                case DragEvent.ACTION_DRAG_EXITED:
-
-                case DragEvent.ACTION_DROP:
-                    Log.d("sam dropo", "ola");
-                    View view = (View) dragEvent.getLocalState();
-
-                    TextView dropTarget = (TextView)layoutView;
-                    TextView dropped = (TextView)view;
-
-                    if(result.getId() == dropTarget.getId()) {
-                        dropTarget.setText(dropped.getText());
-                        return true;
-                    }
-                    return false;
-                case DragEvent.ACTION_DRAG_ENDED:
-
-                default:
-                    Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
-                    break;
-            }
-            return false;
-        }
-    }
-
-    class LongClickListener implements  View.OnLongClickListener {
-
-        private TextView textView;
-
-        LongClickListener(TextView textView) {
-            this.textView = textView;
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            ClipData.Item item = new ClipData.Item(textView.getText());
-
-            ClipData dragData = new ClipData(
-                    textView.getText().toString(),
-                    new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
-                    item
-            );
-
-            v.startDrag(dragData,
-                    new View.DragShadowBuilder(textView),
-                    textView,
-                    0
-            );
-
-            return true;
-        }
-
-    }
+//    class DragListener implements View.OnDragListener {
+//
+//        @Override
+//        public boolean onDrag(View layoutView, DragEvent dragEvent) {
+//            int action = dragEvent.getAction();
+//
+//            switch (action) {
+//                case DragEvent.ACTION_DRAG_STARTED:
+//
+//                case DragEvent.ACTION_DRAG_LOCATION:
+//
+//                case DragEvent.ACTION_DRAG_EXITED:
+//
+//                case DragEvent.ACTION_DROP:
+//                    Log.d("sam dropo", "ola");
+//                    View view = (View) dragEvent.getLocalState();
+//
+//                    TextView dropTarget = (TextView)layoutView;
+//                    TextView dropped = (TextView)view;
+//
+//                    if(result.getId() == dropTarget.getId()) {
+//                        dropTarget.setText(dropped.getText());
+//                        return true;
+//                    }
+//                    return false;
+//                case DragEvent.ACTION_DRAG_ENDED:
+//
+//                default:
+//                    Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
+//                    break;
+//            }
+//            return false;
+//        }
+//    }
+//
+//    class LongClickListener implements  View.OnLongClickListener {
+//
+//        private TextView textView;
+//
+//        LongClickListener(TextView textView) {
+//            this.textView = textView;
+//        }
+//
+//        @Override
+//        public boolean onLongClick(View v) {
+//            ClipData.Item item = new ClipData.Item(textView.getText());
+//
+//            ClipData dragData = new ClipData(
+//                    textView.getText().toString(),
+//                    new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+//                    item
+//            );
+//
+//            v.startDrag(dragData,
+//                    new View.DragShadowBuilder(textView),
+//                    textView,
+//                    0
+//            );
+//
+//            return true;
+//        }
+//
+//    }
 
 }
