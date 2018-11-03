@@ -17,4 +17,8 @@ public class DivisionEquationGenerator extends EquationGenerator {
         secondNumber = numberGenerator.randomNumber(1, limitNumber);
         firstNumber=answer*secondNumber;
     }
+
+    public String operationSign(){
+        return "\u00F7";
+    }
 }

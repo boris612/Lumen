@@ -1,20 +1,47 @@
 package hr.fer.zpr.lumen.numbergame.manager;
 
-import hr.fer.zpr.lumen.numbergame.generator.EquationGenerator;
+import hr.fer.zpr.lumen.numbergame.generator.*;
 
 public class NumbergameManager {
 
-    EquationGenerator equationGenerator;
-    public NumbergameManager(EquationGenerator equationGenerator){
-        this.equationGenerator=equationGenerator;
+
+    private EquationGenerator equationGenerator;
+    public NumbergameManager(Operation operation){
+        switch(operation){
+            case ADDITION:
+                equationGenerator=new AdditionEquationGenerator(EquationConstants.additionLimit);
+                break;
+            case SUBTRACTION:
+                equationGenerator=new SubtractionEquationGenerator(EquationConstants.subtractionLimit);
+                break;
+            case MULTIPLICATION:
+                equationGenerator=new MultiplicationEquationGenerator(EquationConstants.multiplicationLimit);
+                break;
+            case DIVISION:
+                equationGenerator=new DivisionEquationGenerator(EquationConstants.divisionLimit);
+                break;
+        }
+
+
     }
 
-    public boolean checkSolution(){
-        //todo
-        return true;
+    public EquationGenerator getEquationGenerator() {
+        return equationGenerator;
     }
 
-    public void restartGame(){
-        //todo
+    public boolean checkAnswer(int answer){
+        return answer==equationGenerator.getAnswer();
+    }
+
+    public boolean checkFirstNumber(int firstNumber){
+        return firstNumber==equationGenerator.getFirstNumber();
+    }
+
+    public boolean checkSecondNumber(int secondNumber){
+        return secondNumber==equationGenerator.getSecondNumber();
+    }
+
+    public void newEquation(){
+        equationGenerator.generateEquation();
     }
 }
