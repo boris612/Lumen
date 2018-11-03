@@ -31,6 +31,10 @@
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:screenOrientation="landscape"/>
         <activity
+            android:name=".ui.numbergame.activity.NumberGameActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="landscape"/>
+        <activity
                 android:name=".ui.activities.GameSettingsActivity"
                 android:screenOrientation="landscape"/>
         <activity
