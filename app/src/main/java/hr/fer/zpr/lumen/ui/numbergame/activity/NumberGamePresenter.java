@@ -1,4 +1,4 @@
-package hr.fer.zpr.lumen.ui.coingame.util;
+package hr.fer.zpr.lumen.ui.numbergame.activity;
 
 import android.widget.TextView;
 
