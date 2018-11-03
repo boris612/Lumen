@@ -7,7 +7,6 @@ import android.widget.ImageButton;
 
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.ui.numbergame.activity.NumberGameActivity;
 
 public class MainMenuActivity extends DaggerActivity {
 
@@ -15,7 +14,8 @@ public class MainMenuActivity extends DaggerActivity {
     ImageButton startCoinGameBtn;
     ImageButton openSettings;
     ImageButton seeInfo;
-    ImageButton startNumberGameBtn;
+    ImageButton startNumberGame;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +23,11 @@ public class MainMenuActivity extends DaggerActivity {
         component.inject(this);
         setContentView(R.layout.activity_main_menu);
 
+        startNumberGame = findViewById(R.id.pokreniNumberGame);
         startLetterGameBtn = findViewById(R.id.pokreniIgru);
         startCoinGameBtn = findViewById(R.id.pokreniDruguIgru);
         openSettings = findViewById(R.id.Postavke);
         seeInfo = findViewById(R.id.Info);
-        startNumberGameBtn = findViewById(R.id.pokreniTrecuIgru);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         startLetterGameBtn.setOnClickListener(e -> {
@@ -40,8 +40,8 @@ public class MainMenuActivity extends DaggerActivity {
             this.startActivity(game);
         });
 
-        startNumberGameBtn.setOnClickListener(e -> {
-            Intent game = new Intent(this, NumberGameActivity.class);
+        startNumberGame.setOnClickListener(e -> {
+            Intent game = new Intent(this, hr.fer.zpr.lumen.ui.numbergame.activity.NumberGameActivity.class);
             this.startActivity(game);
         });
 
@@ -54,6 +54,7 @@ public class MainMenuActivity extends DaggerActivity {
             Intent info = new Intent(this, InfoActivity.class);
             this.startActivity(info);
         });
+
     }
 
 }

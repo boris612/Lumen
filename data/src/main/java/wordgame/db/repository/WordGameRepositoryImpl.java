@@ -72,6 +72,19 @@ public class WordGameRepositoryImpl implements WordGameRepository {
     }
 
     @Override
+    public Single<List<Letter>> getAllLettersForLanguage(Language language){
+        List<DbLetter> letters = database.letterDao().getAllLettersForLanguage(database.languageDao().findByValue(language.name().toLowerCase()).id);
+        List<Letter> result = new ArrayList<>();
+        for(int i=0;i<letters.size();i++){
+            DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(letters.get(i).id,database.languageDao().findByValue(language.name().toLowerCase()).id);
+            Sound sound = new Sound(dblr.soundPath);
+            result.add(new Letter(letters.get(i).value, new Image(database.imageDao().getImageById(letters.get(i).imageId).path), sound));
+            letters.remove(i);
+        }
+        return Single.just(result);
+    }
+
+    @Override
     public Single<List<Letter>> getLettersWithImages(List<Letter> letters, Language language) {
         List<Letter> result = new ArrayList<>();
         int languageId = database.languageDao().findByValue(language.name().toLowerCase()).id;

@@ -9,8 +9,10 @@ import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +30,10 @@ import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.IsCreateAllLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.SetCreateAllLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.SetCreateMoreLettersUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.StartGameUseCase;
 import hr.fer.zpr.lumen.wordgame.interactor.UseHintUseCase;
@@ -66,6 +70,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Inject
     SetCreateMoreLettersUseCase setCreateMoreLettersUseCase;
     @Inject
+    IsCreateAllLettersActiveUseCase isCreateAllLettersActiveUseCase;
+    @Inject
+    SetCreateAllLettersUseCase setCreateAllLettersUseCase;
+    @Inject
     ChangeLanguageUseCase changeLanguageUseCase;
     @Inject
     ChangeCategoriesUseCase changeCategoriesUseCase;
@@ -94,6 +102,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     private List<LetterFieldModel> fields;
 
     private CoinModel coin;
+
+    private Map<String, String> fieldLetter = new HashMap<>();
 
     public WordGamePresenterImpl(LumenApplication application) {
         application.getApplicationComponent().inject(this);
@@ -158,6 +168,9 @@ public class WordGamePresenterImpl implements WordGamePresenter {
             randomLetters = manager.getRandomLetters(numToGenerate).blockingGet();
 
         }
+        else if (manager.isCreateAllLettersActive().blockingGet()) {
+            randomLetters = manager.getAllLetters().blockingGet();
+        }
         letters = mapper.mapLetters(currentWord, randomLetters);
         view.addLetters(letters);
 
@@ -209,11 +222,17 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     public void letterInserted(LetterModel letter, LetterFieldModel field) {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
 
-        if (correct && manager.isHintOnCorrectOn().blockingGet()) {
+        //FLASH GREEN ON CORRECT
+        /*if (correct && manager.isHintOnCorrectOn().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
+        }*/
+        
+        if(correct) fieldLetter.put(field.toString(),letter.getValue());
 
-        }
+        //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
+        if(correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
+
         if (manager.areAllFieldsFull().blockingGet()) {
             if (manager.isAnswerCorrect().blockingGet()) {
                 manager.changePhase(WordGamePhase.ENDING);
@@ -230,13 +249,20 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                     DebugUtil.LogDebug(e);
                 }
             }
+            //MARK GREEN CORRECT LETTERS
+            else if(manager.isHintWhenFullOn().blockingGet()){
+                for (LetterFieldModel f : fields)
+                    if(f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
+                        f.setColor(Color.GREEN);
+
+            }
         }
     }
-
 
     @Override
     public void letterRemoved(LetterFieldModel field) {
         removeLetterFromFieldUseCase.execute(fields.indexOf(field)).blockingGet();
+        field.setColor(Color.RED);
     }
 
     @Override
