@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import hr.fer.zpr.lumen.R;
@@ -26,20 +27,30 @@ public class NumberGameActivity extends DaggerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
-
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_number_game);
         setDragAndDropListeners();
 
         generateNumbers();
+
+        checkButton();
+    }
+
+    private void checkButton() {
+        Button checkButton = findViewById(R.id.checkButton);
+        checkButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+            }
+
+        });
     }
 
     private void generateNumbers() {
-        //todo 
+        //todo
         firstNumber = findViewById(R.id.firstNumber);
         firstNumber.setText("2");
         secondNumber = findViewById(R.id.secondNumber);
