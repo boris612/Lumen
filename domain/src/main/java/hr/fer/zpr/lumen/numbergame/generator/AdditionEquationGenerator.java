@@ -18,5 +18,9 @@ public class AdditionEquationGenerator extends EquationGenerator {
         secondNumber = answer - firstNumber;
     }
 
+    public String operationSign(){
+        return "+";
+    }
+
 
 }
