@@ -26,9 +26,9 @@ public class NumberGameActivity extends DaggerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        firstNumber = findViewById(R.id.firstNumber);
-        secondNumber = findViewById(R.id.secondNumber);
-        symbole = findViewById(R.id.symbol);
+
+
+
 
         super.onCreate(savedInstanceState);
 
@@ -39,7 +39,12 @@ public class NumberGameActivity extends DaggerActivity {
     }
 
     private void generateNumbers() {
-
+        firstNumber = findViewById(R.id.firstNumber);
+        firstNumber.setText("2");
+        secondNumber = findViewById(R.id.secondNumber);
+        secondNumber.setText("3");
+        symbole = findViewById(R.id.symbol);
+        symbole.setText("+");
     }
 
     private void setDragAndDropListeners() {
