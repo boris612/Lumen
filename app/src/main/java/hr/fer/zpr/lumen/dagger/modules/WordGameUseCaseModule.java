@@ -5,19 +5,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateAllLettersUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.ChangeMessagesLanguageUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.IsCreateAllLettersActiveUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.SetCreateAllLettersUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.SetCreateMoreLettersUseCase;
-import hr.fer.zpr.lumen.wordgame.interactor.StartGameUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.*;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
 
@@ -33,7 +21,7 @@ public class WordGameUseCaseModule {
 
     @Provides
     @Singleton
-    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase(WordGameManager manager){
+    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase(WordGameManager manager) {
         return new ChangeMessagesLanguageUseCase(manager);
     }
 
@@ -106,5 +94,15 @@ public class WordGameUseCaseModule {
         return new ChangeGreenOnCorrectUseCase(manager);
     }
 
+    @Provides
+    @Singleton
+    ChangeGreenWhenFullUseCase changeGreenWhenFullUseCase(WordGameManager manager) {
+        return new ChangeGreenWhenFullUseCase(manager);
+    }
 
+    @Provides
+    @Singleton
+    ChangeGreenInstantlyUseCase changeGreenInstantlyUseCase(WordGameManager manager) {
+        return new ChangeGreenInstantlyUseCase(manager);
+    }
 }
