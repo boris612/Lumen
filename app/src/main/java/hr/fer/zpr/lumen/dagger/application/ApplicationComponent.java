@@ -10,6 +10,7 @@ import hr.fer.zpr.lumen.dagger.modules.WordGameModule;
 import hr.fer.zpr.lumen.ui.activities.CategorySelectionActivity;
 import hr.fer.zpr.lumen.ui.activities.GameSettingsActivity;
 import hr.fer.zpr.lumen.ui.activities.InfoActivity;
+import hr.fer.zpr.lumen.ui.activities.WordGameSettingsActivity;
 import hr.fer.zpr.lumen.ui.coingame.CoinGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.coingame.CoinGameView;
 import hr.fer.zpr.lumen.ui.coingame.activity.CoinGameActivity;
@@ -44,6 +45,7 @@ public interface ApplicationComponent {
 
     void inject(CoinGameActivity activity);
 
+    void inject(WordGameSettingsActivity activity);
 
     final class Initializer {
 

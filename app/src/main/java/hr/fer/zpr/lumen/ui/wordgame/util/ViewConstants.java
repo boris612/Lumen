@@ -8,6 +8,10 @@ public class ViewConstants {
 
     public static String PREFERENCES_ALL_LETTERS = "all_letters";
 
+    public static String PREFERENCES_VALIDATE_WORD = "validate_word";
+
+    public static String PREFERENCES_VALIDATE_LETTERS = "validate_letters";
+
     public static String PREFERENCES_GREEN_ON_CORRECT = "hint_active";
 
     public static String PREFERENCES_LANGUAGE = "language";
