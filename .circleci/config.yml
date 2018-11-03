@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-cache:
+  build:
     working_directory: ~/code
     docker:
         - image: circleci/android:api-27-alpha
@@ -23,12 +23,8 @@ jobs:
 workflows:
    version: 2
    nightly:
-     triggers:
-       - schedule:
-           cron: "0 0 * * *"
-           filters:
-             branches:
-               only:
-                 - dev
      jobs:
-       - build-cache
+       - build:
+          filters:
+            branches:
+              only: dev
