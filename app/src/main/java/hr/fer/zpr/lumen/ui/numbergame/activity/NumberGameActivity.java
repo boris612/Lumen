@@ -39,6 +39,7 @@ public class NumberGameActivity extends DaggerActivity {
     }
 
     private void generateNumbers() {
+        //todo 
         firstNumber = findViewById(R.id.firstNumber);
         firstNumber.setText("2");
         secondNumber = findViewById(R.id.secondNumber);
