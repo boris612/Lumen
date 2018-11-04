@@ -50,16 +50,16 @@ public class NumberGameActivity extends DaggerActivity {
 
 
 
-                if((numberGamePresenter != null) && (result != null) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
+                if((numberGamePresenter != null) && (result != null) && (!result.getText().toString().isEmpty()) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
                     Toast.makeText(getApplicationContext(),"Rjesenje je tocno",Toast.LENGTH_LONG).show();
                     numberGamePresenter.newEquation();
                     result.setText("");
                 }
-                else if((numberGamePresenter != null) && (result != null) && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
+                else if((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
                     Toast.makeText(getApplicationContext(),"Rjesenje nije tocno, pokusaj ponovno",Toast.LENGTH_LONG).show();
                 }
                 else
-                    Toast.makeText(getApplicationContext(),"Greska",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Nije unesen nijedan broj",Toast.LENGTH_LONG).show();
             }
 
         });
