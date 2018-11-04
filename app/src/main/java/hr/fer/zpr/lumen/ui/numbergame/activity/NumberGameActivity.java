@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.numbergame.manager.Operation;
 
 public class NumberGameActivity extends DaggerActivity {
 
@@ -40,21 +39,16 @@ public class NumberGameActivity extends DaggerActivity {
 
             @Override
             public void onClick(View v) {
-
-
-
-
-
                 if((numberGamePresenter != null) && (result != null) && (!result.getText().toString().isEmpty()) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
                     Toast.makeText(getApplicationContext(),"Rjesenje je tocno",Toast.LENGTH_LONG).show();
                     numberGamePresenter.newEquation();
                     result.setText("");
-                }
-                else if((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
+                } else if((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
                     Toast.makeText(getApplicationContext(),"Rjesenje nije tocno, pokusaj ponovno",Toast.LENGTH_LONG).show();
-                }
-                else
+                    result.setText("");
+                } else {
                     Toast.makeText(getApplicationContext(),"Nije unesen nijedan broj",Toast.LENGTH_LONG).show();
+                }
             }
 
         });
