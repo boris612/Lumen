@@ -103,10 +103,12 @@ public class NumberGameActivity extends DaggerActivity {
     public void setResult(String newDigit) {
         String oldDigits = result.getText().toString();
         int digitsLength = oldDigits.length();
+
         if(digitsLength > MAX_DIGITS_NUMBER_IN_ANSWER) return;
         if(digitsLength == 1 && oldDigits.equals("0") && !newDigit.equals("0")){
             oldDigits = "";
         }
+
         oldDigits += newDigit;
         result.setText(oldDigits);
     }
