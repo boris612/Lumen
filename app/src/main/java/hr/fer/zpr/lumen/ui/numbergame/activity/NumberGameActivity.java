@@ -9,10 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.numbergame.generator.EquationGenerator;
-import hr.fer.zpr.lumen.numbergame.manager.NumbergameManager;
 import hr.fer.zpr.lumen.numbergame.manager.Operation;
 
 public class NumberGameActivity extends DaggerActivity {
@@ -23,6 +22,7 @@ public class NumberGameActivity extends DaggerActivity {
     private TextView firstNumber;
     private TextView secondNumber;
     private TextView symbole;
+    private NumberGamePresenter numberGamePresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +30,13 @@ public class NumberGameActivity extends DaggerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_number_game);
+        gameSetup();
+
         setDragAndDropListeners();
-
-        generateNumbers();
-
         checkButton();
+
+
+
     }
 
     private void checkButton() {
@@ -44,19 +46,32 @@ public class NumberGameActivity extends DaggerActivity {
             @Override
             public void onClick(View v) {
 
+
+
+
+
+                if((numberGamePresenter != null) && (result != null) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
+                    Toast.makeText(getApplicationContext(),"Rjesenje je tocno",Toast.LENGTH_LONG).show();
+                    numberGamePresenter.newEquation();
+                    result.setText("");
+                }
+                else if((numberGamePresenter != null) && (result != null) && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))){
+                    Toast.makeText(getApplicationContext(),"Rjesenje nije tocno, pokusaj ponovno",Toast.LENGTH_LONG).show();
+                }
+                else
+                    Toast.makeText(getApplicationContext(),"Greska",Toast.LENGTH_LONG).show();
             }
 
         });
     }
 
-    private void generateNumbers() {
-        //todo
+    private void gameSetup() {
         firstNumber = findViewById(R.id.firstNumber);
-        firstNumber.setText("2");
         secondNumber = findViewById(R.id.secondNumber);
-        secondNumber.setText("3");
         symbole = findViewById(R.id.symbol);
-        symbole.setText("+");
+        result = findViewById(R.id.result);
+        numberGamePresenter=new NumberGamePresenter(firstNumber,secondNumber,symbole);
+        numberGamePresenter.newEquation();
     }
 
     private void setDragAndDropListeners() {
@@ -68,7 +83,7 @@ public class NumberGameActivity extends DaggerActivity {
             textView.setOnClickListener(new ClickListener());
         }
 
-        result = findViewById(R.id.result);
+      //  result = findViewById(R.id.result);
      //   result.setOnDragListener(new DragListener());
         result.setOnClickListener(new ClickListener());
     }

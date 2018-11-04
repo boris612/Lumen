@@ -2,11 +2,12 @@ package hr.fer.zpr.lumen.numbergame.manager;
 
 import hr.fer.zpr.lumen.numbergame.generator.*;
 
-public class NumbergameManager {
+public class NumberGameManager {
 
 
     private EquationGenerator equationGenerator;
-    public NumbergameManager(Operation operation){
+    private Operation operation=NumberGameConstants.operation;
+    public NumberGameManager(){
         switch(operation){
             case ADDITION:
                 equationGenerator=new AdditionEquationGenerator(EquationConstants.additionLimit);
