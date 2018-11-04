@@ -3,20 +3,15 @@ package hr.fer.zpr.lumen.ui.numbergame.activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.numbergame.generator.EquationGenerator;
-import hr.fer.zpr.lumen.numbergame.manager.NumbergameManager;
-import hr.fer.zpr.lumen.numbergame.manager.Operation;
 
-public class NumberGameActivity extends DaggerActivity implements View.OnDragListener{
+public class NumberGameActivity extends DaggerActivity {
 
     private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 3;
     private LinearLayout linearLayout;
@@ -24,12 +19,9 @@ public class NumberGameActivity extends DaggerActivity implements View.OnDragLis
     private TextView firstNumber;
     private TextView secondNumber;
     private TextView symbol;
-    private float downX;
-    private float downY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_number_game);
@@ -64,6 +56,7 @@ public class NumberGameActivity extends DaggerActivity implements View.OnDragLis
 
     private void setDragAndDropListeners() {
         linearLayout = findViewById(R.id.digits);
+        result = findViewById(R.id.result);
 
         for (int i = 0, nChildren = linearLayout.getChildCount(); i < nChildren; i++) {
             TextView textView = (TextView) linearLayout.getChildAt(i);
@@ -71,52 +64,51 @@ public class NumberGameActivity extends DaggerActivity implements View.OnDragLis
             textView.setOnClickListener(new ClickListener());
         }
 
-        findViewById(R.id.relative_layout).setOnDragListener(this);
-        result = findViewById(R.id.result);
-        result.setOnDragListener(this);
+        findViewById(R.id.digits).getRootView().setOnDragListener(new DragListener());
+        findViewById(R.id.equation).getRootView().setOnDragListener(new DragListener());
+
+        result.getRootView().setOnDragListener(new DragListener());
         result.setOnClickListener(new ClickListener());
     }
 
-    @Override
-    public boolean onDrag(View layoutView, DragEvent dragEvent) {
-        int action = dragEvent.getAction();
-        Log.d("tu sam","tu sma");
-        Log.d("action",String.valueOf(action));
-        Log.d("event" ,String.valueOf(DragEvent.ACTION_DROP));
-        if(action == DragEvent.ACTION_DROP) {
-            Log.d("drop", "drop");
-            View view = (View) dragEvent.getLocalState();
-//                    float userX = dragEvent.getX();
-//                    float userY = dragEvent.getY();
-////                    float userX = downX;
-////                    float userY = downY;
-//
-//                    float textViewX = result.getLeft();
-//                    float textViewY = result.getTop();
-//                    float textViewWidth = result.getWidth();
-//                    float textViewHeight = result.getHeight();
-//
-//
-//                    Log.d("x", String.valueOf(userX));
-//                    Log.d("x", String.valueOf(textViewX));
-//                    Log.d("x", String.valueOf(textViewX+textViewWidth));
-//
-//
-//                    Log.d("y", String.valueOf(userY));
-//                    Log.d("x", String.valueOf(textViewY));
-//                    Log.d("x", String.valueOf(textViewHeight+textViewY));
+    class DragListener implements View.OnDragListener {
 
-            TextView dropTarget = (TextView)layoutView;
-            TextView dropped = (TextView)view;
+        @Override
+        public boolean onDrag(View layoutView, DragEvent dragEvent) {
+            int action = dragEvent.getAction();
 
-//                    if(userX >= textViewX && userX <= textViewX + textViewWidth &&
-//                            userY >= textViewY && userY <= textViewY + textViewHeight) {
-            dropTarget.setText(dropped.getText());
-            return true;
-//                    }
-//                    return  false;
+            if (action == DragEvent.ACTION_DROP) {
+                View view = (View) dragEvent.getLocalState();
+                TextView dropped = (TextView) view;
+
+                float userX = dragEvent.getX();
+                float userY = dragEvent.getY();
+
+                float textViewX = result.getLeft();
+                float textViewY = result.getTop();
+                float textViewWidth = result.getWidth();
+                float textViewHeight = result.getHeight();
+
+                if (userX >= textViewX && userX <= textViewX + textViewWidth &&
+                        userY >= textViewY && userY <= textViewY + textViewHeight) {
+                    setResult(dropped.getText().toString());
+                    return true;
+                }
+            }
+
+            return false;
         }
-        return false;
+    }
+
+    public void setResult(String newDigit) {
+        String oldDigits = result.getText().toString();
+        int digitsLength = oldDigits.length();
+        if(digitsLength > MAX_DIGITS_NUMBER_IN_ANSWER) return;
+        if(digitsLength == 1 && oldDigits.equals("0") && !newDigit.equals("0")){
+            oldDigits = "";
+        }
+        oldDigits += newDigit;
+        result.setText(oldDigits);
     }
 
     class ClickListener implements View.OnClickListener {
@@ -127,15 +119,7 @@ public class NumberGameActivity extends DaggerActivity implements View.OnDragLis
             if(result.getId() == textView.getId()){
                 result.setText("");
             } else {
-                String oldDigits = result.getText().toString();
-                String newDigit = textView.getText().toString();
-                int digitsLength = oldDigits.length();
-                if(digitsLength > MAX_DIGITS_NUMBER_IN_ANSWER) return;
-                if(digitsLength == 1 && oldDigits.equals("0") && !newDigit.equals("0")){
-                    oldDigits = "";
-                }
-                oldDigits += newDigit;
-                result.setText(oldDigits);
+                setResult(textView.getText().toString());
             }
         }
 
@@ -159,13 +143,11 @@ public class NumberGameActivity extends DaggerActivity implements View.OnDragLis
                     item
             );
 
-            v.startDrag(dragData,
+            return v.startDrag(dragData,
                     new View.DragShadowBuilder(textView),
-                    textView,
+                    v,
                     0
             );
-
-            return true;
         }
 
     }
