@@ -114,7 +114,7 @@ public class NumberGameActivity extends DaggerActivity {
         int digitsLength = oldDigits.length();
 
         if(digitsLength > MAX_DIGITS_NUMBER_IN_ANSWER) return;
-        if(digitsLength == 1 && oldDigits.equals("0") && !newDigit.equals("0")){
+        if(oldDigits.startsWith("0") && newDigit != null){
             oldDigits = "";
         }
 
