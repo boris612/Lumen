@@ -65,7 +65,7 @@ public class NumberGameActivity extends DaggerActivity {
         secondNumber = findViewById(R.id.secondNumber);
         symbol = findViewById(R.id.symbol);
         result = findViewById(R.id.result);
-        numberGamePresenter=new NumberGamePresenter(firstNumber,secondNumber,symbole);
+        numberGamePresenter=new NumberGamePresenter(firstNumber,secondNumber,symbol);
         numberGamePresenter.newEquation();
     }
 
