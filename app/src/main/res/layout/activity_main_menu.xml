@@ -31,25 +31,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/pokreniTrecuIgru"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="250dp"
-        android:layout_marginTop="32dp"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        android:shadowColor="#1C07A8"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="5"
-        android:src="@drawable/number_game"
+            android:id="@+id/pokreniTrecuIgru"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:shadowColor="#1C07A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:src="@drawable/numbergame"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginStart="96dp"
+            app:layout_constraintStart_toEndOf="@+id/pokreniIgru"
+            app:layout_constraintEnd_toStartOf="@+id/pokreniDruguIgru" android:layout_marginEnd="96dp"/>
 
     <ImageButton
         android:id="@+id/pokreniDruguIgru"

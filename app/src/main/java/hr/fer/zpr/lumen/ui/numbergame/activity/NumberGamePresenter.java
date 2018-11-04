@@ -4,22 +4,21 @@ import android.widget.TextView;
 
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameConstants;
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameMode;
-import hr.fer.zpr.lumen.numbergame.manager.NumbergameManager;
-import hr.fer.zpr.lumen.numbergame.manager.Operation;
+import hr.fer.zpr.lumen.numbergame.manager.NumberGameManager;
 
 
 public class NumberGamePresenter {
 
-    private NumbergameManager numbergameManager;
+    private NumberGameManager numbergameManager;
     private TextView firstNumberTv;
     private TextView secondNumberTv;
     private TextView operationTv;
 
-    public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView operationTv, Operation operation ){
+    public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView operationTv ){
         this.firstNumberTv=firstNumberTv;
         this.secondNumberTv=secondNumberTv;
         this.operationTv=operationTv;
-        numbergameManager=new NumbergameManager(operation);
+        numbergameManager=new NumberGameManager();
     }
 
     public void newEquation(){
@@ -30,12 +29,14 @@ public class NumberGamePresenter {
 
     }
 
-    public void checkSolution(int solution){
+    public boolean checkSolution(int solution){
         if(isSolution(solution)){
             showSolutionIsCorrect();
+            return true;
         }
         else
             showSolutionIsIncorrect();
+        return false;
     }
 
     private void showSolutionIsIncorrect() {
