@@ -72,6 +72,7 @@ public class NumberGameActivity extends DaggerActivity {
         result = findViewById(R.id.result);
         numberGamePresenter=new NumberGamePresenter(firstNumber,secondNumber,symbole);
         numberGamePresenter.newEquation();
+
     }
 
     private void setDragAndDropListeners() {

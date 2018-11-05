@@ -14,6 +14,8 @@ public class NumberGamePresenter {
     private TextView secondNumberTv;
     private TextView operationTv;
 
+
+
     public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView operationTv ){
         this.firstNumberTv=firstNumberTv;
         this.secondNumberTv=secondNumberTv;
@@ -60,5 +62,6 @@ public class NumberGamePresenter {
         return false;
 
     }
+
 
 }
