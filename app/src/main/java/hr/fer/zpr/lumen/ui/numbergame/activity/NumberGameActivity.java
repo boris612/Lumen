@@ -2,6 +2,7 @@ package hr.fer.zpr.lumen.ui.numbergame.activity;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.View;
@@ -11,9 +12,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.numbergame.manager.EquationConstants;
+import hr.fer.zpr.lumen.numbergame.manager.NumberGameConstants;
+import hr.fer.zpr.lumen.numbergame.manager.NumberGamePreferences;
+
+import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NumberGameActivity extends DaggerActivity {
 
+    @Inject
+    SharedPreferences pref;
+    private Set<String> additionSet=new HashSet<>();
     private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 3;
     private LinearLayout linearLayout;
     private TextView result;
@@ -25,12 +36,36 @@ public class NumberGameActivity extends DaggerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_number_game);
+        additionSet.add("ADDITION");
+        setSettings();
         gameSetup();
-
         setDragAndDropListeners();
         checkButton();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setSettings();
+        gameSetup();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setSettings();
+        gameSetup();
+    }
+
+    private void setSettings() {
+        NumberGameConstants.operations=pref.getStringSet(NumberGamePreferences.OPERATIONS.name(),additionSet);
+        NumberGameConstants.numberGameMode=pref.getString(NumberGamePreferences.GAMEMODE.name(),"ADDITION");
+        EquationConstants.setAdditionLimit(pref.getInt(NumberGamePreferences.ADDITIONLIMIT.name(),20));
+        EquationConstants.setSubtractionLimit(pref.getInt(NumberGamePreferences.SUBTRACTIONLIMIT.name(),100));
+        EquationConstants.setMultiplicationLimit(pref.getInt(NumberGamePreferences.MULTIPLICATIONLIMIT.name(),10));
+        EquationConstants.setDivisionLimit(pref.getInt(NumberGamePreferences.DIVISIONLIMIT.name(),10));
+
     }
 
     private void checkButton() {
