@@ -36,6 +36,7 @@ public class NumberGameActivity extends DaggerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getLumenApplication().getApplicationComponent().inject(this);
         setContentView(R.layout.activity_number_game);
         additionSet.add("ADDITION");
         setSettings();
@@ -60,7 +61,7 @@ public class NumberGameActivity extends DaggerActivity {
 
     private void setSettings() {
         NumberGameConstants.operations=pref.getStringSet(NumberGamePreferences.OPERATIONS.name(),additionSet);
-        NumberGameConstants.numberGameMode=pref.getString(NumberGamePreferences.GAMEMODE.name(),"ADDITION");
+        NumberGameConstants.numberGameMode=pref.getString(NumberGamePreferences.GAMEMODE.name(),"CHECKANSWER");
         EquationConstants.setAdditionLimit(pref.getInt(NumberGamePreferences.ADDITIONLIMIT.name(),20));
         EquationConstants.setSubtractionLimit(pref.getInt(NumberGamePreferences.SUBTRACTIONLIMIT.name(),100));
         EquationConstants.setMultiplicationLimit(pref.getInt(NumberGamePreferences.MULTIPLICATIONLIMIT.name(),10));

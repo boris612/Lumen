@@ -19,16 +19,16 @@ public class NumberGameManager {
         for (String s:operations) {
             switch(s){
                 case "ADDITION":
-                    equationGenerators.put(Integer.toString(++i),new AdditionEquationGenerator(EquationConstants.additionLimit));
+                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.additionLimit));
                     break;
                 case "SUBTRACTION":
-                    equationGenerators.put(Integer.toString(++i),new AdditionEquationGenerator(EquationConstants.subtractionLimit));
+                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.subtractionLimit));
                     break;
                 case "MULTIPLICATION":
-                    equationGenerators.put(Integer.toString(++i),new AdditionEquationGenerator(EquationConstants.multiplicationLimit));
+                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.multiplicationLimit));
                     break;
                 case "DIVISION":
-                    equationGenerators.put(Integer.toString(++i),new AdditionEquationGenerator(EquationConstants.divisionLimit));
+                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.divisionLimit));
                     break;
             }
         }
@@ -53,7 +53,7 @@ public class NumberGameManager {
     }
 
     public void newEquation(){
-        int numberOfGenerator=rand.nextInt(equationGenerators.size()-1);
+        int numberOfGenerator=rand.nextInt(equationGenerators.size());
         activeEquationGenerator=Integer.toString(numberOfGenerator);
         equationGenerators.get(activeEquationGenerator).generateEquation();
 
