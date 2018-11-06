@@ -54,4 +54,5 @@ public class LetterModel extends GameDrawable {
         }
         super.draw(canvas);
     }
+
 }

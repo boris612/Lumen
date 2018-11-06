@@ -19,4 +19,7 @@ public class MultiplicationEquationGenerator extends EquationGenerator {
         answer = firstNumber * secondNumber;
     }
 
+    public String operationSign(){
+        return "*";
+    }
 }
