@@ -15,6 +15,9 @@ public class AdditionEquationGenerator extends EquationGenerator {
         NumberGenerator numberGenerator = new NumberGenerator();
         answer = numberGenerator.randomNumber(1, limitNumber);
         firstNumber = numberGenerator.randomNumber(0, answer);
+        if((firstNumber==0||firstNumber==answer)&&Math.random()<=0.5){
+            firstNumber=numberGenerator.randomNumber(answer/2,answer-1);
+        }
         secondNumber = answer - firstNumber;
     }
 
