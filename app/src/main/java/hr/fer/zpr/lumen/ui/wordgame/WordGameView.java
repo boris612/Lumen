@@ -1,15 +1,11 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
+import android.graphics.*;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -281,12 +277,53 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void addAllLetters(List<LetterModel> letters) {
-        LinearLayout linearLayout=new LinearLayout(context);
+        LinearLayout linearLayout = new LinearLayout(context);
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
         for (LetterModel letter : letters) {
-            ImageView imageView = new ImageView(context);
+            ImageView imageView = new AppCompatImageView(context) {
+                @Override
+                public boolean performClick() {
+                    return super.performClick();
+                }
+            };
+
             imageView.setImageBitmap(letter.getImage());
+            imageView.setLayoutParams(layoutParams);
+            imageView.setX(40);
             linearLayout.addView(imageView);
+
+            imageView.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    boolean handled = false;
+                    LetterModel touchedLetter;
+                    int xTouch;
+                    int yTouch;
+                    int pointerId;
+
+                    xTouch = (int) view.getX();
+                    yTouch = (int) view.getY();
+                    if (coin.isTouched(xTouch, yTouch)) presenter.hintPressed();
+                    touchedLetter = getTouchedLetter(xTouch, yTouch);
+                    if (touchedLetter == null) return true;
+                    touchedLetter.setCenter(xTouch, yTouch);
+                    setLetterBeingDragged(touchedLetter);
+
+                    invalidate();
+                    handled = true;
+
+                    return false;
+                }
+            });
+
+//            imageView.setOnDragListener(new OnDragListener() {
+//                @Override
+//                public boolean onDrag(View view, DragEvent dragEvent) {
+//                   letter.setCenter(50,50);
+//                   return true;
+//                }
+//            });
         }
 
         runOnUiThread(new Runnable() {

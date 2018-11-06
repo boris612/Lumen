@@ -40,7 +40,8 @@ public class WordGameActivity extends DaggerActivity {
         constraintLayout.addView(view);
         constraintLayout.addView(scrollView);
         scrollView.setX(0);
-        scrollView.setY(600);
+        scrollView.setY(630);
+        scrollView.setBottom(View.SCROLL_INDICATOR_BOTTOM);
 //do tud
         presenter.setView(view);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
