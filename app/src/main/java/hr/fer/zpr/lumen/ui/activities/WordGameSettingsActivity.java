@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 public class WordGameSettingsActivity extends DaggerActivity {
 
-    private Button greenWhenCorrectBtn;
     private Button addMoreLettersBtn;
     private Button showAllLettersBtn;
     private ImageButton returnBtn;
@@ -54,7 +53,6 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         showAllLettersBtn = findViewById(R.id.GenerateAllLettersButton);
         returnBtn = findViewById(R.id.returnButton);
-        greenWhenCorrectBtn = findViewById(R.id.GreenWhenCorrectButton);
         addMoreLettersBtn = findViewById(R.id.GenerateMoreLettersButton);
         categoriesBtn = findViewById(R.id.categoryButton);
         validateWordBtn = findViewById(R.id.ValidateAllLetters);
@@ -64,15 +62,6 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         setButtonsInitialColor();
         setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
-
-        greenWhenCorrectBtn.setOnClickListener(e -> {
-            boolean correct = pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false);
-            if (!correct) greenWhenCorrectBtn.setBackgroundColor(Color.GREEN);
-            else greenWhenCorrectBtn.setBackgroundColor(Color.RED);
-            editor.putBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, !correct);
-            editor.commit();
-            changeGreenOnCorrectUseCase.execute(!correct).subscribe();
-        });
 
         addMoreLettersBtn.setOnClickListener(e -> {
             boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
@@ -152,10 +141,6 @@ public class WordGameSettingsActivity extends DaggerActivity {
     }
 
     private void setButtonsInitialColor() {
-        if (pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false))
-            greenWhenCorrectBtn.setBackgroundColor(Color.GREEN);
-        else greenWhenCorrectBtn.setBackgroundColor(Color.RED);
-
         if (pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false))
             addMoreLettersBtn.setBackgroundColor(Color.GREEN);
         else addMoreLettersBtn.setBackgroundColor(Color.RED);
@@ -174,10 +159,10 @@ public class WordGameSettingsActivity extends DaggerActivity {
     }
 
     private void setLanguageValues(String newLanguage) {
-        categoriesBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.GUI_LANGUAGE_PROPERTY));
+        categoriesBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CATEGORIES_PROPERTY));
         addMoreLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_MORE_LETTERS_PROPERTY));
         showAllLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_ALL_LETTERS_PROPERTY));
         validateWordBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.VALIDATE_WORD_PROPERTY));
         validateLetterByLetterBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.VALIDATE_LETTERS_PROPERTY));
-        greenWhenCorrectBtn.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.GREEN_ON_CORRECT_PROPERTY)) ;}
+    }
 }

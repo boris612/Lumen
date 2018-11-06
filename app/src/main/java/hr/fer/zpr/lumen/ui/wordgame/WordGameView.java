@@ -3,6 +3,7 @@ package hr.fer.zpr.lumen.ui.wordgame;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
 import android.util.SparseArray;
@@ -16,16 +17,20 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import android.widget.*;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
+import hr.fer.zpr.lumen.wordgame.model.Letter;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+
+import static com.google.android.gms.internal.zzagr.runOnUiThread;
 
 
 public class WordGameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -45,7 +50,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private ImageModel image;
     private LetterModel draggedLetter;
     private LetterFieldModel fieldOfLetterDraggedOutOffield;
-
+    private HorizontalScrollView scrollView;
+    private Canvas canvas;
 
     public WordGameView(LumenApplication context) {
         super(context);
@@ -56,6 +62,9 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         screenWidth = context.getResources().getDisplayMetrics().widthPixels;
     }
 
+    public void setScrollView(HorizontalScrollView scrollView) {
+        this.scrollView = scrollView;
+    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -87,6 +96,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        this.canvas = canvas;
         canvas.drawColor(Color.WHITE);
         List<GameDrawable> copy = new ArrayList<>(drawables);
         for (GameDrawable drawable : copy) drawable.draw(canvas);
@@ -268,6 +278,26 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void addFields(List<LetterFieldModel> fields) {
         this.drawables.addAll(fields);
         this.fields = fields;
+    }
+
+    public void addAllLetters(List<LetterModel> letters) {
+        LinearLayout linearLayout=new LinearLayout(context);
+
+        for (LetterModel letter : letters) {
+            ImageView imageView = new ImageView(context);
+            imageView.setImageBitmap(letter.getImage());
+            linearLayout.addView(imageView);
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.addView(linearLayout);
+            }
+        });
+
+        this.letters = letters;
+
     }
 
     public void addLetters(List<LetterModel> letters) {
