@@ -8,4 +8,6 @@ public interface IEquationGenerator {
     public int getFirstNumber();
 
     public int getSecondNumber();
+
+    public String operationSign();
 }

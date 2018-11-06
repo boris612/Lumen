@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 
-public class MainMenuActivity extends DaggerActivity {
 
+public class MainMenuActivity extends DaggerActivity {
 
     ImageButton startLetterGameBtn;
     ImageButton startCoinGameBtn;
@@ -24,7 +25,7 @@ public class MainMenuActivity extends DaggerActivity {
         component.inject(this);
         setContentView(R.layout.activity_main_menu);
 
-        startNumberGame = findViewById(R.id.pokreniNumberGame);
+        startNumberGame = findViewById(R.id.pokreniTrecuIgru);
         startLetterGameBtn = findViewById(R.id.pokreniIgru);
         startCoinGameBtn = findViewById(R.id.pokreniDruguIgru);
         openSettings = findViewById(R.id.Postavke);

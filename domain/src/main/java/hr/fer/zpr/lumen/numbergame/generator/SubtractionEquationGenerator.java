@@ -18,5 +18,8 @@ public class SubtractionEquationGenerator extends EquationGenerator {
         secondNumber = firstNumber - answer;
     }
 
+    public String operationSign(){
+        return "-";
+    }
 
 }
