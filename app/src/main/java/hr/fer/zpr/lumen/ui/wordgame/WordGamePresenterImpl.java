@@ -171,11 +171,12 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
             letters = mapper.mapAllLetters(randomLetters);
+            view.addAllLetters(letters); return;
         }else{
             letters = mapper.mapLetters(currentWord, randomLetters);
         }
-
         view.addLetters(letters);
+
 
     }
 

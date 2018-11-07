@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.view.View;
 
 public abstract class GameDrawable {
 
@@ -32,7 +33,7 @@ public abstract class GameDrawable {
 
     public void draw(Canvas canvas) {
         if (image == null) return;
-        
+
         canvas.drawBitmap(image, null, rectangle, new Paint());
     }
 
@@ -61,5 +62,9 @@ public abstract class GameDrawable {
 
     public int getHeight() {
         return height;
+    }
+
+    public Bitmap getImage(){
+        return this.image;
     }
 }
