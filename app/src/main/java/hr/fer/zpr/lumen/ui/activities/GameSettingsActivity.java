@@ -64,6 +64,7 @@ public class GameSettingsActivity extends DaggerActivity {
     private TextView coins;
     private Button guiLanguageButton;
     private Button wordGameBtn;
+    private Button numberGameBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class GameSettingsActivity extends DaggerActivity {
         returnBtn = findViewById(R.id.returnButton);
         guiLanguageButton = findViewById(R.id.guilanguageButton);
         wordGameBtn=findViewById(R.id.wordGameSettings);
+        numberGameBtn = findViewById(R.id.numberGameSettings);
         coinNumber.setText(String.valueOf(pref.getInt(getResources().getString(R.string.coins), 0)));
         setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
 
@@ -125,6 +127,11 @@ public class GameSettingsActivity extends DaggerActivity {
 
         wordGameBtn.setOnClickListener(e -> {
             Intent settings = new Intent(this, WordGameSettingsActivity.class);
+            this.startActivity(settings);
+        });
+
+        numberGameBtn.setOnClickListener(e -> {
+            Intent settings = new Intent(this, NumberGameSettingsActivity.class);
             this.startActivity(settings);
         });
     }

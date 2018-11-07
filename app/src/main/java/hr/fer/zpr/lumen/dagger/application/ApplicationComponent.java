@@ -14,6 +14,7 @@ import hr.fer.zpr.lumen.ui.activities.WordGameSettingsActivity;
 import hr.fer.zpr.lumen.ui.coingame.CoinGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.coingame.CoinGameView;
 import hr.fer.zpr.lumen.ui.coingame.activity.CoinGameActivity;
+import hr.fer.zpr.lumen.ui.numbergame.activity.NumberGameActivity;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameActivity;
 import hr.fer.zpr.lumen.ui.wordgame.WordGamePresenterImpl;
 import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
@@ -22,8 +23,9 @@ import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
 @Component(modules = {ApplicationModule.class, WordGameUseCaseModule.class, WordGameModule.class, CoinGameModule.class})
 public interface ApplicationComponent {
 
-
     void inject(LumenApplication application);
+
+    void inject(NumberGameActivity activity);
 
     void inject(WordGamePresenterImpl presenter);
 

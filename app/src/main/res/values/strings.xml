@@ -22,8 +22,21 @@
     <string name="oAplikaciji3">Mentor: Boris Milašinović</string>
     <string name="oAplikaciji4">FER 2018.</string>
     <string name="word_game_settings">Word game settings</string>
+    <string name="number_game_settings">Number game settings</string>
     <string name="coin_game_settings">Coin game settings</string>
     <string name="calculating_game_settings">Calculating game settings</string>
-
+    <string name="permutation">Permutation</string>
+    <string name="addition_lvl_1">Addition level 1</string>
+    <string name="addition_lvl_2">Addition level 2</string>
+    <string name="addition_lvl_3">Addition level 3</string>
+    <string name="subtraction_lvl_1">Subtraction level 1</string>
+    <string name="subtraction_lvl_2">Subtraction level 2</string>
+    <string name="subtraction_lvl_3">Subtraction level 3</string>
+    <string name="multiplication_lvl_1">Multiplication level 1</string>
+    <string name="multiplication_lvl_2">Multiplication level 2</string>
+    <string name="multiplication_lvl_3">Multiplication level 3</string>
+    <string name="division_lvl_1">Division level 1</string>
+    <string name="division_lvl_2">Division level 2</string>
+    <string name="division_lvl_3">Division level 3</string>
 
 </resources>
