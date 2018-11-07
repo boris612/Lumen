@@ -26,17 +26,22 @@
     <string name="coin_game_settings">Coin game settings</string>
     <string name="calculating_game_settings">Calculating game settings</string>
     <string name="permutation">Permutation</string>
-    <string name="addition_lvl_1">Addition level 1</string>
-    <string name="addition_lvl_2">Addition level 2</string>
-    <string name="addition_lvl_3">Addition level 3</string>
-    <string name="subtraction_lvl_1">Subtraction level 1</string>
-    <string name="subtraction_lvl_2">Subtraction level 2</string>
-    <string name="subtraction_lvl_3">Subtraction level 3</string>
-    <string name="multiplication_lvl_1">Multiplication level 1</string>
-    <string name="multiplication_lvl_2">Multiplication level 2</string>
-    <string name="multiplication_lvl_3">Multiplication level 3</string>
-    <string name="division_lvl_1">Division level 1</string>
-    <string name="division_lvl_2">Division level 2</string>
-    <string name="division_lvl_3">Division level 3</string>
+    <string name="on_click">On click</string>
+    <string name="additionCB">Addition</string>
+    <string name="addition_lvl_1">level 1</string>
+    <string name="addition_lvl_2">level 2</string>
+    <string name="addition_lvl_3">level 3</string>
+    <string name="subtractionCB">Subtraction</string>
+    <string name="subtraction_lvl_1">level 1</string>
+    <string name="subtraction_lvl_2">level 2</string>
+    <string name="subtraction_lvl_3">level 3</string>
+    <string name="multiplicationCB">Multiplication</string>
+    <string name="multiplication_lvl_1">level 1</string>
+    <string name="multiplication_lvl_2">level 2</string>
+    <string name="multiplication_lvl_3">level 3</string>
+    <string name="divisionCB">Division</string>
+    <string name="division_lvl_1">level 1</string>
+    <string name="division_lvl_2">level 2</string>
+    <string name="division_lvl_3">level 3</string>
 
 </resources>
