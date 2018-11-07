@@ -32,15 +32,38 @@
         android:layout_marginTop="20dp"
         android:text="@string/permutation"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/onClick"
+        app:layout_constraintTop_toBottomOf="@+id/number_game_settings" />
+
+    <CheckBox
+        android:id="@+id/onClick"
+        android:layout_width="123dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/on_click"
+        app:layout_constraintLeft_toLeftOf="@id/permutation"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/number_game_settings" />
 
+
+    <CheckBox
+        android:id="@+id/additionCB"
+        android:layout_width="123dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="40dp"
+        android:text="@string/additionCB"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/addition"
+        app:layout_constraintTop_toBottomOf="@+id/permutation" />
     <RadioGroup
         android:id="@+id/addition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="20dp"
+        android:layout_marginLeft="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/permutation">
@@ -69,11 +92,24 @@
             />
     </RadioGroup>
 
+
+    <CheckBox
+        android:id="@+id/subtractionCB"
+        android:layout_width="123dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/subtractionCB"
+        android:layout_marginLeft="40dp"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/subtraction"
+        app:layout_constraintTop_toBottomOf="@+id/addition" />
     <RadioGroup
         android:id="@+id/subtraction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -103,12 +139,24 @@
             />
     </RadioGroup>
 
+    <CheckBox
+        android:id="@+id/multiplicationCB"
+        android:layout_width="123dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/multiplicationCB"
+        android:layout_marginLeft="40dp"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/multiplication"
+        app:layout_constraintTop_toBottomOf="@+id/subtraction" />
     <RadioGroup
         android:id="@+id/multiplication"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="20dp"
+        android:layout_marginLeft="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/subtraction">
@@ -137,11 +185,24 @@
             />
     </RadioGroup>
 
+
+    <CheckBox
+        android:id="@+id/divisionCB"
+        android:layout_width="123dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/divisionCB"
+        android:layout_marginLeft="40dp"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/division"
+        app:layout_constraintTop_toBottomOf="@+id/multiplication" />
     <RadioGroup
         android:id="@+id/division"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
