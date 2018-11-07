@@ -44,6 +44,9 @@
         <activity
                 android:name=".ui.activities.WordGameSettingsActivity"
                 android:screenOrientation="landscape"/>
+        <activity
+            android:name=".ui.activities.NumberGameSettingsActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

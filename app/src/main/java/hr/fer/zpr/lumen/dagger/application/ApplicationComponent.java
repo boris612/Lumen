@@ -23,8 +23,9 @@ import hr.fer.zpr.lumen.ui.wordgame.WordGameView;
 @Component(modules = {ApplicationModule.class, WordGameUseCaseModule.class, WordGameModule.class, CoinGameModule.class})
 public interface ApplicationComponent {
 
-
     void inject(LumenApplication application);
+
+    void inject(NumberGameActivity activity);
 
     void inject(WordGamePresenterImpl presenter);
 
