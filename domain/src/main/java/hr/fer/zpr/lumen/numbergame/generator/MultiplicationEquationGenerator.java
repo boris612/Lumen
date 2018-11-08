@@ -20,6 +20,6 @@ public class MultiplicationEquationGenerator extends EquationGenerator {
     }
 
     public String operationSign(){
-        return "*";
+        return "x";
     }
 }

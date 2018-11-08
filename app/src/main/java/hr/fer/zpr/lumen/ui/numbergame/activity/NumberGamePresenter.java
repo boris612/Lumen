@@ -14,6 +14,8 @@ public class NumberGamePresenter {
     private TextView secondNumberTv;
     private TextView operationTv;
 
+
+
     public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView operationTv ){
         this.firstNumberTv=firstNumberTv;
         this.secondNumberTv=secondNumberTv;
@@ -48,17 +50,18 @@ public class NumberGamePresenter {
     }
 
     private boolean isSolution(int solution){
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKANSWER &&numbergameManager.getEquationGenerator().getAnswer()==solution) {
+        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKANSWER.name() &&numbergameManager.getEquationGenerator().getAnswer()==solution) {
             return true;
         }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKFIRSTNUMBER&&numbergameManager.getEquationGenerator().getFirstNumber()==solution) {
+        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKFIRSTNUMBER.name()&&numbergameManager.getEquationGenerator().getFirstNumber()==solution) {
             return true;
         }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKSECONDNUMBER&&numbergameManager.getEquationGenerator().getSecondNumber()==solution) {
+        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKSECONDNUMBER.name()&&numbergameManager.getEquationGenerator().getSecondNumber()==solution) {
             return true;
         }
         return false;
 
     }
+
 
 }

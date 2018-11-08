@@ -49,6 +49,8 @@ public interface ApplicationComponent {
 
     void inject(WordGameSettingsActivity activity);
 
+    void inject(NumberGameActivity activity);
+
     final class Initializer {
 
         static public ApplicationComponent init(final LumenApplication lumenApplication) {
