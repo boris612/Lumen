@@ -67,4 +67,5 @@ public abstract class GameDrawable {
     public Bitmap getImage(){
         return this.image;
     }
+
 }
