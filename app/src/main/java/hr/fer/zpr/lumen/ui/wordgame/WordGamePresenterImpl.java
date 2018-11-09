@@ -176,10 +176,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     }
 
-
-
-
-
     @Override
     public void startGame() {
         Set<Category> categories = getCategories();
