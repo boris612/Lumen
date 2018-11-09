@@ -57,6 +57,7 @@ public class NumberGameActivity extends DaggerActivity {
         setDragAndDropListeners();
         checkButton();
         deleteButton();
+
     }
 
     private void deleteButton() {

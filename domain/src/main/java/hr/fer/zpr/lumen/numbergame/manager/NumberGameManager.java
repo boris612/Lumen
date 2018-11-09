@@ -22,13 +22,13 @@ public class NumberGameManager {
                     equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.additionLimit));
                     break;
                 case "SUBTRACTION":
-                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.subtractionLimit));
+                    equationGenerators.put(Integer.toString(i++),new SubtractionEquationGenerator(EquationConstants.subtractionLimit));
                     break;
                 case "MULTIPLICATION":
-                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.multiplicationLimit));
+                    equationGenerators.put(Integer.toString(i++),new MultiplicationEquationGenerator(EquationConstants.multiplicationLimit));
                     break;
                 case "DIVISION":
-                    equationGenerators.put(Integer.toString(i++),new AdditionEquationGenerator(EquationConstants.divisionLimit));
+                    equationGenerators.put(Integer.toString(i++),new DivisionEquationGenerator(EquationConstants.divisionLimit));
                     break;
             }
         }
