@@ -56,6 +56,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
                     break;
 
             }
+            editor.commit();
         });
 
         CheckBox subtraction = findViewById(R.id.subtractionCB);
@@ -83,6 +84,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
                     break;
 
             }
+            editor.commit();
         });
 
         CheckBox multiplication = findViewById(R.id.multiplicationCB);
@@ -110,6 +112,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
                     break;
 
             }
+            editor.commit();
         });
 
         CheckBox division = findViewById(R.id.divisionCB);
@@ -138,6 +141,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
                     break;
 
             }
+            editor.commit();
         });
 
         setRadioGroup(additionGroup,"additionGroup");

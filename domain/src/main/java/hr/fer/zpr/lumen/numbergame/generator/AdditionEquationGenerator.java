@@ -7,6 +7,7 @@ public class AdditionEquationGenerator extends EquationGenerator {
      * @param limit Represents highest possible answer
      * */
     private int lowerLimit=1;
+    NumberGenerator numberGenerator = new NumberGenerator();
     public AdditionEquationGenerator(int limit) {
         this.limitNumber = limit;
         switch (limit){
@@ -26,7 +27,7 @@ public class AdditionEquationGenerator extends EquationGenerator {
     }
 
     public void generateEquation() {
-        NumberGenerator numberGenerator = new NumberGenerator();
+
         answer = numberGenerator.randomNumber(lowerLimit, limitNumber);
         firstNumber = numberGenerator.randomNumber(0, answer);
         if((firstNumber==0||firstNumber==answer)&&Math.random()<=0.5){

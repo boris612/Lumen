@@ -6,6 +6,7 @@ public class DivisionEquationGenerator extends EquationGenerator {
      * @param limit Represents highest possible value of the result and second number
      * */
     private int lowerLimit=0;
+    NumberGenerator numberGenerator = new NumberGenerator();
     public DivisionEquationGenerator(int limit) {
         limitNumber = limit;
         switch (limit){
@@ -25,7 +26,7 @@ public class DivisionEquationGenerator extends EquationGenerator {
     }
 
     public void generateEquation() {
-        NumberGenerator numberGenerator = new NumberGenerator();
+
         answer = numberGenerator.randomNumber(lowerLimit, limitNumber);
         secondNumber = numberGenerator.randomNumber(1, limitNumber);
         firstNumber=answer*secondNumber;

@@ -6,7 +6,7 @@ public class MultiplicationEquationGenerator extends EquationGenerator {
     /**
      * @param limit Represents highest possible value of a factor
      */
-
+    NumberGenerator numberGenerator = new NumberGenerator();
     private int lowerLimit=0;
     public MultiplicationEquationGenerator(int limit) {
         limitNumber = limit;
@@ -27,7 +27,7 @@ public class MultiplicationEquationGenerator extends EquationGenerator {
     }
 
     public void generateEquation() {
-        NumberGenerator numberGenerator = new NumberGenerator();
+
         firstNumber = numberGenerator.randomNumber(lowerLimit, limitNumber);
         secondNumber = numberGenerator.randomNumber(0, limitNumber);
         answer = firstNumber * secondNumber;

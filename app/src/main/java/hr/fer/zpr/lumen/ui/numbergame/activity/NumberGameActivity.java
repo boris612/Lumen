@@ -36,7 +36,7 @@ public class NumberGameActivity extends DaggerActivity {
     @Inject
     SharedPreferences pref;
     private Set<String> additionSet=new HashSet<>();
-    private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 3;
+    private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 4;
 
     private final static String FILE_PATH_CORRECT_MESSAGE = "database/sound/messages/croatian/correct/bravo.mp3";
     private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj_opet.mp3";

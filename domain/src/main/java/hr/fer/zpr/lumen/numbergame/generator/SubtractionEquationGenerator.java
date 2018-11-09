@@ -6,6 +6,7 @@ public class SubtractionEquationGenerator extends EquationGenerator {
     /**
      * @param limit Represents highest possible value of first number
      */
+    NumberGenerator numberGenerator = new NumberGenerator();
     private int lowerLimit=0;
     public SubtractionEquationGenerator(int limit) {
         this.limitNumber = limit;
@@ -26,7 +27,7 @@ public class SubtractionEquationGenerator extends EquationGenerator {
     }
 
     public void generateEquation() {
-        NumberGenerator numberGenerator = new NumberGenerator();
+
         firstNumber = numberGenerator.randomNumber(lowerLimit, limitNumber);
         answer = numberGenerator.randomNumber(1, firstNumber);
         secondNumber = firstNumber - answer;
