@@ -2,6 +2,8 @@ package hr.fer.zpr.lumen.ui.numbergame.activity;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.localization.LocalizationProvider;
 import hr.fer.zpr.lumen.numbergame.manager.EquationConstants;
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameConstants;
 import hr.fer.zpr.lumen.numbergame.manager.NumberGamePreferences;
@@ -22,7 +25,11 @@ import hr.fer.zpr.lumen.numbergame.manager.NumberGamePreferences;
 import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import hr.fer.zpr.lumen.player.SoundPlayer;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class NumberGameActivity extends DaggerActivity {
 
@@ -31,6 +38,8 @@ public class NumberGameActivity extends DaggerActivity {
     private Set<String> additionSet=new HashSet<>();
     private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 3;
 
+    private final static String FILE_PATH_CORRECT_MESSAGE = "database/sound/messages/croatian/correct/bravo.mp3";
+    private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj_opet.mp3";
 
     @Inject
     SoundPlayer soundPlayer;
@@ -93,7 +102,6 @@ public class NumberGameActivity extends DaggerActivity {
         EquationConstants.setSubtractionLimit(pref.getInt(NumberGamePreferences.SUBTRACTIONLIMIT.name(),100));
         EquationConstants.setMultiplicationLimit(pref.getInt(NumberGamePreferences.MULTIPLICATIONLIMIT.name(),10));
         EquationConstants.setDivisionLimit(pref.getInt(NumberGamePreferences.DIVISIONLIMIT.name(),10));
-
     }
 
     private void checkButton() {
@@ -102,14 +110,26 @@ public class NumberGameActivity extends DaggerActivity {
 
             @Override
             public void onClick(View v) {
+                int backgroundColor = ((ColorDrawable)result.getBackground()).getColor();
                 if ((numberGamePresenter != null) && (result != null) && (!result.getText().toString().isEmpty()) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))) {
-                    Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
-                    soundPlayer.play("database/sound/messages/croatian/correct/bravo.mp3");
-                    numberGamePresenter.newEquation();
-                    result.setText("");
+                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
+                    result.setBackgroundColor(Color.GREEN);
+                    soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
+                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                numberGamePresenter.newEquation();
+                                result.setText("");
+                                result.setBackgroundColor(backgroundColor);
+                            });
                 } else if ((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))) {
-                    Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
-                    result.setText("");
+                 //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
+                    soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
+                    result.setBackgroundColor(Color.RED);
+                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                result.setText("");
+                                result.setBackgroundColor(backgroundColor);
+                            });
                 } else {
                     Toast.makeText(getApplicationContext(), "Nije unesen nijedan broj", Toast.LENGTH_LONG).show();
                 }
