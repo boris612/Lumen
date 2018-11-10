@@ -44,7 +44,6 @@ public class LetterModel extends GameDrawable {
         }
     }
 
-    @Override
     public void draw(Canvas canvas) {
         if (hintActive) {
             Paint paint = new Paint();
