@@ -9,6 +9,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
+import hr.fer.zpr.lumen.wordgame.model.Letter;
 
 public class LetterModel extends GameDrawable {
     private String value;
@@ -27,6 +28,11 @@ public class LetterModel extends GameDrawable {
         rectangle.right = rectangle.left + width;
         rectangle.bottom = rectangle.top + height;
     }
+
+    public boolean isAttachedTo(LetterFieldModel l){
+        return l.getLetterInside().equals(this);
+    }
+
 
     public String getValue() {
         return value;
