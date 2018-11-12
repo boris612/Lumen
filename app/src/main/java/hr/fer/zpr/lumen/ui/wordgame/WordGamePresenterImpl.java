@@ -6,6 +6,8 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.view.SurfaceView;
+import android.widget.HorizontalScrollView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,8 +94,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     private List<Disposable> disposables = new ArrayList<>();
     private WordGameView view;
 
-    private Context context;
 
+    private Context context;
 
     private Word currentWord;
 
@@ -126,6 +128,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         presentHint(model);
     }
 
+
     private void presentHint(StartingHintModel model) {
         disposables.add(Observable.interval(ViewConstants.TIME_BETWEEN_LETTERS, TimeUnit.MILLISECONDS)
                 .takeWhile(e -> model.hasLettersToShow())
@@ -154,6 +157,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     }
 
+
     public void showLetters() {
         fields = mapper.createFields(currentWord);
         view.addFields(fields);
@@ -170,8 +174,9 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
-            letters = mapper.mapAllLetters(randomLetters);
-            view.addAllLetters(letters); return;
+           letters = mapper.mapAllLetters(randomLetters);
+            view.addAllLetters(letters);
+            return;
         }else{
             letters = mapper.mapLetters(currentWord, randomLetters);
         }
@@ -226,11 +231,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     public void letterInserted(LetterModel letter, LetterFieldModel field) {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
 
-        //FLASH GREEN ON CORRECT
+        /*//FLASH GREEN ON CORRECT
         if (correct && manager.isHintOnCorrectOn().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
-        }
+        }*/
 
         if(correct) fieldLetter.put(field.toString(),letter.getValue());
 
@@ -258,6 +263,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                 for (LetterFieldModel f : fields)
                     if(f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
                         f.setColor(Color.GREEN);
+
 
             }
         }
@@ -315,6 +321,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         currentWord = manager.nextWord().blockingGet();
         manager.changePhase(WordGamePhase.PRESENTING);
         presentWord(currentWord);
+    }
+
+    public List<LetterFieldModel> getFields(){
+        return fields;
     }
 
     @Override

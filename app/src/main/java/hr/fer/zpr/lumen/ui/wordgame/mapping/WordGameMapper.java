@@ -117,7 +117,7 @@ public class WordGameMapper {
         for (Letter letter : allLetters) {
             try {
                 Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(letter.image.path));
-                letters.add(new LetterModel(letter.value, image, new Rect(20,50,30,60)));
+                letters.add(new LetterModel(letter.value, image, new Rect(20,50,230,200)));
             } catch (Exception e) {
                 Log.d("error", e.getMessage());
             }

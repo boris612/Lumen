@@ -1,25 +1,39 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.*;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import android.widget.*;
+
+import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
 import hr.fer.zpr.lumen.ui.wordgame.models.ImageModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterFieldModel;
 import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
+import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.model.Letter;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,10 +48,13 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public static final int MILLIS_PER_FRAME = 33;
     @Inject
     WordGamePresenter presenter;
+    @Inject
+    WordGameManager manager;
     private Disposable gameLoopDisposable = Disposables.disposed();
     private List<LetterFieldModel> fields = new ArrayList<>();
     private List<LetterModel> letters = new ArrayList<>();
     private List<GameDrawable> drawables = new ArrayList<>();
+    private List<LetterModel> listOutsideScroll = new ArrayList<>();
     private SparseArray<LetterModel> mLetterPointer = new SparseArray<>();
     private CoinModel coin;
     private Context context;
@@ -47,6 +64,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private LetterModel draggedLetter;
     private LetterFieldModel fieldOfLetterDraggedOutOffield;
     private HorizontalScrollView scrollView;
+    private RecyclerView recyclerView;
     private Canvas canvas;
 
     public WordGameView(LumenApplication context) {
@@ -60,6 +78,10 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void setScrollView(HorizontalScrollView scrollView) {
         this.scrollView = scrollView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -95,7 +117,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         this.canvas = canvas;
         canvas.drawColor(Color.WHITE);
         List<GameDrawable> copy = new ArrayList<>(drawables);
-        for (GameDrawable drawable : copy) drawable.draw(canvas);
+        for (GameDrawable drawable : drawables) drawable.draw(canvas);
     }
 
     @Override
@@ -263,6 +285,10 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         drawables.add(coin);
     }
 
+    public List<GameDrawable> getDrawables() {
+        return drawables;
+    }
+
     public void removeDrawable(GameDrawable drawable) {
         this.drawables.remove(drawable);
     }
@@ -277,64 +303,147 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void addAllLetters(List<LetterModel> letters) {
-        LinearLayout linearLayout = new LinearLayout(context);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setVisibility(ViewGroup.VISIBLE);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ImageView imageView = null;
+        List<Letter> letterList = manager.getAllLetters().blockingGet();
+        Map<ImageView,LetterModel> map = new HashMap<>();
+        //BITNO ZA MULTIPLICIRANJE
+        //List<LetterModel> mapLetters = new ArrayList<>();
         for (LetterModel letter : letters) {
-            ImageView imageView = new AppCompatImageView(context) {
-                @Override
-                public boolean performClick() {
-                    return super.performClick();
-                }
-            };
+
+            imageView = new ImageView(context);
 
             imageView.setImageBitmap(letter.getImage());
+            //mapLetters.add(letter);
+            map.put(imageView,letter);
             imageView.setLayoutParams(layoutParams);
-            imageView.setX(40);
+            imageView.getLayoutParams().height = context.getResources().getDisplayMetrics().heightPixels / 5;
+            imageView.getLayoutParams().width = context.getResources().getDisplayMetrics().widthPixels / 12;
             linearLayout.addView(imageView);
+            imageView.setBaselineAlignBottom(true);
 
             imageView.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    boolean handled = false;
-                    LetterModel touchedLetter;
-                    int xTouch;
-                    int yTouch;
-                    int pointerId;
+                    //PROVJERA JE LI U FIELDU
+                    //TO DO
 
-                    xTouch = (int) view.getX();
-                    yTouch = (int) view.getY();
-                    if (coin.isTouched(xTouch, yTouch)) presenter.hintPressed();
-                    touchedLetter = getTouchedLetter(xTouch, yTouch);
-                    if (touchedLetter == null) return true;
-                    touchedLetter.setCenter(xTouch, yTouch);
-                    setLetterBeingDragged(touchedLetter);
-
-                    invalidate();
-                    handled = true;
-
+                    DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    view.startDrag(null, shadowBuilder, view, 0);
                     return false;
                 }
             });
 
-//            imageView.setOnDragListener(new OnDragListener() {
+
+
+
+
+//            imageView.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    //letter.setRect(new Rect(50, 50 , 250, 250));
+//
+////                    boolean handled = false;
+////                    LetterModel touchedLetter;
+//                    int xTouch;
+//                    int yTouch;
+////                    int pointerId;
+//                    List<LetterFieldModel> letterFieldModels = presenter.getFields();
+//                    boolean flag = true;
+////                    if (!listOutsideScroll.isEmpty()) {
+////                        for (LetterFieldModel model : letterFieldModels) {
+////                            for (LetterModel outside : listOutsideScroll){
+////                                if (outside.equals(model.getLetterInside())) {
+////                                    flag = false;
+////                                }
+////                                if (!flag) {
+////                                    WordGameView.this.removeDrawable(outside);
+////                                    WordGameView.this.draw(canvas);
+////                                    break;
+////                                }
+////                            }
+////                        }
+////                    }
+//
+//
+//
+//                    int[] coordinates = new int[2];
+//
+//                    view.getLocationOnScreen(coordinates);
+//                    try {
+//                        Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(letterList.get(letters.indexOf(letter)).image.path));
+//                        LetterModel letter1 = new LetterModel(new String(letter.getValue()), image, new Rect(letter.getRect()));
+//                        letters.add(letter1);
+//                        listOutsideScroll.add(letter1);
+//                        letter1.setCenter(coordinates[0]+80, coordinates[1]-60);
+//                        WordGameView.this.addDrawable(letter1);
+//                        WordGameView.this.draw(canvas);
+//                    } catch (IOException ex) {
+//                        Log.d("error", ex.getMessage());
+//                    }
+//
+////                    if (coin.isTouched(xTouch, yTouch)) presenter.hintPressed();
+////                    touchedLetter = getTouchedLetter(xTouch, yTouch);
+////                    if (touchedLetter == null) return true;
+////                    touchedLetter.setCenter(xTouch, yTouch);
+////                    setLetterBeingDragged(touchedLetter);
+////
+////                    invalidate();
+////                    handled = true;
+//                    return false;
+//                }
+//            });
+
+//            imageView.setOnDragListener(new View.OnDragListener() {
 //                @Override
 //                public boolean onDrag(View view, DragEvent dragEvent) {
-//                   letter.setCenter(50,50);
-//                   return true;
+//                    letter.setCenter(50, 50);
+//                    return true;
 //                }
 //            });
         }
-
-        runOnUiThread(new Runnable() {
+        WordGameView.this.setOnDragListener(new OnDragListener() {
             @Override
-            public void run() {
-                scrollView.addView(linearLayout);
+            public boolean onDrag(View v, DragEvent dragEvent) {
+                ImageView draggedView = (ImageView) dragEvent.getLocalState();
+                switch (dragEvent.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        break;
+                    case DragEvent.ACTION_DROP:
+                        WordGameView dropTarget = (WordGameView) v;
+                        Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
+                        map.get(draggedView).setCenter(touchPosition.x, touchPosition.y);
+                        dropTarget.addDrawable(map.get(draggedView));
+                        dropTarget.draw(canvas);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+
+                    default:
+                        break;
+                }
+                return true;
             }
         });
-
+        ImageView finalImageView = imageView;
+        runOnUiThread(() -> {
+            scrollView.addView(linearLayout);
+            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - finalImageView.getLayoutParams().height - 10);
+        });
         this.letters = letters;
 
+    }
+
+    private static Point getTouchPositionFromDragEvent(View item, DragEvent event) {
+        Rect rItem = new Rect();
+        item.getGlobalVisibleRect(rItem);
+        return new Point(rItem.left + Math.round(event.getX()), rItem.top + Math.round(event.getY()));
     }
 
     public void addLetters(List<LetterModel> letters) {
