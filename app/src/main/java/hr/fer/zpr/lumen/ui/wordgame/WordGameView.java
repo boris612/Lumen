@@ -227,12 +227,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 if (field.getRect().contains(letter.getRect().centerX(), letter.getRect().centerY()) && letter == draggedLetter && fieldOfLetterDraggedOutOffield != field) {
                     Point newCenter = field.getCenter();
                     if (letterInside != null && letterInside != letter) {
-                        if (draggedLetter.getRect().centerY() > field.getRect().centerY()) {
-                            letterInside.setCenter(field.getRect().centerX(), field.getRect().top - letterInside.getHeight() / 2);
-                        } else {
-                            letterInside.setCenter(field.getRect().centerX(), field.getRect().bottom + letterInside.getHeight() / 2);
-                        }
-
+                        letterInside.setCenter(field.getRect().centerX(), field.getRect().top - letterInside.getHeight() / 2);
                     }
                     if (field.getLetterInside() != letter) {
                         field.attachLetter(letter);
@@ -244,6 +239,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
     }
+
 
     public void setLetterBeingDragged(LetterModel letterBeingDragged) {
         if (letterBeingDragged == null) {
@@ -268,6 +264,10 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
             if (letter.isTouched(x, y)) return letter;
         }
         return null;
+    }
+
+    public HorizontalScrollView getScrollView(){
+        return scrollView;
     }
 
 
@@ -340,10 +340,12 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 }
             });
         }
-            WordGameView.this.setOnDragListener(new OnDragListener() {
+        ImageView finalImageView = imageView;
+        WordGameView.this.setOnDragListener(new OnDragListener() {
                 @Override
                 public boolean onDrag(View v, DragEvent dragEvent) {
                     ImageView draggedView = (ImageView) dragEvent.getLocalState();
+                    WordGameView dropTarget = (WordGameView) v;
                     switch (dragEvent.getAction()) {
                         case DragEvent.ACTION_DRAG_STARTED:
                             break;
@@ -352,20 +354,21 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                         case DragEvent.ACTION_DRAG_EXITED:
                             break;
                         case DragEvent.ACTION_DROP:
-                            WordGameView dropTarget = (WordGameView) v;
-                            try {
-                                Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(mapLetter.get(draggedView).image.path));
-                                LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), image, new Rect(mapModel.get(draggedView).getRect()));
-                                letters.add(letter1);
-                                listOutsideScroll.add(letter1);
-
-                                Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
-                                letter1.setCenter(touchPosition.x, touchPosition.y);
-
-                                dropTarget.addDrawable(letter1);
-                                dropTarget.draw(canvas);
-                            } catch (IOException ex) {
-                                Log.d("error", ex.getMessage());
+                            Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
+                            if(touchPosition.y<context.getResources().getDisplayMetrics().heightPixels - finalImageView.getLayoutParams().height - 10){
+                                try {
+                                    Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(mapLetter.get(draggedView).image.path));
+                                    LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), image, new Rect(mapModel.get(draggedView).getRect()));
+                                    letters.add(letter1);
+                                    listOutsideScroll.add(letter1);
+                                    letter1.setCenter(touchPosition.x, touchPosition.y);
+                                    setLetterBeingDragged(letter1);
+                                    dropTarget.addDrawable(letter1);
+                                    dropTarget.draw(canvas);
+                                    updateAddingLettersToFields(true);
+                                } catch (IOException ex) {
+                                    Log.d("error", ex.getMessage());
+                                }
                             }
                             break;
                         case DragEvent.ACTION_DRAG_ENDED:
@@ -376,7 +379,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 }
             });
 
-        ImageView finalImageView = imageView;
         runOnUiThread(() -> {
             scrollView.addView(linearLayout);
             scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - finalImageView.getLayoutParams().height - 10);
