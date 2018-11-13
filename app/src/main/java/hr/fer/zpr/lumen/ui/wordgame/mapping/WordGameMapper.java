@@ -110,14 +110,30 @@ public class WordGameMapper {
         return letters;
     }
 
-    public List<LetterModel> mapAllLetters(List<Letter> allLetters) {
+    public List<LetterModel> mapAllLetters(Word word, List<Letter> allLetters) {
         if (allLetters == null) allLetters = new ArrayList<>();
 
+        int letterDimension = (int) (screenWidth / (word.letters.size() * (1 + ViewConstants.CHAR_FIELD_GAP_WIDTH_TO_FIELD_WIDTH_FACTOR)) * ViewConstants.CHAR_FIELDS_WIDTH_FACTOR);
+        if (letterDimension > screenWidth * ViewConstants.CHAR_FIELD_WIDTH_MAX_FACTOR)
+            letterDimension = (int) (screenWidth * ViewConstants.CHAR_FIELD_WIDTH_MAX_FACTOR);
+        int startingSpace = screenWidth / 100;
+        int fieldDimension = letterDimension;
+        letterDimension = (int) (letterDimension * ViewConstants.LETTER_IMAGE_SCALE_FACTOR);
+        int space = (int) (screenWidth - (allLetters.size() + word.letters.size()) * letterDimension - startingSpace) / (allLetters.size() + word.letters.size());
+        List<Rect> rects = new ArrayList<>();
+        for (int i = 0, n = allLetters.size() + word.letters.size(); i < n; i++) {
+            Rect rect = new Rect();
+            rect.left = startingSpace + i * (space + letterDimension);
+            rect.right = rect.left + letterDimension;
+            rect.top = (int) (screenHeight * ViewConstants.CHAR_FIELDS_Y_COORDINATE_FACTOR + fieldDimension + screenHeight * ViewConstants.FIELD_LETTER_SPACE_FACTOR);
+            rect.bottom = rect.top + letterDimension;
+            rects.add(rect);
+        }
         List<LetterModel> letters = new ArrayList<>();
         for (Letter letter : allLetters) {
             try {
                 Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(letter.image.path));
-                letters.add(new LetterModel(letter.value, image, new Rect(20,50,230,200)));
+                letters.add(new LetterModel(letter.value, image, rects.get(allLetters.indexOf(letter))));
             } catch (Exception e) {
                 Log.d("error", e.getMessage());
             }

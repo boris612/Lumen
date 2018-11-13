@@ -39,28 +39,29 @@ public class WordGameActivity extends DaggerActivity {
     WordGameView view;
     @Inject
     WordGamePresenter presenter;
+    @Inject
+    WordGameManager manager;
 
     private ConstraintLayout constraintLayout;
 
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getLumenApplication().getApplicationComponent().inject(this);
         setContentView(R.layout.activity_game);
         view = new WordGameView(this.getLumenApplication());
-        int screenHeight = this.getLumenApplication().getResources().getDisplayMetrics().heightPixels;
-        int screenWidth = this.getLumenApplication().getResources().getDisplayMetrics().widthPixels;
         //OVO staviti samo ako je ukljuceno stvaranje svih slova
         constraintLayout = findViewById(R.id.gameLayout);
-
         HorizontalScrollView scrollView = new HorizontalScrollView(this.getLumenApplication());
         view.setScrollView(scrollView);
-        scrollView.setVisibility(ViewGroup.VISIBLE);
         constraintLayout.addView(view);
-        constraintLayout.addView(scrollView);
-        scrollView.setBottom(View.SCROLL_INDICATOR_BOTTOM);
+        if(manager.isCreateAllLettersActive().blockingGet()){
+            constraintLayout.addView(scrollView);
+            scrollView.setVisibility(ViewGroup.VISIBLE);
+            scrollView.setBottom(View.SCROLL_INDICATOR_BOTTOM);
+        }
+
 //do tud
         presenter.setView(view);
 

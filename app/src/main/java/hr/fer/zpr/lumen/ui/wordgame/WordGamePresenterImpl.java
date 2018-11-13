@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.view.SurfaceView;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 
 import java.util.ArrayList;
@@ -125,6 +126,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         StartingHintModel model = mapper.hintModel(word);
         view.addDrawable(model);
+        //if(manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().setEnabled(true);
         presentHint(model);
     }
 
@@ -174,7 +176,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
-           letters = mapper.mapAllLetters(randomLetters);
+            letters = mapper.mapAllLetters(currentWord, randomLetters);
             view.addAllLetters(letters);
             return;
         }else{
@@ -317,6 +319,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         coin.setCoins(manager.getCoins().blockingGet());
         view.clearDrawables();
+        //if(manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().setEnabled(false);
         view.setCoin(coin);
         currentWord = manager.nextWord().blockingGet();
         manager.changePhase(WordGamePhase.PRESENTING);
