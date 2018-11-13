@@ -51,7 +51,6 @@ public class WordGameActivity extends DaggerActivity {
         this.getLumenApplication().getApplicationComponent().inject(this);
         setContentView(R.layout.activity_game);
         view = new WordGameView(this.getLumenApplication());
-        //OVO staviti samo ako je ukljuceno stvaranje svih slova
         constraintLayout = findViewById(R.id.gameLayout);
         HorizontalScrollView scrollView = new HorizontalScrollView(this.getLumenApplication());
         view.setScrollView(scrollView);
@@ -62,7 +61,6 @@ public class WordGameActivity extends DaggerActivity {
             scrollView.setBottom(View.SCROLL_INDICATOR_BOTTOM);
         }
 
-//do tud
         presenter.setView(view);
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -71,7 +69,6 @@ public class WordGameActivity extends DaggerActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface WordGamePresenter {
 
     void letterRemoved(LetterFieldModel field);
 
-    void hintPressed();
+    LetterModel hintPressed();
 
     void exit();
 
