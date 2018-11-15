@@ -33,7 +33,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         permutations.setOnClickListener(v->{
             editor.putBoolean("permutationsCheckbox",permutations.isChecked() );
             if(permutations.isChecked()) editor.putString(NumberGamePreferences.GAMEMODE.name(),"PERMUTATIONS");
-            else editor.putString(NumberGamePreferences.INPUTMODE.name(),"CHECKANSWER");
+            else editor.putString(NumberGamePreferences.GAMEMODE.name(),"CHECKANSWER");
             editor.commit();
         });
         CheckBox onClickOption=findViewById(R.id.onClick);
