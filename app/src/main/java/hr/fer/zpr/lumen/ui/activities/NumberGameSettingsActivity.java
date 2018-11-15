@@ -9,10 +9,7 @@ import android.widget.*;
 
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.numbergame.manager.EquationConstants;
-import hr.fer.zpr.lumen.numbergame.manager.NumberGameConstants;
-import hr.fer.zpr.lumen.numbergame.manager.NumberGamePreferences;
-import hr.fer.zpr.lumen.numbergame.manager.Operation;
+import hr.fer.zpr.lumen.numbergame.manager.*;
 
 import javax.inject.Inject;
 import java.security.acl.Group;
@@ -31,6 +28,22 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         setContentView(R.layout.activity_numbergame_settings);
         this.getLumenApplication().getApplicationComponent().inject(this);
         final SharedPreferences.Editor editor = pref.edit();
+        CheckBox permutations=findViewById(R.id.permutation);
+        permutations.setChecked(pref.getBoolean("permutationsCheckbox",false));
+        permutations.setOnClickListener(v->{
+            editor.putBoolean("permutationsCheckbox",permutations.isChecked() );
+            if(permutations.isChecked()) editor.putString(NumberGamePreferences.GAMEMODE.name(),"PERMUTATIONS");
+            else editor.putString(NumberGamePreferences.INPUTMODE.name(),"CHECKANSWER");
+            editor.commit();
+        });
+        CheckBox onClickOption=findViewById(R.id.onClick);
+        onClickOption.setChecked(pref.getBoolean("onClickOptionCheckbox",false));
+        onClickOption.setOnClickListener(v->{
+            editor.putBoolean("onClickOptionCheckbox",onClickOption.isChecked() );
+            if(onClickOption.isChecked()) editor.putString(NumberGamePreferences.INPUTMODE.name(),"ONCLICK");
+            else editor.putString(NumberGamePreferences.INPUTMODE.name(),"ONDRAG");
+            editor.commit();
+        });
         CheckBox addition = findViewById(R.id.additionCB);
         addition.setChecked(pref.getBoolean("additionCheckbox",true));
         RadioGroup additionGroup = findViewById(R.id.addition);
