@@ -12,29 +12,30 @@
 
         <TextView
             android:id="@+id/firstNumber"
-            android:layout_width="100dp"
+            android:layout_width="104dp"
             android:layout_height="80dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="103dp"
+            android:layout_marginStart="86dp"
             android:gravity="center"
             android:maxLines="1"
-            android:textStyle="bold"
+            android:textColor="#000000"
             android:textSize="45dp"
-            android:textColor="#000000"/>
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/symbol"
-            android:layout_width="45dp"
+            android:layout_width="wrap_content"
             android:layout_height="80dp"
-            android:gravity="center"
             android:layout_centerInParent="true"
             android:layout_toRightOf="@id/firstNumber"
+            android:gravity="center"
+            android:textColor="#000000"
             android:textSize="45dp"
-            android:textStyle="bold"
-            android:textColor="#000000"/>
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/secondNumber"
-            android:layout_width="100dp"
+            android:layout_width="104dp"
             android:layout_height="80dp"
             android:gravity="center"
             android:layout_centerInParent="true"
@@ -43,40 +44,41 @@
             android:textSize="45dp"
             android:maxLines="1"
             android:textColor="#000000"/>
+
         <TextView
             android:id="@+id/equal"
-            android:layout_width="45dp"
+            android:layout_width="39dp"
             android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/result"
             android:gravity="center"
-            android:layout_centerInParent="true"
-            android:layout_toRightOf="@id/secondNumber"
-            android:textStyle="bold"
-            android:textSize="45dp"
             android:text="="
-            android:textColor="#000000"/>
+            android:textColor="#000000"
+            android:textSize="45dp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/result"
-            android:layout_width="101dp"
+            android:layout_width="104dp"
             android:layout_height="80dp"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="-1dp"
-            android:layout_toRightOf="@id/equal"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/deleteButton"
+            android:background="@color/colorPrimary"
             android:gravity="center"
             android:maxLines="1"
-            android:textStyle="bold"
-            android:textSize="45dp"
             android:textColor="#000000"
-            android:background="@color/colorPrimary"
-            />
+            android:textSize="45dp"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/deleteButton"
             android:layout_width="71dp"
             android:layout_height="67dp"
-            android:layout_centerInParent="true"
-            android:layout_toRightOf="@id/result"
-            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="60dp"
             android:background="@null"
+            android:gravity="center"
             android:src="@drawable/icons8_erase_48" />
 
     </RelativeLayout>

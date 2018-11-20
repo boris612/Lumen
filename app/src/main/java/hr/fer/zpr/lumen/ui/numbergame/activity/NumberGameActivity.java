@@ -115,9 +115,11 @@ public class NumberGameActivity extends DaggerActivity {
                   //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
                     result.setBackgroundColor(Color.GREEN);
                     soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
+                    result.setClickable(false);
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
                                 numberGamePresenter.newEquation();
+                                result.setClickable(true);
                                 result.setText("");
                                 result.setBackgroundColor(backgroundColor);
                             });
@@ -125,8 +127,10 @@ public class NumberGameActivity extends DaggerActivity {
                  //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
                     result.setBackgroundColor(Color.RED);
+                    result.setClickable(false);
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
+                                result.setClickable(true);
                                 result.setText("");
                                 result.setBackgroundColor(backgroundColor);
                             });
