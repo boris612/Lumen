@@ -97,7 +97,8 @@ public class NumberGameActivity extends DaggerActivity {
 
     private void setSettings() {
         NumberGameConstants.operations=pref.getStringSet(NumberGamePreferences.OPERATIONS.name(),additionSet);
-        NumberGameConstants.numberGameMode=pref.getString(NumberGamePreferences.GAMEMODE.name(),"CHECKANSWER");
+        NumberGameConstants.setInputMode(pref.getString(NumberGamePreferences.INPUTMODE.name(),"ONDRAG"));
+        NumberGameConstants.setNumberGameMode(pref.getString(NumberGamePreferences.GAMEMODE.name(),"CHECKANSWER"));
         EquationConstants.setAdditionLimit(pref.getInt(NumberGamePreferences.ADDITIONLIMIT.name(),20));
         EquationConstants.setSubtractionLimit(pref.getInt(NumberGamePreferences.SUBTRACTIONLIMIT.name(),100));
         EquationConstants.setMultiplicationLimit(pref.getInt(NumberGamePreferences.MULTIPLICATIONLIMIT.name(),10));

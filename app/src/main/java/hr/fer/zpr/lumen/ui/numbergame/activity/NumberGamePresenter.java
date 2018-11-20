@@ -53,10 +53,10 @@ public class NumberGamePresenter {
         if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKANSWER.name() &&numbergameManager.getEquationGenerator().getAnswer()==solution) {
             return true;
         }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKFIRSTNUMBER.name()&&numbergameManager.getEquationGenerator().getFirstNumber()==solution) {
+        if(NumberGameConstants.numberGameMode==NumberGameMode.PERMUTATIONS.name()&&numbergameManager.getEquationGenerator().getFirstNumber()==solution) {
             return true;
         }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKSECONDNUMBER.name()&&numbergameManager.getEquationGenerator().getSecondNumber()==solution) {
+        if(NumberGameConstants.numberGameMode==NumberGameMode.PERMUTATIONS.name()&&numbergameManager.getEquationGenerator().getSecondNumber()==solution) {
             return true;
         }
         return false;
