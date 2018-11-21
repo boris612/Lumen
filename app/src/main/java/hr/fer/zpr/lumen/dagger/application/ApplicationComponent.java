@@ -22,7 +22,6 @@ public interface ApplicationComponent {
 
     void inject(LumenApplication application);
 
-
     void inject(WordGamePresenterImpl presenter);
 
     void inject(DaggerActivity activity);
