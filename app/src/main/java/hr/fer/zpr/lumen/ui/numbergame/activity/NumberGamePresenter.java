@@ -39,6 +39,7 @@ public class NumberGamePresenter {
         if(gamemode.equals("CHECKANSWER")){
         firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
         secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
+        resultTv.setText("");
         return resultTv;
         }
         else{
@@ -46,16 +47,19 @@ public class NumberGamePresenter {
             if(permutationDecider<=0.45){
                 secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
                 resultTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getAnswer()));
+                firstNumberTv.setText("");
                 return firstNumberTv;
             }
             else if(permutationDecider<=0.9){
                 firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
                 resultTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getAnswer()));
+                secondNumberTv.setText("");
                 return secondNumberTv;
             }
             else{
                 firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
                 secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
+                resultTv.setText("");
                 return resultTv;
             }
         }
