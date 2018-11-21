@@ -53,6 +53,7 @@ public class NumberGameActivity extends DaggerActivity {
     private TextView secondNumber;
     private TextView symbol;
     private ImageButton deleteButton;
+    private ImageButton checkButton;
     private NumberGamePresenter numberGamePresenter;
     private TextView target;
 
@@ -110,7 +111,6 @@ public class NumberGameActivity extends DaggerActivity {
     }
 
     private void checkButton() {
-        ImageButton checkButton = findViewById(R.id.checkButton);
         checkButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -119,34 +119,26 @@ public class NumberGameActivity extends DaggerActivity {
                   //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
                     target.setBackgroundColor(Color.GREEN);
-                    target.setClickable(false);
-                    checkButton.setClickable(false);
-                    deleteButton.setClickable(false);
+                    setClickable(false);
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
-                                target.setClickable(true);
+                                setClickable(true);
                                 target.setOnDragListener(null);
                                 target.setBackgroundColor(Color.TRANSPARENT);
                                 target = numberGamePresenter.newEquation();
                                 target.setOnDragListener(dragListener);
                                 target.setBackgroundColor(BACKGROUND_COLOR);
-                                checkButton.setClickable(true);
-                                deleteButton.setClickable(true);
                             });
                 } else if ((numberGamePresenter != null) && (target != null) && !target.getText().toString().isEmpty() && !numberGamePresenter.checkSolution()) {
                  //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
                     target.setBackgroundColor(Color.RED);
-                    target.setClickable(false);
-                    checkButton.setClickable(false);
-                    deleteButton.setClickable(false);
+                    setClickable(false);
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
                                 target.setText("");
                                 target.setBackgroundColor(BACKGROUND_COLOR);
-                                target.setClickable(true);
-                                checkButton.setClickable(true);
-                                deleteButton.setClickable(true);
+                                setClickable(true);
                             });
                 } else {
                     Toast.makeText(getApplicationContext(), "Nije unesen nijedan broj", Toast.LENGTH_LONG).show();
@@ -156,12 +148,24 @@ public class NumberGameActivity extends DaggerActivity {
         });
     }
 
+    private void setClickable(boolean clickable){
+        target.setClickable(clickable);
+        checkButton.setClickable(clickable);
+        deleteButton.setClickable(clickable);
+        for (int i = 0, nChildren = linearLayout.getChildCount(); i < nChildren; i++) {
+            TextView textView = (TextView) linearLayout.getChildAt(i);
+            textView.setClickable(clickable);
+        }
+    }
+
     private void gameSetup() {
         firstNumber = findViewById(R.id.firstNumber);
         secondNumber = findViewById(R.id.secondNumber);
         symbol = findViewById(R.id.symbol);
         result = findViewById(R.id.result);
         deleteButton = findViewById(R.id.deleteButton);
+        linearLayout = findViewById(R.id.digits);
+        checkButton = findViewById(R.id.checkButton);
 
         firstNumber.setBackgroundColor(Color.TRANSPARENT);
         secondNumber.setBackgroundColor(Color.TRANSPARENT);
@@ -175,7 +179,6 @@ public class NumberGameActivity extends DaggerActivity {
     }
 
     private void setListeners() {
-        linearLayout = findViewById(R.id.digits);
 
         for (int i = 0, nChildren = linearLayout.getChildCount(); i < nChildren; i++) {
             TextView textView = (TextView) linearLayout.getChildAt(i);
