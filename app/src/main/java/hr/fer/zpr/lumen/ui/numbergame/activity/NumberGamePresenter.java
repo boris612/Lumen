@@ -1,10 +1,15 @@
 package hr.fer.zpr.lumen.ui.numbergame.activity;
 
+import android.content.SharedPreferences;
 import android.widget.TextView;
 
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameConstants;
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameMode;
 import hr.fer.zpr.lumen.numbergame.manager.NumberGameManager;
+import hr.fer.zpr.lumen.numbergame.manager.NumberGamePreferences;
+
+import javax.inject.Inject;
+import java.util.Random;
 
 
 public class NumberGamePresenter {
@@ -13,55 +18,60 @@ public class NumberGamePresenter {
     private TextView firstNumberTv;
     private TextView secondNumberTv;
     private TextView operationTv;
+    private TextView resultTv;
+    private Random rand=new Random();
 
 
 
-    public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView operationTv ){
+    public NumberGamePresenter(TextView firstNumberTv, TextView secondNumberTv, TextView resultTv, TextView operationTv ){
+
         this.firstNumberTv=firstNumberTv;
         this.secondNumberTv=secondNumberTv;
         this.operationTv=operationTv;
+        this.resultTv=resultTv;
         numbergameManager=new NumberGameManager();
     }
 
-    public void newEquation(){
+    public TextView newEquation(){
+        String gamemode= NumberGameConstants.numberGameMode;
         numbergameManager.newEquation();
-        firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
         operationTv.setText(numbergameManager.getEquationGenerator().operationSign());
+        if(gamemode.equals("CHECKANSWER")){
+        firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
         secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
+        return resultTv;
+        }
+        else{
+            double permutationDecider=rand.nextDouble();
+            if(permutationDecider<=0.45){
+                secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
+                resultTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getAnswer()));
+                return firstNumberTv;
+            }
+            else if(permutationDecider<=0.9){
+                firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
+                resultTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getAnswer()));
+                return secondNumberTv;
+            }
+            else{
+                firstNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getFirstNumber()));
+                secondNumberTv.setText(String.valueOf(numbergameManager.getEquationGenerator().getSecondNumber()));
+                return resultTv;
+            }
+        }
 
     }
 
-    public boolean checkSolution(int solution){
-        if(isSolution(solution)){
-            showSolutionIsCorrect();
-            return true;
-        }
-        else
-            showSolutionIsIncorrect();
+    public boolean checkSolution(){
+        if(numbergameManager.getEquationGenerator().getAnswer()==Integer.parseInt(resultTv.getText().toString())
+                &&numbergameManager.getEquationGenerator().getFirstNumber()==Integer.parseInt(firstNumberTv.getText().toString())
+                &&numbergameManager.getEquationGenerator().getSecondNumber()==Integer.parseInt(secondNumberTv.getText().toString()))return true;
         return false;
     }
 
-    private void showSolutionIsIncorrect() {
-        //todo
-    }
 
-    private void showSolutionIsCorrect() {
-        //todo
-    }
 
-    private boolean isSolution(int solution){
-        if(NumberGameConstants.numberGameMode==NumberGameMode.CHECKANSWER.name() &&numbergameManager.getEquationGenerator().getAnswer()==solution) {
-            return true;
-        }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.PERMUTATIONS.name()&&numbergameManager.getEquationGenerator().getFirstNumber()==solution) {
-            return true;
-        }
-        if(NumberGameConstants.numberGameMode==NumberGameMode.PERMUTATIONS.name()&&numbergameManager.getEquationGenerator().getSecondNumber()==solution) {
-            return true;
-        }
-        return false;
 
-    }
 
 
 }

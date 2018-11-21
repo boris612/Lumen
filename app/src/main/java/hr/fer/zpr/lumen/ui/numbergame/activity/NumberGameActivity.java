@@ -114,7 +114,7 @@ public class NumberGameActivity extends DaggerActivity {
             @Override
             public void onClick(View v) {
                 int backgroundColor = ((ColorDrawable)result.getBackground()).getColor();
-                if ((numberGamePresenter != null) && (result != null) && (!result.getText().toString().isEmpty()) && numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))) {
+                if ((numberGamePresenter != null) && (result != null) && (!result.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
                   //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
                     result.setBackgroundColor(Color.GREEN);
                     soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
@@ -126,7 +126,7 @@ public class NumberGameActivity extends DaggerActivity {
                                 result.setBackgroundColor(backgroundColor);
                                 result.setClickable(true);
                             });
-                } else if ((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))) {
+                } else if ((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution()) {
                  //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
                     result.setBackgroundColor(Color.RED);
@@ -150,7 +150,7 @@ public class NumberGameActivity extends DaggerActivity {
         secondNumber = findViewById(R.id.secondNumber);
         symbol = findViewById(R.id.symbol);
         result = findViewById(R.id.result);
-        numberGamePresenter = new NumberGamePresenter(firstNumber, secondNumber, symbol);
+        numberGamePresenter = new NumberGamePresenter(firstNumber, secondNumber, result, symbol);
         numberGamePresenter.newEquation();
     }
 
