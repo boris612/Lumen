@@ -33,16 +33,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class NumberGameActivity extends DaggerActivity {
 
-    @Inject
-    SharedPreferences pref;
-    private Set<String> additionSet=new HashSet<>();
     private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 4;
 
     private final static String FILE_PATH_CORRECT_MESSAGE = "database/sound/messages/croatian/correct/bravo.mp3";
     private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj_opet.mp3";
 
     @Inject
+    SharedPreferences pref;
+
+    @Inject
     SoundPlayer soundPlayer;
+
+    private Set<String> additionSet=new HashSet<>();
 
     private LinearLayout linearLayout;
     private TextView result;
@@ -60,7 +62,7 @@ public class NumberGameActivity extends DaggerActivity {
         additionSet.add("ADDITION");
         setSettings();
         gameSetup();
-        setDragAndDropListeners();
+        setListeners();
         checkButton();
         deleteButton();
     }
@@ -120,9 +122,9 @@ public class NumberGameActivity extends DaggerActivity {
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
                                 numberGamePresenter.newEquation();
-                                result.setClickable(true);
                                 result.setText("");
                                 result.setBackgroundColor(backgroundColor);
+                                result.setClickable(true);
                             });
                 } else if ((numberGamePresenter != null) && (result != null) && !result.getText().toString().isEmpty() && !numberGamePresenter.checkSolution(Integer.parseInt(result.getText().toString()))) {
                  //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
@@ -131,9 +133,9 @@ public class NumberGameActivity extends DaggerActivity {
                     result.setClickable(false);
                     Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                             .subscribe(() -> {
-                                result.setClickable(true);
                                 result.setText("");
                                 result.setBackgroundColor(backgroundColor);
+                                result.setClickable(true);
                             });
                 } else {
                     Toast.makeText(getApplicationContext(), "Nije unesen nijedan broj", Toast.LENGTH_LONG).show();
@@ -152,18 +154,37 @@ public class NumberGameActivity extends DaggerActivity {
         numberGamePresenter.newEquation();
     }
 
-    private void setDragAndDropListeners() {
+    private void setListeners() {
         linearLayout = findViewById(R.id.digits);
-        result = findViewById(R.id.result);
 
         for (int i = 0, nChildren = linearLayout.getChildCount(); i < nChildren; i++) {
             TextView textView = (TextView) linearLayout.getChildAt(i);
-            textView.setOnTouchListener(new TouchListener(textView));
-            textView.setOnClickListener(new ClickListener());
+
+            if(pref.getBoolean("onClickOptionCheckbox",false)){
+                textView.setOnClickListener(new DigitClickListener());
+            } else {
+                textView.setOnTouchListener(new TouchListener(textView));
+            }
         }
 
+     //   result.setOnClickListener(new onClickDeleteListener());
         result.setOnDragListener(new DragListener());
-        result.setOnClickListener(new ClickListener());
+
+    //    firstNumber.setOnClickListener(new onClickDeleteListener());
+        firstNumber.setOnDragListener(new DragListener());
+
+     //   secondNumber.setOnClickListener(new onClickDeleteListener());
+        secondNumber.setOnDragListener(new DragListener());
+    }
+
+    public class DigitClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            TextView textView = (TextView)v;
+            setResult(textView.getText().toString());
+        }
+
     }
 
     public class DragListener implements View.OnDragListener {
@@ -216,15 +237,19 @@ public class NumberGameActivity extends DaggerActivity {
         result.setText(oldDigits);
     }
 
-    class ClickListener implements View.OnClickListener {
+
+    class onClickDeleteListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             TextView textView = (TextView)v;
+
             if(result.getId() == textView.getId()){
                 result.setText("");
-            } else {
-                setResult(textView.getText().toString());
+            } else if (firstNumber.getId() == textView.getId()){
+                firstNumber.setText("");
+            } else if (secondNumber.getId() == textView.getId()){
+                secondNumber.setText("");
             }
         }
 
