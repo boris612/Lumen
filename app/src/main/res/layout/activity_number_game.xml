@@ -8,8 +8,8 @@
         android:id="@+id/equation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_above="@id/checkButton">
+        android:layout_marginBottom="100dp"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/firstNumber"
@@ -82,16 +82,16 @@
 
     </RelativeLayout>
 
-    <ImageButton
-        android:id="@+id/checkButton"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_above="@+id/digits"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="58dp"
-        android:gravity="center"
-        android:background="@null"
-        android:src="@drawable/icons8_question_mark_48" />
+    <!--<ImageButton-->
+        <!--android:id="@+id/checkButton"-->
+        <!--android:layout_width="72dp"-->
+        <!--android:layout_height="72dp"-->
+        <!--android:layout_above="@+id/digits"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_marginBottom="58dp"-->
+        <!--android:gravity="center"-->
+        <!--android:background="@null"-->
+        <!--android:src="@drawable/icons8_question_mark_48" />-->
 
     <LinearLayout
         android:id="@+id/digits"

@@ -3,6 +3,7 @@ package hr.fer.zpr.lumen.ui.numbergame.activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ public class NumberGameActivity extends DaggerActivity {
 
     private final static int MAX_DIGITS_NUMBER_IN_ANSWER = 4;
 
-    private final static int BACKGROUND_COLOR = Color.rgb(100,28,156);
+    private final static int BORDER_COLOR = Color.rgb(141,8,110);
     private final static String FILE_PATH_CORRECT_MESSAGE = "database/sound/messages/croatian/correct/bravo.mp3";
     private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj_opet.mp3";
     private final  DragListener dragListener = new DragListener();
@@ -53,7 +54,7 @@ public class NumberGameActivity extends DaggerActivity {
     private TextView secondNumber;
     private TextView symbol;
     private ImageButton deleteButton;
-    private ImageButton checkButton;
+//    private ImageButton checkButton;
     private NumberGamePresenter numberGamePresenter;
     private TextView target;
 
@@ -67,7 +68,7 @@ public class NumberGameActivity extends DaggerActivity {
         setSettings();
         gameSetup();
         setListeners();
-        checkButton();
+//        checkButton();
         deleteButton();
     }
 
@@ -110,51 +111,52 @@ public class NumberGameActivity extends DaggerActivity {
         EquationConstants.setDivisionLimit(pref.getInt(NumberGamePreferences.DIVISIONLIMIT.name(),10));
     }
 
-    private void checkButton() {
-        checkButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if ((numberGamePresenter != null) && (target != null) && (!target.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
-                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
-                    soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
-                    target.setBackgroundColor(Color.GREEN);
-                    setClickable(false);
-                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                            .subscribe(() -> {
-                                setClickable(true);
-                                target.setOnDragListener(null);
-                                target.setBackgroundColor(Color.TRANSPARENT);
-                                target = numberGamePresenter.newEquation();
-                                target.setOnDragListener(dragListener);
-                                target.setBackgroundColor(BACKGROUND_COLOR);
-                            });
-                } else if ((numberGamePresenter != null) && (target != null) && !target.getText().toString().isEmpty() && !numberGamePresenter.checkSolution()) {
-                 //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
-                    soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
-                    target.setBackgroundColor(Color.RED);
-                    setClickable(false);
-                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                            .subscribe(() -> {
-                                target.setText("");
-                                target.setBackgroundColor(BACKGROUND_COLOR);
-                                setClickable(true);
-                            });
-                } else {
-                    Toast.makeText(getApplicationContext(), "Nije unesen nijedan broj", Toast.LENGTH_LONG).show();
-                }
-            }
-
-        });
-    }
+//    private void checkButton() {
+//        checkButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if ((numberGamePresenter != null) && (target != null) && (!target.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
+//                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
+//                    soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
+//                    target.setBackgroundColor(Color.GREEN);
+//                    setClickable(false);
+//                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+//                            .subscribe(() -> {
+//                                setClickable(true);
+//                                target.setOnDragListener(null);
+//                                target.setBackgroundColor(Color.TRANSPARENT);
+//                                target = numberGamePresenter.newEquation();
+//                                target.setOnDragListener(dragListener);
+//                                target.setBackgroundColor(BACKGROUND_COLOR);
+//                            });
+//                } else if ((numberGamePresenter != null) && (target != null) && !target.getText().toString().isEmpty() && !numberGamePresenter.checkSolution()) {
+//                 //   Toast.makeText(getApplicationContext(), "Rjesenje nije tocno, pokusaj ponovno", Toast.LENGTH_LONG).show();
+//                    soundPlayer.play(FILE_PATH_INCORRECT_MESSAGE);
+//                    target.setBackgroundColor(Color.RED);
+//                    setClickable(false);
+//                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+//                            .subscribe(() -> {
+//                                target.setText("");
+//                                target.setBackgroundColor(BACKGROUND_COLOR);
+//                                setClickable(true);
+//                            });
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Nije unesen nijedan broj", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
+//    }
 
     private void setClickable(boolean clickable){
         target.setClickable(clickable);
-        checkButton.setClickable(clickable);
+//        checkButton.setClickable(clickable);
         deleteButton.setClickable(clickable);
         for (int i = 0, nChildren = linearLayout.getChildCount(); i < nChildren; i++) {
             TextView textView = (TextView) linearLayout.getChildAt(i);
             textView.setClickable(clickable);
+            textView.setEnabled(clickable);
         }
     }
 
@@ -165,7 +167,7 @@ public class NumberGameActivity extends DaggerActivity {
         result = findViewById(R.id.result);
         deleteButton = findViewById(R.id.deleteButton);
         linearLayout = findViewById(R.id.digits);
-        checkButton = findViewById(R.id.checkButton);
+//        checkButton = findViewById(R.id.checkButton);
 
         firstNumber.setBackgroundColor(Color.TRANSPARENT);
         secondNumber.setBackgroundColor(Color.TRANSPARENT);
@@ -175,7 +177,14 @@ public class NumberGameActivity extends DaggerActivity {
 
         target = numberGamePresenter.newEquation();
         target.setOnDragListener(dragListener);
-        target.setBackgroundColor(BACKGROUND_COLOR);
+        setTextViewBorder(target);
+    }
+
+    private void setTextViewBorder(TextView textView){
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setStroke(8, BORDER_COLOR);
+        textView.setBackground(drawable);
     }
 
     private void setListeners() {
@@ -197,6 +206,7 @@ public class NumberGameActivity extends DaggerActivity {
         public void onClick(View v) {
             TextView textView = (TextView)v;
             setResult(textView.getText().toString());
+            checkAnswer();
         }
 
     }
@@ -224,7 +234,7 @@ public class NumberGameActivity extends DaggerActivity {
                     String dragData = item.getText().toString();
 
                     setResult(dragData);
-
+                    checkAnswer();
                     // Returns true. DragEvent.getResult() will return true.
                     return true;
 
@@ -251,6 +261,23 @@ public class NumberGameActivity extends DaggerActivity {
         target.setText(oldDigits);
     }
 
+    private void checkAnswer(){
+        if ((numberGamePresenter != null) && (target != null) && (!target.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
+                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
+                    soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
+                    target.setBackgroundColor(Color.GREEN);
+                    setClickable(false);
+                    Completable.timer(2000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                setClickable(true);
+                                target.setOnDragListener(null);
+                                target.setBackgroundColor(Color.TRANSPARENT);
+                                target = numberGamePresenter.newEquation();
+                                target.setOnDragListener(dragListener);
+                                setTextViewBorder(target);
+                            });
+                }
+    }
 
     class onClickDeleteListener implements View.OnClickListener {
 
