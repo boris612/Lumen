@@ -28,6 +28,12 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         setContentView(R.layout.activity_numbergame_settings);
         this.getLumenApplication().getApplicationComponent().inject(this);
         final SharedPreferences.Editor editor = pref.edit();
+        if(pref.getStringSet(NumberGamePreferences.OPERATIONS.name(),new HashSet<>()).isEmpty()){
+            Set<String> additionSet=new HashSet<>();
+            additionSet.add("ADDITION");
+            editor.putStringSet(NumberGamePreferences.OPERATIONS.name(),additionSet);
+            editor.commit();
+        }
         CheckBox permutations=findViewById(R.id.permutation);
         permutations.setChecked(pref.getBoolean("permutationsCheckbox",false));
         permutations.setOnClickListener(v->{
@@ -197,6 +203,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
             activeSet.remove(operation.name());
         }
         editor.putBoolean(s,checkBox.isChecked() );
+        //if(activeSet.isEmpty())activeSet.add("ADDITION");
         editor.putStringSet(NumberGamePreferences.OPERATIONS.name(), activeSet);
         editor.commit();
     }
