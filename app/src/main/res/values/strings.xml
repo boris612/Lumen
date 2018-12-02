@@ -24,7 +24,14 @@
     <string name="word_game_settings">Word game settings</string>
     <string name="number_game_settings">Number game settings</string>
     <string name="coin_game_settings">Coin game settings</string>
-    <string name="calculating_game_settings">Calculating game settings</string>
+    <!--<string name="calculating_game_settings">Calculating game settings</string>-->
+    <string name="kategorije">Kategorije</string>
+    <string name="validiraj_slovo_po_slovo">Validiraj slovo po slovo</string>
+    <string name="validiraj_cijelu_rijec">Validiraj cijelu riječ</string>
+    <string name="prikazi_sva_slova">Prikaži sva slova</string>
+    <string name="stvori_vise_slova">Stvori više slova</string>
+    <string name="zazeleni_tocno_slovo">Zazeleni točno slovo</string>
+
     <string name="permutation">Permutation</string>
     <string name="on_click">On click</string>
     <string name="additionCB">Addition</string>

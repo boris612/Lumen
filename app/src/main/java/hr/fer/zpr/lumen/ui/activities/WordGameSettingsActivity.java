@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
+import hr.fer.zpr.lumen.localization.LocalizationConstants;
 import hr.fer.zpr.lumen.localization.LocalizationProvider;
 import hr.fer.zpr.lumen.ui.wordgame.util.ViewConstants;
 import hr.fer.zpr.lumen.wordgame.interactor.*;
@@ -16,7 +17,6 @@ import javax.inject.Inject;
 
 public class WordGameSettingsActivity extends DaggerActivity {
 
-    private Button greenWhenCorrectBtn;
     private Button addMoreLettersBtn;
     private Button showAllLettersBtn;
     private ImageButton returnBtn;
@@ -53,7 +53,6 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         showAllLettersBtn = findViewById(R.id.GenerateAllLettersButton);
         returnBtn = findViewById(R.id.returnButton);
-        greenWhenCorrectBtn = findViewById(R.id.GreenWhenCorrectButton);
         addMoreLettersBtn = findViewById(R.id.GenerateMoreLettersButton);
         categoriesBtn = findViewById(R.id.categoryButton);
         validateWordBtn = findViewById(R.id.ValidateAllLetters);
@@ -62,47 +61,54 @@ public class WordGameSettingsActivity extends DaggerActivity {
         final SharedPreferences.Editor editor = pref.edit();
 
         setButtonsInitialColor();
-
-        greenWhenCorrectBtn.setOnClickListener(e -> {
-            boolean correct = pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false);
-            if (!correct) greenWhenCorrectBtn.setBackgroundColor(Color.GREEN);
-            else greenWhenCorrectBtn.setBackgroundColor(Color.RED);
-            editor.putBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, !correct);
-            editor.commit();
-            changeGreenOnCorrectUseCase.execute(!correct).subscribe();
-        });
+        setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
 
         addMoreLettersBtn.setOnClickListener(e -> {
             boolean more = pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false);
-            if (more){
+            if (!more) {
+                if (pref.getBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, false)) {
+                    showAllLettersBtn.setBackgroundColor(Color.RED);
+                    editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, false);
+                }
                 addMoreLettersBtn.setBackgroundColor(Color.GREEN);
-                showAllLettersBtn.setBackgroundColor(Color.RED);
+            } else {
+                addMoreLettersBtn.setBackgroundColor(Color.RED);
             }
-            else addMoreLettersBtn.setBackgroundColor(Color.RED);
+
             editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, !more);
-            editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, more);
             editor.commit();
             changeCreateMoreLettersUseCase.execute(!more).subscribe();
         });
 
         showAllLettersBtn.setOnClickListener(e -> {
             boolean allLetters = pref.getBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, false);
-            if (allLetters) {
+            if (!allLetters) {
+                if (pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false)) {
+                    addMoreLettersBtn.setBackgroundColor(Color.RED);
+                    editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, false);
+                }
                 showAllLettersBtn.setBackgroundColor(Color.GREEN);
-                addMoreLettersBtn.setBackgroundColor(Color.RED);
             } else {
                 showAllLettersBtn.setBackgroundColor(Color.RED);
             }
+
             editor.putBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, !allLetters);
-            editor.putBoolean(ViewConstants.PREFERENCES_LETTERS, allLetters);
             editor.commit();
             changeCreateAllLettersUseCase.execute(!allLetters).subscribe();
         });
 
         validateWordBtn.setOnClickListener(e -> {
             boolean validateWord = pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, false);
-            if (!validateWord) validateWordBtn.setBackgroundColor(Color.GREEN);
-            else validateWordBtn.setBackgroundColor(Color.RED);
+            if (!validateWord) {
+                if (pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, false)) {
+                    validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+                    editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, false);
+                }
+                validateWordBtn.setBackgroundColor(Color.GREEN);
+            } else {
+                validateWordBtn.setBackgroundColor(Color.RED);
+            }
+
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, !validateWord);
             editor.commit();
             changeGreenWhenFullUseCase.execute(!validateWord).subscribe();
@@ -110,8 +116,16 @@ public class WordGameSettingsActivity extends DaggerActivity {
 
         validateLetterByLetterBtn.setOnClickListener(e -> {
             boolean validateLetters = pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, false);
-            if (!validateLetters) validateLetterByLetterBtn.setBackgroundColor(Color.GREEN);
-            else validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+            if (!validateLetters) {
+                if (pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, false)) {
+                    validateWordBtn.setBackgroundColor(Color.RED);
+                    editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, false);
+                }
+                validateLetterByLetterBtn.setBackgroundColor(Color.GREEN);
+            } else {
+                validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+            }
+
             editor.putBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, !validateLetters);
             editor.commit();
             changeGreenInstantlyUseCase.execute(!validateLetters).subscribe();
@@ -124,26 +138,31 @@ public class WordGameSettingsActivity extends DaggerActivity {
         });
 
         returnBtn.setOnClickListener(e -> onBackPressed());
-
-
     }
 
     private void setButtonsInitialColor() {
-        if (pref.getBoolean(ViewConstants.PREFERENCES_GREEN_ON_CORRECT, false))
-            greenWhenCorrectBtn.setBackgroundColor(Color.GREEN);
-        else greenWhenCorrectBtn.setBackgroundColor(Color.RED);
         if (pref.getBoolean(ViewConstants.PREFERENCES_LETTERS, false))
             addMoreLettersBtn.setBackgroundColor(Color.GREEN);
         else addMoreLettersBtn.setBackgroundColor(Color.RED);
+
         if (pref.getBoolean(ViewConstants.PREFERENCES_ALL_LETTERS, false))
             showAllLettersBtn.setBackgroundColor(Color.GREEN);
         else showAllLettersBtn.setBackgroundColor(Color.RED);
+
         if (pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_LETTERS, false))
             validateLetterByLetterBtn.setBackgroundColor(Color.GREEN);
         else validateLetterByLetterBtn.setBackgroundColor(Color.RED);
+
         if (pref.getBoolean(ViewConstants.PREFERENCES_VALIDATE_WORD, false))
             validateWordBtn.setBackgroundColor(Color.GREEN);
         else validateWordBtn.setBackgroundColor(Color.RED);
     }
 
+    private void setLanguageValues(String newLanguage) {
+        categoriesBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CATEGORIES_PROPERTY));
+        addMoreLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_MORE_LETTERS_PROPERTY));
+        showAllLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_ALL_LETTERS_PROPERTY));
+        validateWordBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.VALIDATE_WORD_PROPERTY));
+        validateLetterByLetterBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.VALIDATE_LETTERS_PROPERTY));
+    }
 }
