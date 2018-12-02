@@ -275,6 +275,7 @@ public class NumberGameActivity extends DaggerActivity {
                                 target = numberGamePresenter.newEquation();
                                 target.setOnDragListener(dragListener);
                                 setTextViewBorder(target);
+                                soundPlayer.stopPlaying();
                             });
                 }
     }
