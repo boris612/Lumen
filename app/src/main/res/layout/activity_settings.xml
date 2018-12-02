@@ -113,7 +113,7 @@
             android:textSize="10sp"
             android:textAppearance="@style/TextAppearance.AppCompat"
             app:layout_constraintLeft_toLeftOf="@+id/wordGameSettings"
-            app:layout_constraintRight_toRightOf="@id/calculatingGameSettings"
+            app:layout_constraintRight_toRightOf="@id/numberGameSettings"
             app:layout_constraintTop_toBottomOf="@+id/coinNumber"/>
     <Button
             android:id="@+id/numberGameSettings"
