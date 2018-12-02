@@ -2,7 +2,6 @@ package hr.fer.zpr.lumen.ui.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
