@@ -40,9 +40,9 @@ public class WordGameManagerImpl implements WordGameManager {
     private WordGameRepository repository;
     private Coins coins;
 
-    public WordGameManagerImpl(WordGameRepository repository,SoundPlayer player) {
+    public WordGameManagerImpl(WordGameRepository repository, SoundPlayer player) {
         this.repository = repository;
-        this.player=player;
+        this.player = player;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class WordGameManagerImpl implements WordGameManager {
     @Override
     public Single<Boolean> isAnswerCorrect() {
         boolean correct = letterField.isWordCorrect(currentWord);
-        if(correct){
+        if (correct) {
             player.play(repository.getCorrectMessage(messagesLanguage).blockingGet());
             coins.addCoins(COINS_TO_ADD);
         }
@@ -114,7 +114,7 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public void setMessagesLanguage(String language) {
-        messagesLanguage=Language.valueOf(language.toUpperCase());
+        messagesLanguage = Language.valueOf(language.toUpperCase());
     }
 
     @Override
@@ -155,7 +155,11 @@ public class WordGameManagerImpl implements WordGameManager {
 
     @Override
     public Single<Boolean> isGamePhasePlaying() {
-        return Single.just(phase==WordGamePhase.PLAYING);
+        return Single.just(phase == WordGamePhase.PLAYING);
+    }
+
+    public Single<Boolean> isGamePhasePresenting() {
+        return Single.just(phase == WordGamePhase.PRESENTING);
     }
 
     @Override

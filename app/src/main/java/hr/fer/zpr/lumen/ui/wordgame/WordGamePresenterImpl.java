@@ -134,7 +134,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         StartingHintModel model = mapper.hintModel(word);
         view.addDrawable(model);
-        if (manager.isCreateAllLettersActive().blockingGet() && !manager.isGamePhasePlaying().blockingGet())
+        if (manager.isCreateAllLettersActive().blockingGet() && manager.isGamePhasePresenting().blockingGet())
             view.getScrollView().removeView(view.getLinearLayout());
         presentHint(model);
     }
@@ -245,7 +245,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }*/
 
         if (correct) fieldLetter.put(field.toString(), letter.getValue());
-        
+
         //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
         if (correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
 
