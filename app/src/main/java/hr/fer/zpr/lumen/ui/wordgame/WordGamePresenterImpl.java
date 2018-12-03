@@ -241,7 +241,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }*/
 
         if (correct) fieldLetter.put(field.toString(), letter.getValue());
-        
+
         //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
         if (correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
 
