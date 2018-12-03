@@ -81,9 +81,9 @@ public class GameSettingsActivity extends DaggerActivity {
         languageButton = findViewById(R.id.languageButton);
         returnBtn = findViewById(R.id.returnButton);
         guiLanguageButton = findViewById(R.id.guilanguageButton);
-        wordGameBtn=findViewById(R.id.wordGameSettings);
-        coinGameBtn=findViewById(R.id.coinGameSettings);
-        calculatingGameBtn=findViewById(R.id.calculatingGameSettings);
+        wordGameBtn = findViewById(R.id.wordGameSettings);
+        coinGameBtn = findViewById(R.id.coinGameSettings);
+        calculatingGameBtn = findViewById(R.id.calculatingGameSettings);
         coinNumber.setText(String.valueOf(pref.getInt(getResources().getString(R.string.coins), 0)));
         setLanguageValues(pref.getString(ViewConstants.PREFERENCES_GUI_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE));
 
@@ -131,6 +131,11 @@ public class GameSettingsActivity extends DaggerActivity {
             Intent settings = new Intent(this, WordGameSettingsActivity.class);
             this.startActivity(settings);
         });
+
+        calculatingGameBtn.setOnClickListener(e -> {
+            Intent settings = new Intent(this, NumberGameSettingsActivity.class);
+            this.startActivity(settings);
+        });
     }
 
 
@@ -140,9 +145,9 @@ public class GameSettingsActivity extends DaggerActivity {
         coins.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.NUMBER_OF_COINS_PROPERTY));
         String words_language = pref.getString(ViewConstants.PREFERENCES_LANGUAGE, ViewConstants.DEFAULT_LANGUAGE);
         languageButton.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.WORDS_LANGUAGE_PROPERTY) + ":" + localizationProvider.getValueForLanguage(newLanguage, words_language));
-        wordGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.WORD_GAME_SETTINGS_PROPERTY));
-        coinGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.COIN_GAME_SETTINGS_PROPERTY));
-        calculatingGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage,LocalizationConstants.CALCULATING_GAME_SETTINGS_PROPERTY));
+        wordGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.WORD_GAME_SETTINGS_PROPERTY));
+        coinGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.COIN_GAME_SETTINGS_PROPERTY));
+        calculatingGameBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CALCULATING_GAME_SETTINGS_PROPERTY));
     }
 
 }

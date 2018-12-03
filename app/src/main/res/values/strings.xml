@@ -48,5 +48,6 @@
     <string name="division_lvl_1">level 1</string>
     <string name="division_lvl_2">level 2</string>
     <string name="division_lvl_3">level 3</string>
+    <string name="number_game_settings">Number game settings</string>
 
 </resources>

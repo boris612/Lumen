@@ -1,32 +1,13 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
-import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.*;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-
-import android.widget.*;
-
-import hr.fer.zpr.lumen.R;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
@@ -39,6 +20,14 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.internal.zzagr.runOnUiThread;
 
@@ -183,8 +172,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
                     xTouch = (int) event.getX(actionIndex);
                     yTouch = (int) event.getY(actionIndex);
-                    
-                    if (yTouch+letters.get(0).getHeight() >= this.getHeight() - scrollView.getHeight()) {
+
+                    if (yTouch + letters.get(0).getHeight() >= this.getHeight() - scrollView.getHeight()) {
                         return true;
                     }
                     touchedLetter = mLetterPointer.get(pointerId);
