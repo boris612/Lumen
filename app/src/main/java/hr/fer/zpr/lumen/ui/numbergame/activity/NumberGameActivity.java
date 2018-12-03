@@ -263,7 +263,6 @@ public class NumberGameActivity extends DaggerActivity {
 
     private void checkAnswer(){
         if ((numberGamePresenter != null) && (target != null) && (!target.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
-                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
                     target.setBackgroundColor(Color.GREEN);
                     setClickable(false);
