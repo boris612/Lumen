@@ -20,6 +20,7 @@ import java.util.Set;
 public class NumberGameSettingsActivity extends DaggerActivity {
 
     private ImageButton returnBtn;
+    private int numberOfCheckedBoxes;
     @Inject
     SharedPreferences pref;
 
@@ -29,6 +30,7 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         setContentView(R.layout.activity_numbergame_settings);
         this.getLumenApplication().getApplicationComponent().inject(this);
         final SharedPreferences.Editor editor = pref.edit();
+        numberOfCheckedBoxes=pref.getInt("numberOfCheckedBoxes",1);
         if (pref.getStringSet(NumberGamePreferences.OPERATIONS.name(), new HashSet<>()).isEmpty()) {
             Set<String> additionSet = new HashSet<>();
             additionSet.add("ADDITION");
@@ -56,8 +58,17 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         RadioGroup additionGroup = findViewById(R.id.addition);
         enableDisableRadioButtons(addition, additionGroup);
         addition.setOnClickListener(v -> {
+            int numberOfCBoxes= updateCounter(addition.isChecked(),editor);
+            if(numberOfCBoxes==0){
+                addition.setChecked(true);
+                numberOfCheckedBoxes=1;
+                editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
+                editor.commit();
+            }
+            else{
             enableDisableRadioButtons(addition, additionGroup);
             saveCheckboxSettings(editor, addition, Operation.ADDITION, "additionCheckbox");
+            }
         });
         additionGroup.setOnCheckedChangeListener((v, i) -> {
             int indexOfChecked = saveRadioButtonSettings(additionGroup, "additionGroup", editor);
@@ -84,8 +95,17 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         RadioGroup subtractionGroup = findViewById(R.id.subtraction);
         enableDisableRadioButtons(subtraction, subtractionGroup);
         subtraction.setOnClickListener(v -> {
-            enableDisableRadioButtons(subtraction, subtractionGroup);
-            saveCheckboxSettings(editor, subtraction, Operation.SUBTRACTION, "subtractionCheckbox");
+            int numberOfCBoxes= updateCounter(subtraction.isChecked(),editor);
+            if(numberOfCBoxes==0){
+                subtraction.setChecked(true);
+                numberOfCheckedBoxes=1;
+                editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
+                editor.commit();
+            }
+            else {
+                enableDisableRadioButtons(subtraction, subtractionGroup);
+                saveCheckboxSettings(editor, subtraction, Operation.SUBTRACTION, "subtractionCheckbox");
+            }
         });
         subtractionGroup.setOnCheckedChangeListener((v, i) -> {
             int indexOfChecked = saveRadioButtonSettings(subtractionGroup, "subtractionGroup", editor);
@@ -112,8 +132,17 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         RadioGroup multiplicationGroup = findViewById(R.id.multiplication);
         enableDisableRadioButtons(multiplication, multiplicationGroup);
         multiplication.setOnClickListener(v -> {
-            enableDisableRadioButtons(multiplication, multiplicationGroup);
-            saveCheckboxSettings(editor, multiplication, Operation.MULTIPLICATION, "multiplicationCheckbox");
+            int numberOfCBoxes= updateCounter(multiplication.isChecked(),editor);
+            if(numberOfCBoxes==0){
+                multiplication.setChecked(true);
+                numberOfCheckedBoxes=1;
+                editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
+                editor.commit();
+            }
+            else {
+                enableDisableRadioButtons(multiplication, multiplicationGroup);
+                saveCheckboxSettings(editor, multiplication, Operation.MULTIPLICATION, "multiplicationCheckbox");
+            }
         });
         multiplicationGroup.setOnCheckedChangeListener((v, i) -> {
             int indexOfChecked = saveRadioButtonSettings(multiplicationGroup, "multiplicationGroup", editor);
@@ -140,8 +169,17 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         RadioGroup divisionGroup = findViewById(R.id.division);
         enableDisableRadioButtons(division, divisionGroup);
         division.setOnClickListener(v -> {
-            enableDisableRadioButtons(division, divisionGroup);
-            saveCheckboxSettings(editor, division, Operation.DIVISION, "divisionCheckbox");
+            int numberOfCBoxes= updateCounter(division.isChecked(),editor);
+            if(numberOfCBoxes==0){
+                division.setChecked(true);
+                numberOfCheckedBoxes=1;
+                editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
+                editor.commit();
+            }
+            else {
+                enableDisableRadioButtons(division, divisionGroup);
+                saveCheckboxSettings(editor, division, Operation.DIVISION, "divisionCheckbox");
+            }
         });
         divisionGroup.setOnCheckedChangeListener((v, i) -> {
 
@@ -174,6 +212,19 @@ public class NumberGameSettingsActivity extends DaggerActivity {
 
     }
 
+    private int updateCounter(boolean checked,SharedPreferences.Editor editor){
+        numberOfCheckedBoxes=pref.getInt("numberOfCheckedBoxes",1);
+        if(checked){
+            numberOfCheckedBoxes++;
+        }
+        else {
+            numberOfCheckedBoxes--;
+        }
+        editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
+        editor.commit();
+        System.out.println(numberOfCheckedBoxes);
+        return numberOfCheckedBoxes;
+    }
     private void setRadioGroup(RadioGroup group, String groupname) {
         ((RadioButton) group.getChildAt(0)).setChecked(pref.getBoolean(groupname + 0, true));
         for (int i = 1; i < group.getChildCount(); i++) {
