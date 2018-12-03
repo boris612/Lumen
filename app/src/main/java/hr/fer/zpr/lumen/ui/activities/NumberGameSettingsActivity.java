@@ -222,7 +222,6 @@ public class NumberGameSettingsActivity extends DaggerActivity {
         }
         editor.putInt("numberOfCheckedBoxes",numberOfCheckedBoxes);
         editor.commit();
-        System.out.println(numberOfCheckedBoxes);
         return numberOfCheckedBoxes;
     }
     private void setRadioGroup(RadioGroup group, String groupname) {
