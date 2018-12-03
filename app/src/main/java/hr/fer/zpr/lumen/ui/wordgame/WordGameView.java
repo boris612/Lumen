@@ -299,6 +299,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void addAllLetters(List<LetterModel> letters) {
+        this.letters = letters;
+        List<LetterModel> listOutsideScroll = new ArrayList<>();
         scrollView.smoothScrollTo(0, 0);
         linearLayout.setVisibility(ViewGroup.VISIBLE);
         linearLayout = new LinearLayout(context);
@@ -306,7 +308,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         TextView textView = null;
         List<Letter> letterList = manager.getAllLetters().blockingGet();
 
-        List<LetterModel> listOutsideScroll = new ArrayList<>();
         for (LetterModel letter : letters) {
             textView = new TextView(context);
             textView.setAllCaps(true);
@@ -318,7 +319,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
             mapLetter.put(textView, letterList.get(letters.indexOf(letter)));
             textView.setLayoutParams(layoutParams);
             textView.getLayoutParams().height = (int) (context.getResources().getDisplayMetrics().heightPixels / 3.5);
-//            textView.getLayoutParams().width += 7;
+//            textView.getLayoutParams().width += 5;
             linearLayout.setBaselineAligned(true);
             linearLayout.addView(textView);
 
@@ -387,10 +388,9 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         runOnUiThread(() -> {
             scrollView.addView(linearLayout);
-            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10);
+            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height - 10);
         });
 
-        this.letters = letters;
 
     }
 

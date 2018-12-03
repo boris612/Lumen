@@ -130,7 +130,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         StartingHintModel model = mapper.hintModel(word);
         view.addDrawable(model);
-        if (manager.isCreateAllLettersActive().blockingGet() && !manager.isGamePhasePlaying().blockingGet())
+        if (manager.isCreateAllLettersActive().blockingGet() && manager.isGamePhasePresenting().blockingGet())
             view.getScrollView().removeView(view.getLinearLayout());
         presentHint(model);
     }
