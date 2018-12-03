@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
@@ -54,8 +55,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private HorizontalScrollView scrollView;
     private Canvas canvas;
     private LinearLayout linearLayout;
-    private Map<ImageView, LetterModel> mapModel = new HashMap<>();
-    private Map<ImageView, Letter> mapLetter = new HashMap<>();
+    private Map<TextView, LetterModel> mapModel = new HashMap<>();
+    private Map<TextView, Letter> mapLetter = new HashMap<>();
 
     public WordGameView(LumenApplication context) {
         super(context);
@@ -92,7 +93,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         gameLoopDisposable.dispose();
     }
 
-    public Map<ImageView, LetterModel> getMapModel() {
+    public Map<TextView, LetterModel> getMapModel() {
         return mapModel;
     }
 
@@ -213,7 +214,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         return super.onTouchEvent(event) || handled;
     }
 
-    private void updateAddingLettersToFields(boolean actionUpJustOccured) {
+    public void updateAddingLettersToFields(boolean actionUpJustOccured) {
         outerLoop:
         for (LetterFieldModel field : fields) {
             LetterModel letterInside = field.getLetterInside();
@@ -302,23 +303,27 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         linearLayout.setVisibility(ViewGroup.VISIBLE);
         linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        ImageView imageView = null;
+        TextView textView = null;
         List<Letter> letterList = manager.getAllLetters().blockingGet();
 
         List<LetterModel> listOutsideScroll = new ArrayList<>();
         for (LetterModel letter : letters) {
+            textView=new TextView(context);
+//            imageView = new ImageView(context);
+//            imageView.setImageBitmap(letter.getImage());
+            textView.setAllCaps(true);
+            textView.setTextSize(90);
+            textView.setTextColor(Color.BLACK);
+            textView.setText(letter.getValue());
+            mapModel.put(textView, letter);
+            mapLetter.put(textView, letterList.get(letters.indexOf(letter)));
+            textView.setLayoutParams(layoutParams);
+            textView.getLayoutParams().height =(int)( context.getResources().getDisplayMetrics().heightPixels / 3.5);
+            textView.getLayoutParams().width = context.getResources().getDisplayMetrics().widthPixels / 9;
+            linearLayout.setBaselineAligned(true);
+            linearLayout.addView(textView);
 
-            imageView = new ImageView(context);
-            imageView.setImageBitmap(letter.getImage());
-            mapModel.put(imageView, letter);
-            mapLetter.put(imageView, letterList.get(letters.indexOf(letter)));
-            imageView.setLayoutParams(layoutParams);
-            imageView.getLayoutParams().height = context.getResources().getDisplayMetrics().heightPixels / 5;
-            imageView.getLayoutParams().width = context.getResources().getDisplayMetrics().widthPixels / 12;
-            linearLayout.addView(imageView);
-            imageView.setBaselineAlignBottom(true);
-
-            imageView.setOnLongClickListener(new OnLongClickListener() {
+            textView.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     if (!listOutsideScroll.isEmpty()) {
@@ -341,11 +346,11 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 }
             });
         }
-        ImageView finalImageView = imageView;
+        TextView finalTextView = textView;
         WordGameView.this.setOnDragListener(new OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent dragEvent) {
-                ImageView draggedView = (ImageView) dragEvent.getLocalState();
+                TextView draggedView = (TextView) dragEvent.getLocalState();
                 WordGameView dropTarget = (WordGameView) v;
                 switch (dragEvent.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
@@ -356,7 +361,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                         break;
                     case DragEvent.ACTION_DROP:
                         Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
-                        if (touchPosition.y < context.getResources().getDisplayMetrics().heightPixels - finalImageView.getLayoutParams().height - 10) {
+                        if (touchPosition.y < context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10) {
                             try {
                                 Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(mapLetter.get(draggedView).image.path));
                                 LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), image, new Rect(mapModel.get(draggedView).getRect()));
@@ -382,7 +387,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         runOnUiThread(() -> {
             scrollView.addView(linearLayout);
-            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - finalImageView.getLayoutParams().height - 10);
+            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10);
         });
         this.letters = letters;
 
