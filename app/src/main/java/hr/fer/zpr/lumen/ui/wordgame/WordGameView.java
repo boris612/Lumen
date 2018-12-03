@@ -299,6 +299,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void addAllLetters(List<LetterModel> letters) {
+        while(manager.isGamePhasePresenting().blockingGet()){}
         this.letters = letters;
         List<LetterModel> listOutsideScroll = new ArrayList<>();
         scrollView.smoothScrollTo(0, 0);
