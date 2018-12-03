@@ -1,135 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ui.activities.GameSettingsActivity">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/constraintLayout"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".ui.activities.GameSettingsActivity">
 
 
     <ImageButton
-        android:id="@+id/returnButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="280dp"
-        android:layout_marginEnd="120dp"
-        android:layout_marginTop="2dp"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="back arrow"
-        android:cropToPadding="false"
-        android:src="@drawable/back_arrow" />
+            android:id="@+id/returnButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="280dp"
+            android:layout_marginEnd="120dp"
+            android:layout_marginTop="2dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="back arrow"
+            android:cropToPadding="false"
+            android:src="@drawable/back_arrow"/>
 
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Postavke"
-        android:textSize="36sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Postavke"
+            android:textSize="36sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
     <Button
-        android:id="@+id/GreenWhenCorrectButton"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="4dp"
-        android:text="Zazeleni Točno Slovo"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textSize="20sp"
-        android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+            android:id="@+id/guilanguageButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="4dp"
+            android:text="Jezik:Hrvatski"
+            android:layout_marginBottom="20dp"
+            android:textSize="10sp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/languageButton"
+            app:layout_constraintTop_toBottomOf="@+id/textView"/>
 
     <Button
-        android:id="@+id/languageButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="4dp"
-        android:text="Riječi: Hrvatski"
-        android:textSize="10sp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintLeft_toLeftOf="@+id/guilanguageButton"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/GenerateMoreLettersButton" />
+            android:id="@+id/languageButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
+            android:text="Riječi: Hrvatski"
+            android:textSize="10sp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            app:layout_constraintLeft_toLeftOf="@+id/guilanguageButton"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"/>
 
-    <Button
-        android:id="@+id/guilanguageButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="4dp"
-        android:text="Jezik:Hrvatski"
-        android:textSize="10sp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/languageButton"
-        app:layout_constraintTop_toBottomOf="@+id/GenerateMoreLettersButton" />
-
-    <Button
-        android:id="@+id/categoryButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="2dp"
-        android:text="Kategorije"
-        android:textSize="20dp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/languageButton"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/GenerateMoreLettersButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="2dp"
-        android:text="Stvori Više Slova"
-        android:textSize="20sp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/GreenWhenCorrectButton" />
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="320dp"
-        android:layout_marginTop="4dp"
-        android:text="Broj novčića"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryButton" />
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="320dp"
+            android:layout_marginTop="4dp"
+            android:text="Broj novčića"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/languageButton"/>
 
     <EditText
-        android:id="@+id/coinNumber"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="20dp"
-        android:ems="10"
-        android:inputType="numberSigned"
-        app:layout_constraintBottom_toBottomOf="@+id/textView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView3" />
+            android:id="@+id/coinNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="20dp"
+            android:ems="10"
+            android:inputType="numberSigned"
+            app:layout_constraintBottom_toBottomOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView3"/>
 
+    <Button
+            android:id="@+id/wordGameSettings"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/word_game_settings"
+            android:textSize="10sp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/coinGameSettings"
+            app:layout_constraintTop_toBottomOf="@+id/coinNumber"/>
+
+    <Button
+            android:id="@+id/coinGameSettings"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/coin_game_settings"
+            android:textSize="10sp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            app:layout_constraintLeft_toLeftOf="@+id/wordGameSettings"
+            app:layout_constraintRight_toRightOf="@id/numberGameSettings"
+            app:layout_constraintTop_toBottomOf="@+id/coinNumber"/>
+    <Button
+            android:id="@+id/numberGameSettings"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/number_game_settings"
+            android:textSize="10sp"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            app:layout_constraintLeft_toLeftOf="@+id/coinGameSettings"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/coinNumber"/>
 
 </android.support.constraint.ConstraintLayout>

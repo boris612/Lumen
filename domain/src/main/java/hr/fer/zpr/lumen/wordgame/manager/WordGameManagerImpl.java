@@ -31,9 +31,12 @@ public class WordGameManagerImpl implements WordGameManager {
     private Language currentLanguage = Language.CROATIAN;
     private WordGamePhase phase;
     private boolean hintOnCorrectLetter = true;
+    private boolean hintInstantlyLetter = true;
+    private boolean hintWhenFullLetter = true;
     private boolean hintActive;
     private Language messagesLanguage;
     private boolean createMoreLetters;
+    private boolean createAllLetters;
     private WordGameRepository repository;
     private Coins coins;
 
@@ -134,9 +137,21 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
+    public Single<Boolean> isCreateAllLettersActive() {
+        return Single.just(createAllLetters);
+    }
+
+
+    @Override
     public void setCreateMoreLetters(boolean value) {
         this.createMoreLetters = value;
     }
+
+    @Override
+    public void setCreateAllLetters(boolean value) {
+        this.createAllLetters = value;
+    }
+
 
     @Override
     public Single<Boolean> isGamePhasePlaying() {
@@ -147,6 +162,17 @@ public class WordGameManagerImpl implements WordGameManager {
     public Single<Boolean> isHintOnCorrectOn() {
         return Single.just(hintOnCorrectLetter);
     }
+
+    @Override
+    public Single<Boolean> isHintInstantlyOn() {
+        return Single.just(hintInstantlyLetter);
+    }
+
+    @Override
+    public Single<Boolean> isHintWhenFullOn() {
+        return Single.just(hintWhenFullLetter);
+    }
+
 
     @Override
     public Single<Boolean> areAllFieldsFull() {
@@ -212,8 +238,24 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     @Override
+    public Single<List<Letter>> getAllLetters() {
+        return repository.getAllLettersForLanguage(currentLanguage);
+
+    }
+
+    @Override
     public void setGreenOnCorrect(boolean active) {
         this.hintOnCorrectLetter = active;
+    }
+
+    @Override
+    public void setGreenInstantly(boolean active) {
+        this.hintInstantlyLetter = active;
+    }
+
+    @Override
+    public void setGreenWhenFull(boolean active) {
+        this.hintWhenFullLetter = active;
     }
 
     @Override
