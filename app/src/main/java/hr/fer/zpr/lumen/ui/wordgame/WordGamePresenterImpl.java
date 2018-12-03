@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import android.widget.ImageView;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.DebugUtil;
@@ -126,7 +128,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         StartingHintModel model = mapper.hintModel(word);
         view.addDrawable(model);
-        //if(manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().setEnabled(true);
+        if (manager.isCreateAllLettersActive().blockingGet() && !manager.isGamePhasePlaying().blockingGet())
+            view.getScrollView().removeView(view.getLinearLayout());
         presentHint(model);
     }
 
@@ -173,19 +176,19 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         if (manager.isCreateMoreLettersActive().blockingGet()) {
             randomLetters = manager.getRandomLetters(numToGenerate).blockingGet();
             letters = mapper.mapLetters(currentWord, randomLetters);
-        }
-        else if (manager.isCreateAllLettersActive().blockingGet()) {
+        } else if (manager.isCreateAllLettersActive().blockingGet()) {
             randomLetters = manager.getAllLetters().blockingGet();
             letters = mapper.mapAllLetters(currentWord, randomLetters);
             view.addAllLetters(letters);
             return;
-        }else{
+        } else {
             letters = mapper.mapLetters(currentWord, randomLetters);
         }
         view.addLetters(letters);
 
 
     }
+
 
     @Override
     public void startGame() {
@@ -211,12 +214,12 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     public void setView(WordGameView view) {
         this.view = view;
-        coin=mapper.getCoinModel(preferences.getInt(ViewConstants.PREFERENCES_COINS,0));
+        coin = mapper.getCoinModel(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         view.setCoin(coin);
     }
 
     private void playSound(String path) {
-            player.play(path);
+        player.play(path);
     }
 
     @Override
@@ -228,17 +231,17 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Override
     public void letterInserted(LetterModel letter, LetterFieldModel field) {
         boolean correct = insertLetterInPositionUseCase.execute(new InsertLetterInPositionUseCase.Params(new Letter(letter.getValue()), fields.indexOf(field))).blockingGet();
-
+        field.setColor(Color.RED);
         /*//FLASH GREEN ON CORRECT
         if (correct && manager.isHintOnCorrectOn().blockingGet()) {
                 field.setColor(Color.GREEN);
                 disposables.add(Completable.timer(500, TimeUnit.MILLISECONDS.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe(() -> {if(manager.isGamePhasePlaying().blockingGet())field.setColor(Color.RED);}));
         }*/
 
-        if(correct) fieldLetter.put(field.toString(),letter.getValue());
+        if (correct) fieldLetter.put(field.toString(), letter.getValue());
 
         //MARK GREEN RIGHT AWAY AFTER ADDING THE LETTER
-        if(correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
+        if (correct && manager.isHintInstantlyOn().blockingGet()) field.setColor(Color.GREEN);
 
         if (manager.areAllFieldsFull().blockingGet()) {
             if (manager.isAnswerCorrect().blockingGet()) {
@@ -257,9 +260,9 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                 }
             }
             //MARK GREEN CORRECT LETTERS
-            else if(manager.isHintWhenFullOn().blockingGet()){
+            else if (manager.isHintWhenFullOn().blockingGet()) {
                 for (LetterFieldModel f : fields)
-                    if(f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
+                    if (f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
                         f.setColor(Color.GREEN);
 
 
@@ -274,11 +277,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     }
 
     @Override
-    public void hintPressed() {
-        if (manager.isHintActive().blockingGet()) return;
-
+    public LetterModel hintPressed() {
+        if (manager.isHintActive().blockingGet()) return null;
+        LetterModel hintLetter = null;
         UseHintUseCase.Result result = useHintUseCase.execute().blockingGet();
-        if (!result.canActivate) return;
+        if (!result.canActivate) return null;
         coin.setCoins(manager.getCoins().blockingGet());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoins().blockingGet());
@@ -294,35 +297,59 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                 }
                 hintLetters.add(letter);
                 letter.setHintActive(true);
+                hintLetter = letter;
             }
 
         }
         disposables.add(Observable.interval(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).takeWhile(e -> !field.containsLetter() || !field.getLetterInside().getValue().equals(result.correctLetter))
                 .subscribe(f -> {
                     field.switchHintColor();
-                    for (LetterModel model : hintLetters) model.switchHintColor();
+                    for (LetterModel model : hintLetters) {
+                        if (manager.isCreateAllLettersActive().blockingGet()) {
+                            for (Map.Entry<ImageView, LetterModel> entry : view.getMapModel().entrySet()) {
+                                if (entry.getValue().equals(model)) {
+                                    view.getScrollView().scrollTo((int) entry.getKey().getX(), (int) entry.getKey().getY());
+                                    ImageView view = entry.getKey();
+                                    view.setBackgroundColor(Color.GREEN);
+                                    break;
+                                }
+                            }
+
+                            model.setHintActive(true);
+                        } else model.switchHintColor();
+                    }
                 }, g -> {
                 }, () -> {
                     if (manager.isGamePhasePlaying().blockingGet())
                         field.setColor(Color.RED);
-                    for (LetterModel letter : hintLetters) letter.setHintActive(false);
+                    for (LetterModel letter : hintLetters) {
+                        if (manager.isCreateAllLettersActive().blockingGet()) {
+                            for (Map.Entry<ImageView, LetterModel> entry : view.getMapModel().entrySet()) {
+                                if (entry.getValue().equals(letter)) {
+                                    entry.getKey().setBackgroundColor(Color.TRANSPARENT);
+                                    break;
+                                }
+                            }
+                        } else
+                            letter.setHintActive(false);
+                    }
                     manager.setHint(false);
                 }));
-
+        return hintLetter;
     }
 
     private void nextWord() {
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         coin.setCoins(manager.getCoins().blockingGet());
         view.clearDrawables();
-        //if(manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().setEnabled(false);
+        if (manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().removeView(view.getLinearLayout());
         view.setCoin(coin);
         currentWord = manager.nextWord().blockingGet();
         manager.changePhase(WordGamePhase.PRESENTING);
         presentWord(currentWord);
     }
 
-    public List<LetterFieldModel> getFields(){
+    public List<LetterFieldModel> getFields() {
         return fields;
     }
 

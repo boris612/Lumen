@@ -23,15 +23,11 @@ public class LocalizationProviderImpl implements LocalizationProvider {
 
     @Override
     public String getValueForLanguage(String language, String key) {
-        currentLanguage = language;
         load(language);
         return translations.getProperty(key);
     }
 
-    @Override
-    public String getCurrentLanguage() {
-        return currentLanguage;
-    }
+
 
     private void load(String language) {
         if (currentLanguage != language || translations == null) {
