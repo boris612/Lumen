@@ -24,7 +24,7 @@ android {
     project.archivesBaseName = "Lumen";
     defaultConfig {
         applicationId "hr.fer.zpr.lumen"
-        minSdkVersion 24
+        minSdkVersion 23
         targetSdkVersion 27
         versionCode 6
         versionName "1.1.1"
