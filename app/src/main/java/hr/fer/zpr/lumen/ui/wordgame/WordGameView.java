@@ -398,11 +398,11 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
             textView.setTextColor(Color.BLACK);
             textView.setText(letter.getValue());
             textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+            textView.setPadding(30,0,30,0);
             mapModel.put(textView, letter);
             mapLetter.put(textView, letterList.get(letters.indexOf(letter)));
             textView.setLayoutParams(layoutParams);
             textView.getLayoutParams().height = (int) (context.getResources().getDisplayMetrics().heightPixels / 3.5);
-//            textView.getLayoutParams().width += 5;
             linearLayout.setBaselineAligned(true);
             linearLayout.addView(textView);
 

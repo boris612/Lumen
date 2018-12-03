@@ -330,9 +330,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                     }
                 }, g -> {
                 }, () -> {
-                    if (manager.isGamePhasePlaying().blockingGet()) {
-                        if (manager.isHintOnCorrectOn().blockingGet()) hintField.setColor(Color.GREEN);
-                        else hintField.setColor(Color.RED);
+                    if (manager.isGamePhasePlaying().blockingGet() && manager.isHintOnCorrectOn().blockingGet()) {
+                        hintField.setColor(Color.GREEN);
                     }
                     for (LetterModel letter : hintLetters) {
                         if (manager.isCreateAllLettersActive().blockingGet()) {
