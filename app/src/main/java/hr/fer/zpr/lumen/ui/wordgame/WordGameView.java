@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.internal.zzagr.runOnUiThread;
@@ -109,8 +110,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         super.draw(canvas);
         this.canvas = canvas;
         canvas.drawColor(Color.WHITE);
-        List<GameDrawable> copy = new ArrayList<>(drawables);
-        for (GameDrawable drawable : drawables) drawable.draw(canvas);
+        List<GameDrawable> copy = new CopyOnWriteArrayList<>(drawables);
+        for (GameDrawable drawable : copy) drawable.draw(canvas);
     }
 
     @Override
@@ -299,7 +300,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void addAllLetters(List<LetterModel> letters) {
-        while(manager.isGamePhasePresenting().blockingGet()){}
         this.letters = letters;
         List<LetterModel> listOutsideScroll = new ArrayList<>();
         scrollView.smoothScrollTo(0, 0);
