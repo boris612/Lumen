@@ -328,15 +328,15 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 }
                 if(manager.isHintActive().blockingGet()){
                     LetterModel lPressed = mapModel.get(v);
-                    LetterModel l = presenter.getHintLetter();
+//                    LetterModel l = presenter.getHintLetter();
                     LetterFieldModel f = presenter.getHintField();
-                    if(lPressed.equals(l)){
+//                    if(lPressed.getValue().equals(l.getValue())){
                         if(f.containsLetter()) {
                             LetterModel letterInside = f.getLetterInside();
                             letterInside.setCenter(f.getRect().centerX(), f.getRect().top - letterInside.getHeight() / 2);
                         }
-                        l.setCenter(f.getCenter().x, f.getCenter().y);
-                        LetterModel letter1 = new LetterModel(l.getValue(), l.getImage(), l.getRect());
+                        LetterModel letter1 = new LetterModel(lPressed.getValue(), lPressed.getImage(), new Rect(lPressed.getRect()));
+                        letter1.setCenter(f.getCenter().x, f.getCenter().y);
                         letters.add(letter1);
                         listOutsideScroll.add(letter1);
                         setLetterBeingDragged(letter1);
@@ -344,27 +344,19 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                         WordGameView.this.draw(canvas);
                         updateAddingLettersToFields(true);
 
-                    }
+//                    }
                 }else {
                     for(LetterFieldModel field: fields){
-
                         if(!field.containsLetter()){
-                            Bitmap image;
-                            try{
-                                image = BitmapFactory.decodeStream(context.getAssets().open(mapLetter.get(v).image.path));
-                                LetterModel letter1 = new LetterModel(mapModel.get(v).getValue(), image, new Rect(mapModel.get(v).getRect()));
-                                letters.add(letter1);
-                                listOutsideScroll.add(letter1);
-                                letter1.setCenter(field.getCenter().x, field.getCenter().y);
-                                setLetterBeingDragged(letter1);
-                                WordGameView.this.addDrawable(letter1);
-                                WordGameView.this.draw(canvas);
-                                updateAddingLettersToFields(true);
-                                break;
-                            }catch (IOException ex){
-                                Log.d("error",ex.getMessage());
-                                break;
-                            }
+                            LetterModel letter1 = new LetterModel(mapModel.get(v).getValue(), mapModel.get(v).getImage(), new Rect(mapModel.get(v).getRect()));
+                            letters.add(letter1);
+                            listOutsideScroll.add(letter1);
+                            letter1.setCenter(field.getCenter().x, field.getCenter().y);
+                            setLetterBeingDragged(letter1);
+                            WordGameView.this.addDrawable(letter1);
+                            WordGameView.this.draw(canvas);
+                            updateAddingLettersToFields(true);
+                            break;
 
                         }
                     }
@@ -425,19 +417,14 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 case DragEvent.ACTION_DROP:
                     Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
                     if (touchPosition.y < context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10) {
-                        try {
-                            Bitmap image = BitmapFactory.decodeStream(context.getAssets().open(mapLetter.get(draggedView).image.path));
-                            LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), image, new Rect(mapModel.get(draggedView).getRect()));
-                            letters.add(letter1);
-                            listOutsideScroll.add(letter1);
-                            letter1.setCenter(touchPosition.x, touchPosition.y);
-                            setLetterBeingDragged(letter1);
-                            dropTarget.addDrawable(letter1);
-                            dropTarget.draw(canvas);
-                            updateAddingLettersToFields(true);
-                        } catch (IOException ex) {
-                            Log.d("error", ex.getMessage());
-                        }
+                        LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), mapModel.get(draggedView).getImage(), new Rect(mapModel.get(draggedView).getRect()));
+                        letters.add(letter1);
+                        listOutsideScroll.add(letter1);
+                        letter1.setCenter(touchPosition.x, touchPosition.y);
+                        setLetterBeingDragged(letter1);
+                        dropTarget.addDrawable(letter1);
+                        dropTarget.draw(canvas);
+                        updateAddingLettersToFields(true);
                     }
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:

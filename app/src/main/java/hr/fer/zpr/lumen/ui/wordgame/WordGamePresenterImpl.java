@@ -278,6 +278,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Override
     public void letterRemoved(LetterFieldModel field) {
         removeLetterFromFieldUseCase.execute(fields.indexOf(field)).blockingGet();
+        field.detachLetter();
         field.setColor(Color.RED);
     }
 
