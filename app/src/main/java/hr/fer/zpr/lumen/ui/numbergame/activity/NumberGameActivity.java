@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.numbergame.manager.EquationConstants;
@@ -37,7 +36,7 @@ public class NumberGameActivity extends DaggerActivity {
 
     private final static int BORDER_COLOR = Color.rgb(141,8,110);
     private final static String FILE_PATH_CORRECT_MESSAGE = "database/sound/messages/croatian/correct/bravo.mp3";
-    private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj_opet.mp3";
+    private final static String FILE_PATH_INCORRECT_MESSAGE = "database/sound/messages/croatian/incorrect/pokusaj opet.mp3";
     private final  DragListener dragListener = new DragListener();
 
     @Inject
@@ -103,6 +102,7 @@ public class NumberGameActivity extends DaggerActivity {
 
     private void setSettings() {
         NumberGameConstants.operations=pref.getStringSet(NumberGamePreferences.OPERATIONS.name(),additionSet);
+        if(NumberGameConstants.operations.isEmpty())NumberGameConstants.operations=additionSet;
         NumberGameConstants.setInputMode(pref.getString(NumberGamePreferences.INPUTMODE.name(),"ONDRAG"));
         NumberGameConstants.setNumberGameMode(pref.getString(NumberGamePreferences.GAMEMODE.name(),"CHECKANSWER"));
         EquationConstants.setAdditionLimit(pref.getInt(NumberGamePreferences.ADDITIONLIMIT.name(),20));
@@ -263,7 +263,6 @@ public class NumberGameActivity extends DaggerActivity {
 
     private void checkAnswer(){
         if ((numberGamePresenter != null) && (target != null) && (!target.getText().toString().isEmpty()) && numberGamePresenter.checkSolution()) {
-                  //  Toast.makeText(getApplicationContext(), "Rjesenje je tocno", Toast.LENGTH_LONG).show();
                     soundPlayer.play(FILE_PATH_CORRECT_MESSAGE);
                     target.setBackgroundColor(Color.GREEN);
                     setClickable(false);

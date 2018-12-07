@@ -98,10 +98,9 @@ public class GameSettingsActivity extends DaggerActivity {
             String newLanguage = languages.get((languages.indexOf(currLanguage) + 1) % languages.size());
             editor.putString(ViewConstants.PREFERENCES_GUI_LANGUAGE, newLanguage);
             editor.commit();
-            setLanguageValues(newLanguage);
             changeCoinGameLanguageUseCase.execute(newLanguage).subscribe();
             changeMessagesLanguageUseCase.execute(newLanguage).subscribe();
-
+            setLanguageValues(newLanguage);
         });
         languageButton.setOnClickListener(e -> {
             List<String> languages = database.languageDao().getAllLanguagesString();

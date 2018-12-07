@@ -41,4 +41,22 @@ public class LocalizationConstants {
     public static final String COIN_GAME_SETTINGS_PROPERTY = "coin_game_settings";
 
     public static final String CALCULATING_GAME_SETTINGS_PROPERTY = "calculating_game_settings";
+
+    public static final String PERMUTATION = "permutation";
+
+    public static final String ON_CLICK_OPTION = "on_click";
+
+    public static final String ADDITION = "addition";
+
+    public static final String SUBTRACTION = "subtraction";
+
+    public static final String MULTIPLICATION = "multiplication";
+
+    public static final String DIVISION = "division";
+
+    public static final String LVL_1 = "lvl_1";
+
+    public static final String LVL_2 = "lvl_2";
+
+    public static final String LVL_3 = "lvl_3";
 }
