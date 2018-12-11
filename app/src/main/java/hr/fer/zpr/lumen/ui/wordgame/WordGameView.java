@@ -21,6 +21,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -365,9 +366,10 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         this.letters = letters;
 
         scrollView.smoothScrollTo(0, 0);
+
         linearLayout.setVisibility(ViewGroup.VISIBLE);
         linearLayout = new LinearLayout(context);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         TextView textView = null;
         List<Letter> letterList = manager.getAllLetters().blockingGet();
 
@@ -527,9 +529,9 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         });
 
         runOnUiThread(() -> {
+            resizeView(scrollView, screenWidth, 350);
             scrollView.addView(linearLayout);
-            scrollView.setMinimumHeight(200);
-            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height - 10);
+            scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height-50);
             scrollView.setScrollbarFadingEnabled(false);
         });
 
@@ -572,6 +574,15 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         }
 
         public abstract void onDoubleClick(View v);
+    }
+
+    private void resizeView(View view, int newWidth, int newHeight) {
+        try {
+            Constructor<? extends ViewGroup.LayoutParams> ctor = view.getLayoutParams().getClass().getDeclaredConstructor(int.class, int.class);
+            view.setLayoutParams(ctor.newInstance(newWidth, newHeight));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
