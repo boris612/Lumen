@@ -1,14 +1,35 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.*;
+import android.view.DragEvent;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import hr.fer.zpr.lumen.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.ui.viewmodels.CoinModel;
 import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
@@ -21,15 +42,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.internal.zzagr.runOnUiThread;
 
@@ -58,6 +70,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private LinearLayout linearLayout;
     private Map<TextView, LetterModel> mapModel = new HashMap<>();
     private Map<TextView, Letter> mapLetter = new HashMap<>();
+    private List<LetterModel> listOutsideScroll = new ArrayList<>();
 
     public WordGameView(LumenApplication context) {
         super(context);
@@ -119,7 +132,7 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         if (!presenter.shouldHandleTouch()) return super.onTouchEvent(event);
         boolean handled = false;
-        LetterModel touchedLetter;
+        LetterModel touchedLetter = null;
         int xTouch;
         int yTouch;
         int pointerId;
@@ -189,6 +202,22 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 break;
 
             case MotionEvent.ACTION_UP:
+                if (!listOutsideScroll.isEmpty()) {
+                    for (LetterModel out : listOutsideScroll) {
+                        if (drawables.contains(out)){
+                            boolean isInField = false;
+                            for (LetterFieldModel field : fields) {
+                                if (field.getRect().contains(out.getCenter().x, out.getCenter().y)){
+                                    isInField = true;
+                                    break;
+                                }
+                            }
+                            if (!isInField) {
+                                WordGameView.this.removeDrawable(out);
+                            }
+                        }
+                    }
+                }
                 mLetterPointer.clear();
                 invalidate();
                 handled = true;
@@ -197,6 +226,22 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
+                if (!listOutsideScroll.isEmpty()) {
+                    for (LetterModel out : listOutsideScroll) {
+                        if (drawables.contains(out)){
+                            boolean isInField = false;
+                            for (LetterFieldModel field : fields) {
+                                if (field.getRect().contains(out.getCenter().x, out.getCenter().y)){
+                                    isInField = true;
+                                    break;
+                                }
+                            }
+                            if (!isInField) {
+                                WordGameView.this.removeDrawable(out);
+                            }
+                        }
+                    }
+                }
                 pointerId = event.getPointerId(actionIndex);
 
                 mLetterPointer.remove(pointerId);
@@ -216,7 +261,6 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void updateAddingLettersToFields(boolean actionUpJustOccured) {
-        outerLoop:
         for (LetterFieldModel field : fields) {
             LetterModel letterInside = field.getLetterInside();
             if (letterInside != null && !field.getRect().contains(letterInside.getRect().centerX(), letterInside.getRect().centerY())) {
@@ -239,6 +283,22 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                         letter.setCenter(newCenter.x, newCenter.y);
                     }
 
+                    if (!listOutsideScroll.isEmpty()) {
+                        for (LetterModel out : listOutsideScroll) {
+                            if (drawables.contains(out)){
+                                boolean isInField = false;
+                                for (LetterFieldModel field1 : fields) {
+                                    if (field1.getRect().contains(out.getCenter().x, out.getCenter().y)){
+                                        isInField = true;
+                                        break;
+                                    }
+                                }
+                                if (!isInField) {
+                                    WordGameView.this.removeDrawable(out);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -274,6 +334,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         return scrollView;
     }
 
+    public void setLinearLayout(LinearLayout layout){this.linearLayout=layout;}
+
 
     public void addDrawable(GameDrawable drawable) {
         drawables.add(drawable);
@@ -301,13 +363,37 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void addAllLetters(List<LetterModel> letters) {
         this.letters = letters;
-        List<LetterModel> listOutsideScroll = new ArrayList<>();
+
         scrollView.smoothScrollTo(0, 0);
         linearLayout.setVisibility(ViewGroup.VISIBLE);
         linearLayout = new LinearLayout(context);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         TextView textView = null;
         List<Letter> letterList = manager.getAllLetters().blockingGet();
+
+        OnTouchListener onTouchListener = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action=event.getAction();
+//                if (!listOutsideScroll.isEmpty()) {
+//                    for (LetterModel out : listOutsideScroll) {
+//                        boolean isInField = false;
+//                        for (LetterFieldModel field : fields) {
+//                            if (field.containsLetter() && out.isAttachedTo(field)) {
+//                                isInField = true;
+//                                break;
+//                            }
+//                        }
+//                        if (!isInField) {
+//                            if (drawables.contains(out)) WordGameView.this.removeDrawable(out);
+//                        }
+//                    }
+//                }
+                DragShadowBuilder shadowBuilder = new DragShadowBuilder(v);
+                v.startDrag(null, shadowBuilder, v, 0);
+                return true;
+            }
+        };
 
         DoubleClickListener doubleClickListener = new DoubleClickListener() {
             @Override
@@ -399,11 +485,14 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
             linearLayout.setBaselineAligned(true);
             linearLayout.addView(textView);
 
-            textView.setOnClickListener(doubleClickListener);
+            //textView.setOnClickListener(doubleClickListener);
 
-            textView.setOnLongClickListener(onLongClickListener);
+            //textView.setOnLongClickListener(onLongClickListener);
+
+            textView.setOnTouchListener(onTouchListener);
         }
         TextView finalTextView = textView;
+
         WordGameView.this.setOnDragListener((v, dragEvent) -> {
             TextView draggedView = (TextView) dragEvent.getLocalState();
             WordGameView dropTarget = (WordGameView) v;
@@ -416,16 +505,19 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
                     break;
                 case DragEvent.ACTION_DROP:
                     Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
-                    if (touchPosition.y < context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10) {
-                        LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), mapModel.get(draggedView).getImage(), new Rect(mapModel.get(draggedView).getRect()));
-                        letters.add(letter1);
-                        listOutsideScroll.add(letter1);
-                        letter1.setCenter(touchPosition.x, touchPosition.y);
-                        setLetterBeingDragged(letter1);
-                        dropTarget.addDrawable(letter1);
-                        dropTarget.draw(canvas);
-                        updateAddingLettersToFields(true);
+                    for(LetterFieldModel field: fields){
+                        if ((touchPosition.y < context.getResources().getDisplayMetrics().heightPixels - finalTextView.getLayoutParams().height - 10) && field.getRect().contains(touchPosition.x, touchPosition.y) ) {
+                            LetterModel letter1 = new LetterModel(mapModel.get(draggedView).getValue(), mapModel.get(draggedView).getImage(), new Rect(mapModel.get(draggedView).getRect()));
+                            letters.add(letter1);
+                            listOutsideScroll.add(letter1);
+                            letter1.setCenter(touchPosition.x, touchPosition.y);
+                            setLetterBeingDragged(letter1);
+                            dropTarget.addDrawable(letter1);
+                            dropTarget.draw(canvas);
+                            updateAddingLettersToFields(true);
+                        }
                     }
+
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
                 default:
@@ -436,7 +528,9 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         runOnUiThread(() -> {
             scrollView.addView(linearLayout);
+            scrollView.setMinimumHeight(200);
             scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height - 10);
+            scrollView.setScrollbarFadingEnabled(false);
         });
 
 
@@ -479,4 +573,5 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
 
         public abstract void onDoubleClick(View v);
     }
+
 }
