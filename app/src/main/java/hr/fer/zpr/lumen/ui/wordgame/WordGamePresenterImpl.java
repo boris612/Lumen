@@ -136,6 +136,8 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         view.addDrawable(model);
         if (manager.isCreateAllLettersActive().blockingGet() && manager.isGamePhasePresenting().blockingGet())
             view.getScrollView().removeView(view.getLinearLayout());
+            view.getButtonLeft().setVisibility(ViewGroup.INVISIBLE);
+            view.getButtonRight().setVisibility(ViewGroup.INVISIBLE);
         presentHint(model);
     }
 
@@ -252,7 +254,11 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         if (manager.areAllFieldsFull().blockingGet()) {
             if (manager.isAnswerCorrect().blockingGet()) {
                 manager.changePhase(WordGamePhase.ENDING);
-                if (manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().removeView(view.getLinearLayout());
+                if (manager.isCreateAllLettersActive().blockingGet()) {
+                    view.getScrollView().removeView(view.getLinearLayout());
+                    view.getButtonRight().setVisibility(ViewGroup.INVISIBLE);
+                    view.getButtonLeft().setVisibility(ViewGroup.INVISIBLE);
+                }
                 coin.setCoins(manager.getCoins().blockingGet());
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoins().blockingGet());

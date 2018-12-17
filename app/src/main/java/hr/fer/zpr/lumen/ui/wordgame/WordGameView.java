@@ -17,7 +17,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -67,6 +69,8 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     private LetterModel draggedLetter;
     private LetterFieldModel fieldOfLetterDraggedOutOffield;
     private HorizontalScrollView scrollView;
+    private ImageButton buttonLeft;
+    private ImageButton buttonRight;
     private Canvas canvas;
     private LinearLayout linearLayout;
     private Map<TextView, LetterModel> mapModel = new HashMap<>();
@@ -373,6 +377,20 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         TextView textView = null;
         List<Letter> letterList = manager.getAllLetters().blockingGet();
 
+        OnClickListener onClickListenerButtonLeft = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollTo(scrollView.getScrollX()-scrollView.getWidth()+letters.get(0).getWidth()+60,0);
+            }
+        };
+
+        OnClickListener onClickListenerButtonRight = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollTo(scrollView.getScrollX()+scrollView.getWidth()-letters.get(0).getWidth()-60,0);
+            }
+        };
+
         OnTouchListener onTouchListener = new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -529,9 +547,26 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
         });
 
         runOnUiThread(() -> {
-            resizeView(scrollView, screenWidth, 350);
+            buttonLeft.setOnClickListener(onClickListenerButtonLeft);
+            buttonRight.setOnClickListener(onClickListenerButtonRight);
+
+            buttonLeft.setVisibility(ViewGroup.VISIBLE);
+            buttonRight.setVisibility(ViewGroup.VISIBLE);
+
+            ViewGroup.LayoutParams params = buttonLeft.getLayoutParams();
+            params.width=letters.get(0).getWidth()-2;
+            params.height=300;
+            buttonRight.setPadding(5,0,5,0);
+
+            buttonLeft.setLayoutParams(params);
+            buttonRight.setX(screenWidth-letters.get(0).getWidth());
+            buttonRight.setLayoutParams(params);
+            buttonRight.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height);
+            buttonLeft.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height);
+            resizeView(scrollView,screenWidth-2*letters.get(0).getWidth(), 350);
             scrollView.addView(linearLayout);
             scrollView.setY(context.getResources().getDisplayMetrics().heightPixels - mapLetter.entrySet().iterator().next().getKey().getLayoutParams().height-50);
+            scrollView.setX(letters.get(0).getWidth());
             scrollView.setScrollbarFadingEnabled(false);
         });
 
@@ -558,6 +593,14 @@ public class WordGameView extends SurfaceView implements SurfaceHolder.Callback 
     public LinearLayout getLinearLayout() {
         return linearLayout;
     }
+
+    public void setButtonRight(ImageButton buttonRight) {this.buttonRight=buttonRight; }
+
+    public void setButtonLeft(ImageButton buttonLeft) {this.buttonLeft=buttonLeft; }
+
+    public ImageButton getButtonLeft() {return this.buttonLeft;}
+
+    public ImageButton getButtonRight() {return this.buttonRight;}
 
     private abstract class DoubleClickListener implements OnClickListener {
         private static final long DOUBLE_CLICK_TIME_DELTA = 300;//milliseconds
