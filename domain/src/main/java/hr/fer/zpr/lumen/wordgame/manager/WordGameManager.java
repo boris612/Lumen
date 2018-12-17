@@ -45,6 +45,8 @@ public interface WordGameManager {
 
     Single<Boolean> isGamePhasePlaying();
 
+    Single<Boolean> isGamePhasePresenting();
+
     Single<Boolean> isHintOnCorrectOn();
 
     Single<Boolean> isHintInstantlyOn();
@@ -76,7 +78,6 @@ public interface WordGameManager {
     void setGreenWhenFull(boolean active);
 
     void setLanguage(String language);
-
 
 
 }

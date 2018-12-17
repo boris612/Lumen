@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import android.widget.ImageView;
+import android.widget.TextView;
 import hr.fer.zpr.lumen.dagger.application.LumenApplication;
 import hr.fer.zpr.lumen.player.SoundPlayer;
 import hr.fer.zpr.lumen.ui.DebugUtil;
@@ -53,6 +54,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import org.w3c.dom.Text;
 import wordgame.db.database.WordGameDatabase;
 import wordgame.db.mapping.DataDomainMapper;
 
@@ -110,6 +112,10 @@ public class WordGamePresenterImpl implements WordGamePresenter {
 
     private Map<String, String> fieldLetter = new HashMap<>();
 
+    private LetterModel hintLetter = null;
+
+    private LetterFieldModel hintField = null;
+
     public WordGamePresenterImpl(LumenApplication application) {
         application.getApplicationComponent().inject(this);
         this.context = application;
@@ -128,7 +134,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         }
         StartingHintModel model = mapper.hintModel(word);
         view.addDrawable(model);
-        if (manager.isCreateAllLettersActive().blockingGet() && !manager.isGamePhasePlaying().blockingGet())
+        if (manager.isCreateAllLettersActive().blockingGet() && manager.isGamePhasePresenting().blockingGet())
             view.getScrollView().removeView(view.getLinearLayout());
         presentHint(model);
     }
@@ -246,6 +252,7 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         if (manager.areAllFieldsFull().blockingGet()) {
             if (manager.isAnswerCorrect().blockingGet()) {
                 manager.changePhase(WordGamePhase.ENDING);
+                if (manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().removeView(view.getLinearLayout());
                 coin.setCoins(manager.getCoins().blockingGet());
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoins().blockingGet());
@@ -264,8 +271,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                 for (LetterFieldModel f : fields)
                     if (f.getLetterInside().getValue().equals(fieldLetter.get(f.toString())))
                         f.setColor(Color.GREEN);
-
-
             }
         }
     }
@@ -273,20 +278,26 @@ public class WordGamePresenterImpl implements WordGamePresenter {
     @Override
     public void letterRemoved(LetterFieldModel field) {
         removeLetterFromFieldUseCase.execute(fields.indexOf(field)).blockingGet();
+        field.detachLetter();
         field.setColor(Color.RED);
     }
 
     @Override
+    public LetterFieldModel getHintField(){return hintField;}
+
+    @Override
+    public LetterModel getHintLetter(){return hintLetter;}
+
+    @Override
     public LetterModel hintPressed() {
         if (manager.isHintActive().blockingGet()) return null;
-        LetterModel hintLetter = null;
         UseHintUseCase.Result result = useHintUseCase.execute().blockingGet();
         if (!result.canActivate) return null;
         coin.setCoins(manager.getCoins().blockingGet());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(ViewConstants.PREFERENCES_COINS, manager.getCoins().blockingGet());
         editor.commit();
-        LetterFieldModel field = fields.get(result.index);
+        hintField = fields.get(result.index);
         List<LetterModel> hintLetters = new ArrayList<>();
         outerLoop:
         for (LetterModel letter : letters) {
@@ -301,16 +312,16 @@ public class WordGamePresenterImpl implements WordGamePresenter {
             }
 
         }
-        disposables.add(Observable.interval(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).takeWhile(e -> !field.containsLetter() || !field.getLetterInside().getValue().equals(result.correctLetter))
+        disposables.add(Observable.interval(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).takeWhile(e -> !hintField.containsLetter() || !hintField.getLetterInside().getValue().equals(result.correctLetter))
                 .subscribe(f -> {
-                    field.switchHintColor();
+                    hintField.switchHintColor();
                     for (LetterModel model : hintLetters) {
                         if (manager.isCreateAllLettersActive().blockingGet()) {
-                            for (Map.Entry<ImageView, LetterModel> entry : view.getMapModel().entrySet()) {
+                            for (Map.Entry<TextView, LetterModel> entry : view.getMapModel().entrySet()) {
                                 if (entry.getValue().equals(model)) {
                                     view.getScrollView().scrollTo((int) entry.getKey().getX(), (int) entry.getKey().getY());
-                                    ImageView view = entry.getKey();
-                                    view.setBackgroundColor(Color.GREEN);
+                                    TextView view = entry.getKey();
+                                    view.setTextColor(Color.GREEN);
                                     break;
                                 }
                             }
@@ -320,13 +331,14 @@ public class WordGamePresenterImpl implements WordGamePresenter {
                     }
                 }, g -> {
                 }, () -> {
-                    if (manager.isGamePhasePlaying().blockingGet())
-                        field.setColor(Color.RED);
+                    if (manager.isGamePhasePlaying().blockingGet() && manager.isHintOnCorrectOn().blockingGet()) {
+                        hintField.setColor(Color.GREEN);
+                    }
                     for (LetterModel letter : hintLetters) {
                         if (manager.isCreateAllLettersActive().blockingGet()) {
-                            for (Map.Entry<ImageView, LetterModel> entry : view.getMapModel().entrySet()) {
+                            for (Map.Entry<TextView, LetterModel> entry : view.getMapModel().entrySet()) {
                                 if (entry.getValue().equals(letter)) {
-                                    entry.getKey().setBackgroundColor(Color.TRANSPARENT);
+                                    entry.getKey().setTextColor(Color.BLACK);
                                     break;
                                 }
                             }
@@ -342,7 +354,6 @@ public class WordGamePresenterImpl implements WordGamePresenter {
         manager.setCoins(preferences.getInt(ViewConstants.PREFERENCES_COINS, 0));
         coin.setCoins(manager.getCoins().blockingGet());
         view.clearDrawables();
-        if (manager.isCreateAllLettersActive().blockingGet()) view.getScrollView().removeView(view.getLinearLayout());
         view.setCoin(coin);
         currentWord = manager.nextWord().blockingGet();
         manager.changePhase(WordGamePhase.PRESENTING);
