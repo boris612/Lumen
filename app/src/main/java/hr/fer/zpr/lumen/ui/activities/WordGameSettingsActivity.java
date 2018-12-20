@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
 import hr.fer.zpr.lumen.localization.LocalizationConstants;
@@ -23,6 +25,7 @@ public class WordGameSettingsActivity extends DaggerActivity {
     private Button categoriesBtn;
     private Button validateWordBtn;
     private Button validateLetterByLetterBtn;
+    private TextView textView;
 
     @Inject
     ChangeGreenOnCorrectUseCase changeGreenOnCorrectUseCase;
@@ -51,6 +54,7 @@ public class WordGameSettingsActivity extends DaggerActivity {
         this.getLumenApplication().getApplicationComponent().inject(this);
         setContentView(R.layout.activity_wordgame_settings);
 
+        textView = findViewById(R.id.textView);
         showAllLettersBtn = findViewById(R.id.GenerateAllLettersButton);
         returnBtn = findViewById(R.id.returnButton);
         addMoreLettersBtn = findViewById(R.id.GenerateMoreLettersButton);
@@ -159,6 +163,7 @@ public class WordGameSettingsActivity extends DaggerActivity {
     }
 
     private void setLanguageValues(String newLanguage) {
+        textView.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.WORD_GAME_SETTINGS_PROPERTY));
         categoriesBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CATEGORIES_PROPERTY));
         addMoreLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_MORE_LETTERS_PROPERTY));
         showAllLettersBtn.setText(localizationProvider.getValueForLanguage(newLanguage, LocalizationConstants.CREATE_ALL_LETTERS_PROPERTY));
