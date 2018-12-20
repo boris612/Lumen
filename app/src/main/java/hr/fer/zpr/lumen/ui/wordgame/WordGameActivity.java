@@ -1,36 +1,21 @@
 package hr.fer.zpr.lumen.ui.wordgame;
 
-import android.annotation.SuppressLint;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Inject;
 
 import hr.fer.zpr.lumen.R;
 import hr.fer.zpr.lumen.dagger.activity.DaggerActivity;
-import hr.fer.zpr.lumen.ui.viewmodels.GameDrawable;
-import hr.fer.zpr.lumen.ui.wordgame.mapping.WordGameMapper;
-import hr.fer.zpr.lumen.ui.wordgame.models.LetterModel;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
-import hr.fer.zpr.lumen.wordgame.model.Letter;
-
-import javax.inject.Inject;
 
 public class WordGameActivity extends DaggerActivity {
 
@@ -53,10 +38,21 @@ public class WordGameActivity extends DaggerActivity {
         view = new WordGameView(this.getLumenApplication());
         constraintLayout = findViewById(R.id.gameLayout);
         HorizontalScrollView scrollView = new HorizontalScrollView(this.getLumenApplication());
+        ImageButton buttonLeft = new ImageButton(this.getLumenApplication());
+        ImageButton buttonRight = new ImageButton(this.getLumenApplication());
+        buttonLeft.setImageResource(R.drawable.icons8_left_50);
+        buttonRight.setImageResource(R.drawable.icons8_right_50);
+        buttonLeft.setBackgroundColor(Color.TRANSPARENT);
+        buttonRight.setBackgroundColor(Color.TRANSPARENT);
+
+        view.setButtonLeft(buttonLeft);
+        view.setButtonRight(buttonRight);
         view.setScrollView(scrollView);
         constraintLayout.addView(view);
         if(manager.isCreateAllLettersActive().blockingGet()){
             constraintLayout.addView(scrollView);
+            constraintLayout.addView(buttonLeft);
+            constraintLayout.addView(buttonRight);
             scrollView.setVisibility(ViewGroup.VISIBLE);
             scrollView.setBottom(View.SCROLL_INDICATOR_BOTTOM);
         }
@@ -82,4 +78,6 @@ public class WordGameActivity extends DaggerActivity {
         super.onResume();
         presenter.startGame();
     }
+
+
 }
