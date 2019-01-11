@@ -16,7 +16,11 @@ public interface WordGameManager {
 
     Single<Boolean> isCreateMoreLettersActive();
 
+    Single<Boolean> isCreateAllLettersActive();
+
     void setCreateMoreLetters(boolean value);
+
+    void setCreateAllLetters(boolean value);
 
     Single<Boolean> insertLetterIntoField(String letter, int position);
 
@@ -32,6 +36,8 @@ public interface WordGameManager {
 
     Single<List<Letter>> getRandomLetters(int n);
 
+    Single<List<Letter>> getAllLetters();
+
     void setMessagesLanguage(String language);
 
 
@@ -39,7 +45,13 @@ public interface WordGameManager {
 
     Single<Boolean> isGamePhasePlaying();
 
+    Single<Boolean> isGamePhasePresenting();
+
     Single<Boolean> isHintOnCorrectOn();
+
+    Single<Boolean> isHintInstantlyOn();
+
+    Single<Boolean> isHintWhenFullOn();
 
     Single<Boolean> areAllFieldsFull();
 
@@ -61,8 +73,11 @@ public interface WordGameManager {
 
     void setGreenOnCorrect(boolean active);
 
-    void setLanguage(String language);
+    void setGreenInstantly(boolean active);
 
+    void setGreenWhenFull(boolean active);
+
+    void setLanguage(String language);
 
 
 }
