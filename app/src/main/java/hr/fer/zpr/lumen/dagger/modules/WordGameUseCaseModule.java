@@ -5,7 +5,16 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import hr.fer.zpr.lumen.wordgame.interactor.*;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeCategoriesUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeCreateMoreLettersUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeGreenOnCorrectUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeLanguageUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.ChangeMessagesLanguageUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.InsertLetterInPositionUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.IsCreateMoreLettersActiveUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.RemoveLetterFromFieldUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.SetCreateMoreLettersUseCase;
+import hr.fer.zpr.lumen.wordgame.interactor.StartGameUseCase;
 import hr.fer.zpr.lumen.wordgame.manager.WordGameManager;
 import hr.fer.zpr.lumen.wordgame.repository.WordGameRepository;
 
@@ -21,7 +30,7 @@ public class WordGameUseCaseModule {
 
     @Provides
     @Singleton
-    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase(WordGameManager manager) {
+    ChangeMessagesLanguageUseCase changeMessagesLanguageUseCase(WordGameManager manager){
         return new ChangeMessagesLanguageUseCase(manager);
     }
 
@@ -72,37 +81,9 @@ public class WordGameUseCaseModule {
 
     @Provides
     @Singleton
-    IsCreateAllLettersActiveUseCase isCreateAllLettersActiveUseCase(WordGameManager manager) {
-        return new IsCreateAllLettersActiveUseCase(manager);
-    }
-
-    @Provides
-    @Singleton
-    SetCreateAllLettersUseCase setCreateAllLettersUseCase(WordGameManager manager) {
-        return new SetCreateAllLettersUseCase(manager);
-    }
-
-    @Provides
-    @Singleton
-    ChangeCreateAllLettersUseCase changeCreateAllLettersUseCase(WordGameManager manager) {
-        return new ChangeCreateAllLettersUseCase(manager);
-    }
-
-    @Provides
-    @Singleton
     ChangeGreenOnCorrectUseCase changeGreenOnCorrectUseCase(WordGameManager manager) {
         return new ChangeGreenOnCorrectUseCase(manager);
     }
 
-    @Provides
-    @Singleton
-    ChangeGreenWhenFullUseCase changeGreenWhenFullUseCase(WordGameManager manager) {
-        return new ChangeGreenWhenFullUseCase(manager);
-    }
 
-    @Provides
-    @Singleton
-    ChangeGreenInstantlyUseCase changeGreenInstantlyUseCase(WordGameManager manager) {
-        return new ChangeGreenInstantlyUseCase(manager);
-    }
 }

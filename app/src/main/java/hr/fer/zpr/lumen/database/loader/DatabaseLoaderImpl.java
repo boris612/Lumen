@@ -1,10 +1,7 @@
 package hr.fer.zpr.lumen.database.loader;
 
 import android.content.Context;
-import coingame.model.DbCoin;
-import hr.fer.zpr.lumen.ui.DebugUtil;
-import wordgame.db.database.WordGameDatabase;
-import wordgame.db.model.*;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +9,22 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import coingame.model.DbCoin;
+import hr.fer.zpr.lumen.ui.DebugUtil;
+import wordgame.db.database.WordGameDatabase;
+import wordgame.db.model.DbCategory;
+import wordgame.db.model.DbCorrectMessage;
+import wordgame.db.model.DbImage;
+import wordgame.db.model.DbIncorrectMessage;
+import wordgame.db.model.DbLanguage;
+import wordgame.db.model.DbLetter;
+import wordgame.db.model.DbLetterLanguageRelation;
+import wordgame.db.model.DbTryAgainMessage;
+import wordgame.db.model.DbVersion;
+import wordgame.db.model.DbWord;
+import wordgame.db.model.DbWordCategoriesRelation;
+import wordgame.db.model.DbWordLanguageRelation;
 
 public class DatabaseLoaderImpl implements DatabaseLoader {
 

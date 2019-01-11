@@ -1,12 +1,8 @@
 package wordgame.db.repository;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 
@@ -74,28 +70,6 @@ public class WordGameRepositoryImpl implements WordGameRepository {
         }
         return Single.just(result);
     }
-
-    @Override
-    public Single<List<Letter>> getAllLettersForLanguage(Language language){
-        List<DbLetter> letters = database.letterDao().getAllLettersForLanguage(database.languageDao().findByValue(language.name().toLowerCase()).id);
-        int alphabetSize=letters.size();
-        List<Letter> result = new ArrayList<>();
-        for(int i=0;i<alphabetSize;i++){
-            DbLetterLanguageRelation dblr=database.letterLanguageDao().findByLetterAndLanguage(letters.get(i).id,database.languageDao().findByValue(language.name().toLowerCase()).id);
-            Sound sound = new Sound(dblr.soundPath);
-            result.add(new Letter(letters.get(i).value, new Image(database.imageDao().getImageById(letters.get(i).imageId).path), sound));
-        }
-        letters.removeAll(letters);
-        if(new String("CROATIAN").equalsIgnoreCase(language.name())){
-            Locale croatian = new Locale("hr", "HR");
-            Collator collator = Collator.getInstance(croatian);
-            Collections.sort(result, (c1, c2) -> collator.compare(c1.toString(), c2.toString()));
-        }
-        else Collections.sort(result, (l1, l2) -> l1.toString().compareTo(l2.toString()));
-
-        return Single.just(result);
-    }
-
 
     @Override
     public Single<List<Letter>> getLettersWithImages(List<Letter> letters, Language language) {
