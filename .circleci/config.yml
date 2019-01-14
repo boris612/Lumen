@@ -18,13 +18,7 @@ jobs:
              root: .
              paths:
                - .git
-               - config
-        - run:
-            name: Run Build
-            command: ./gradlew assemble
-        - store_artifacts:
-            path: app/build/outputs/apk/release/
-            destination: apks/
+               - config        
 
 workflows:
    version: 2
