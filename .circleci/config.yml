@@ -19,6 +19,9 @@ jobs:
              paths:
                - .git
                - config
+        - run:
+            name: Run Build
+            command: ./gradlew build
         - store_artifacts:
             path: app/build/outputs/apk/release/
             destination: apks/
